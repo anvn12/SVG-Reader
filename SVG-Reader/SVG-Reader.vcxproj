@@ -170,6 +170,7 @@
     <Image Include="SVGDemo.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="note.md" />
     <None Include="sample.svg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
