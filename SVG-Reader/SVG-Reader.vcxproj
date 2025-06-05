@@ -169,6 +169,9 @@
     <Image Include="small.ico" />
     <Image Include="SVGDemo.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="sample.svg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
