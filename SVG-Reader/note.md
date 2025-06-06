@@ -1,14 +1,23 @@
 ﻿# Cách chia file
-header file thì nhét vô stdafx.h
-targetver.h để nhét đúng cái thư viện cho các phiên bản windows (10,11,7,8,...)
+## File không được thay đổi
+- targetver.h 
+- rapidxml.hpp 
+- stdafx.cpp
 
 
-rapidxml.hpp là thư viện để đọc file SVG (xml), KO THAY ĐỔI cái này
+## Sử dụng stdafx.h
+- Có include thư viện gì thì include trong cái stdafx.h trước
+- Sau đó include cái thư viện đó trong cái file .h cần thêm
+- Trong file .cpp, làm:
+	-	#include "stdafx.h"
+	-	#include "cái file .h"
 
-mấy cái này đang vẽ bằng windows.h, chưa có thư viện gdi+
+- Mục đích của cái này là tăng tốc thời gian combine.
 
 
 # Các bước đọc file
 1. Parse cái svg (bỏ mấy cái <> của xml)
 2. Sau khi lọc cái svg -> bỏ vô mấy cái class
 3. Dùng đồ họa vẽ nó lên
+
+
