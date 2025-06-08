@@ -1,0 +1,29 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+# /.gitignore
+/x64
+/SVG-Reader/x64
+# /SVG-Reader/x64/Debug
+# /x64/Debug/SVG-Reader.exe
+# /x64/Debug/SVG-Reader.pdb
+# /SVG-Reader/x64/Debug/vc143.pdb
+# /SVG-Reader/x64/Debug/vc143.idb
+# /SVG-Reader/x64/Debug/SVGReader.obj
+# /SVG-Reader/x64/Debug/SVG-Reader.log
+# /SVG-Reader/x64/Debug/SVG-Reader.ilk
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/rc.write.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/rc.read.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/CL.command.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/CL.read.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/Cl.items.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/CL.write.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/link.read.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/link.write.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/rc.command.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/link.command.1.tlog
+# /SVG-Reader/x64/Debug/SVG-Reader.tlog/link.secondary.1.tlog
+# /x64/Debug/SVG-Reader.exe
+# /x64/Debug/SVG-Reader.pdb
