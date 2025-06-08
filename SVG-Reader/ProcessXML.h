@@ -12,6 +12,4 @@ using namespace rapidxml;
 
 VOID processXML(Graphics& graphics, string filename);
 
-//void shapeProcess(Rectangle, char*, const char*);
-
 #endif

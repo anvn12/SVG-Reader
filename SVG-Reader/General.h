@@ -5,8 +5,8 @@
 // RGB color
 class RGBColor {
 private:
-	int red, green, blue;
 public:
+	int red, green, blue;
 	RGBColor()
 		: red(0), green(0), blue(0) {}
 	RGBColor(int r, int g, int b)
