@@ -3,23 +3,23 @@
 #pragma once
 
 // RGB color
-class Color {
+class RGBColor {
 private:
 	int red, green, blue;
 public:
-	Color()
+	RGBColor()
 		: red(0), green(0), blue(0) {}
-	Color(int r, int g, int b)
+	RGBColor(int r, int g, int b)
 		: red(r), green(g), blue(b)	{}
 };
 
-class Point {
-private:
-	double x, y;
+class Point2D {
+//private:
 public:
-	Point()
+	double x, y;
+	Point2D()
 		: x(0), y(0) {}
-	Point(double coorX, double coorY)
+	Point2D(double coorX, double coorY)
 		: x(coorX), y(coorY) {}
 };
 
