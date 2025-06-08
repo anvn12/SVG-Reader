@@ -10,7 +10,7 @@
 using namespace std;
 using namespace rapidxml;
 
-void processXML(string filename);
+VOID processXML(Graphics& graphics, string filename);
 
 //void shapeProcess(Rectangle, char*, const char*);
 

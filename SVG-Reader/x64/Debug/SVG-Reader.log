@@ -1,6 +1,7 @@
-﻿  stdafx.cpp
+﻿  ProcessXML.cpp
   SVGReader.cpp
-D:\SVG-Reader\SVG-Reader\SVGReader.cpp(92,12): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+  Generating Code...
+D:\SVG-Reader\SVG-Reader\SVGReader.cpp(123,12): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
   (compiling source file '/SVGReader.cpp')
   
   SVG-Reader.vcxproj -> D:\SVG-Reader\x64\Debug\SVG-Reader.exe

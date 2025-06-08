@@ -4,7 +4,7 @@
 
 #include "General.h"
 
-class Rectangle {
+class SVGRectangle {
 //private:
 public:
 	double fillOpacity;
@@ -15,7 +15,7 @@ public:
 	int width;
 	int height;
 
-	Rectangle() {
+	SVGRectangle() {
 		fillOpacity = 0;
 		//stroke = RGBColor();
 		//fill = RGBColor();
@@ -23,8 +23,9 @@ public:
 		//position = Point2D();
 		width = height = 0;
 	}
+	VOID processAttribute(char* attributeName, char* attributeValue);
 
-	VOID draw(HDC hdc);
+	VOID draw(Graphics &graphic);
 };
 
 #endif
