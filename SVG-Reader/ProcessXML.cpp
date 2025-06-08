@@ -2,7 +2,7 @@
 #include "ProcessXML.h"
 #include "Shape.h"
 
-VOID processXML(string filename) {
+VOID processXML(Graphics& graphics, string filename) {
 	// Read XML
 	xml_document<> doc;
 	xml_node<>* rootNode;
@@ -35,6 +35,8 @@ VOID processXML(string filename) {
 				curAttribute = curAttribute->next_attribute();
 			}
 
+			// xong hết attribute thì vẽ ở đây
+
 		}
 	
 
@@ -45,8 +47,27 @@ VOID processXML(string filename) {
 
 		// đây là mấy cái chỗ đọc thuộc tính, node name là kiểu rect...
 		// bấm debug từ từ để coi giá trị
-		// tạo mấy cái class rồi nhét vô
+
 		// ========================
+
+		Pen      pen(Color(255, 0, 0, 255));		// argb (alpha = opacity 0 -> 255, red, green, blue)
+
+		//graphics.DrawLine(&pen, 0, 0, 200, 100);
+
+		SolidBrush solidBrush(Color(255, 255, 0, 0));
+
+		Rect ball1 = Rect(5, 5, 100, 100);
+		Rect ball2 = Rect(105, 5, 100, 100);
+		Rect body = Rect(55, 105, 100, 300);
+
+		graphics.DrawEllipse(&pen, Rect(5, 5, 100, 100));
+		graphics.FillEllipse(&solidBrush, ball1);
+
+		graphics.DrawEllipse(&pen, ball2);
+		graphics.FillEllipse(&solidBrush, ball2);
+
+		graphics.DrawRectangle(&pen, body);
+		graphics.FillRectangle(&solidBrush, body);
 	}
 }
 
