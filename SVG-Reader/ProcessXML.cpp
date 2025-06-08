@@ -20,7 +20,7 @@ VOID processXML(Graphics& graphics, string filename) {
 		char* nodeName = node->name();
 
 		// Shape process
-		if (nodeName == "rect") {
+		if (strcmp(nodeName, "rect") == 0) {
 			SVGRectangle object;
 
 			xml_attribute<>* curAttribute = node->first_attribute();
