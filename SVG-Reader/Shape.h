@@ -17,10 +17,10 @@ public:
 
 	SVGRectangle() {
 		fillOpacity = 0;
-		//stroke = RGBColor();
-		//fill = RGBColor();
+		stroke = RGBColor();
+		fill = RGBColor();
 		strokeWidth = 0;
-		//position = Point2D();
+		position = Point2D();
 		width = height = 0;
 	}
 	VOID processAttribute(char* attributeName, char* attributeValue);
