@@ -4,24 +4,27 @@
 
 #include "General.h"
 
-class rect {
-private:
+class Rectangle {
+//private:
+public:
 	double fillOpacity;
-	Color stroke;
-	Color fill;
+	RGBColor stroke;
+	RGBColor fill;
 	int strokeWidth;
-	Point position;
+	Point2D position;
 	int width;
 	int height;
-public:
-	rect() {
+
+	Rectangle() {
 		fillOpacity = 0;
-		//stroke = Color();
-		//fill = Color();
+		//stroke = RGBColor();
+		//fill = RGBColor();
 		strokeWidth = 0;
-		position = Point();
+		//position = Point2D();
 		width = height = 0;
 	}
+
+	VOID draw(HDC hdc);
 };
 
 #endif

@@ -1,8 +1,8 @@
 ﻿#include "stdafx.h"
 #include "ProcessXML.h"
+#include "Shape.h"
 
-void processXML(string filename)
-{
+VOID processXML(string filename) {
 	// Read XML
 	xml_document<> doc;
 	xml_node<>* rootNode;
@@ -19,24 +19,24 @@ void processXML(string filename)
 	while (node != NULL) {
 		char* nodeName = node->name();
 
+		// Shape process
+		if (nodeName == "rect") {
+			//Rectangle object;
 
-		xml_attribute<>* curAttribute = node->first_attribute();
-		while (curAttribute != NULL) {
-			char* attributeName = curAttribute->name();
-			char* attributeValue = curAttribute->value();
+			xml_attribute<>* curAttribute = node->first_attribute();
+			while (curAttribute != NULL) {
+				char* attributeName = curAttribute->name();
+				char* attributeValue = curAttribute->value();
+
+				// tạo mấy cái class rồi nhét vô
 
 
-			// tạo mấy cái class rồi nhét vô
 
+				curAttribute = curAttribute->next_attribute();
+			}
 
-
-			curAttribute = curAttribute->next_attribute();
 		}
-
-		/*xml_attribute<>* firstAttribute = node->first_attribute();
-		char* attributeName = firstAttribute->name();
-		char* attributeValue = firstAttribute->value();
-		xml_attribute<>* secondAttribute = firstAttribute->next_attribute();*/
+	
 
 		// Set breakpoint here to view value
 		// Ref: http://rapidxml.sourceforge.net/manual.html
@@ -50,3 +50,15 @@ void processXML(string filename)
 	}
 }
 
+//VOID shapeProcess(Rectangle& object, char* attributeName, char* attributeValue) {
+//	if (attributeName == "fill-opacity") {
+//		object.fillOpacity = atoi(attributeValue);
+//	}
+//	else if (attributeName == "x") {
+//		object.position.x = atoi(attributeValue);
+//	}
+//	else if (attributeName == "y") {
+//		object.position.y = atoi(attributeValue);
+//	}
+//
+//}
