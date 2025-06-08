@@ -20,4 +20,11 @@
 2. Sau khi lọc cái svg -> bỏ vô mấy cái class
 3. Dùng đồ họa vẽ nó lên
 
+# Giai thich vài hàm của windows.h
+WINMAIN: chỗ chứa như hàm main
 
+wndclass: là chỗ của mấy cái kiểu như nút bấm, chức năng này kia
+hwnd: chỉ tạo ra cái màn hình không có chức năng -> cần có cái showwindow, updatewindow...
+
+
+taskkill /F /IM SVG-Reader.exe

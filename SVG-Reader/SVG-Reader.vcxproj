@@ -147,13 +147,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="General.h" />
+    <ClInclude Include="ProcessXML.h" />
     <ClInclude Include="rapidxml.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVGReader.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ProcessXML.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -163,15 +168,15 @@
     <ClCompile Include="SVGReader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SVGDemo.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="small.ico" />
-    <Image Include="SVGDemo.ico" />
+    <Image Include="SVGReader.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="note.md" />
     <None Include="sample.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SVGReader.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
