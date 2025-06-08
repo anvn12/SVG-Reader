@@ -21,15 +21,15 @@ VOID processXML(Graphics& graphics, string filename) {
 
 		// Shape process
 		if (nodeName == "rect") {
-			//Rectangle object;
+			SVGRectangle object;
 
 			xml_attribute<>* curAttribute = node->first_attribute();
 			while (curAttribute != NULL) {
 				char* attributeName = curAttribute->name();
 				char* attributeValue = curAttribute->value();
 
-				// tạo mấy cái class rồi nhét vô
-
+				// ===========
+				object.processAttribute(attributeName, attributeValue);
 
 
 				curAttribute = curAttribute->next_attribute();
@@ -71,7 +71,7 @@ VOID processXML(Graphics& graphics, string filename) {
 	}
 }
 
-//VOID shapeProcess(Rectangle& object, char* attributeName, char* attributeValue) {
+//VOID processAttribute(Rectangle& object, char* attributeName, char* attributeValue) {
 //	if (attributeName == "fill-opacity") {
 //		object.fillOpacity = atoi(attributeValue);
 //	}
