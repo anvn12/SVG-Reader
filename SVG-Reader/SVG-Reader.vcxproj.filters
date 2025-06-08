@@ -69,6 +69,7 @@
     <None Include="note.md">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="blabla.md" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVGReader.rc">
