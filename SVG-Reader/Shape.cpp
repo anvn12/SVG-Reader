@@ -42,8 +42,8 @@ VOID SVGRectangle::draw(Graphics& graphics) {
 
 	Rect object = Rect(position.x, position.y, width, height);
 
-	graphics.DrawRectangle(&pen, object);
 	graphics.FillRectangle(&solidBrush, object);
+	graphics.DrawRectangle(&pen, object);
 }
 
 
