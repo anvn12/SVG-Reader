@@ -7,7 +7,7 @@ int RGBColor::clamp(int value) const    //clamp(value, low, high) -> nho hon low
     if (value < 0) {
         return 0;
     }
-    if (value > 255) {
+    else if (value > 255) {
         return 255;
     }
     return value;
