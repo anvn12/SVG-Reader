@@ -3,6 +3,7 @@
 #pragma once
 
 #include "General.h"
+#include <sstream>
 
 class SVGRectangle {
 //private:
@@ -10,7 +11,7 @@ public:
 	double fillOpacity;
 	RGBColor stroke;
 	RGBColor fill;
-	int strokeWidth;
+	double strokeWidth;
 	Point2D position;
 	int width;
 	int height;
@@ -25,17 +26,8 @@ public:
 	}
 	VOID processAttribute(char* attributeName, char* attributeValue);
 
-	VOID draw(Graphics &graphic);
+	VOID draw(Graphics &graphics);
 };
-
-/*class Rectangle{
-	int x, y, width, height;
-	string stroke, fill;
-	float fillOpacity, strokeWidth;
-
-	
-
-};*/
 
 class Text {
 	int x, y;
@@ -129,7 +121,7 @@ class Polygon {
 	}
 };
 
-
+RGBColor textToRGB(char*);
 
 
 #endif
