@@ -2,6 +2,9 @@
 #define General_h
 #pragma once
 
+#include <vector>
+#include <sstream>
+
 // RGB color
 class RGBColor {
 private:
@@ -57,5 +60,8 @@ public:
 	void setY2(int value);
 };
 
+
+//help for reading poly poitns
+vector<PointF> parsePoints(const string& pointsStr);
 
 #endif

@@ -109,3 +109,21 @@ void Point2D::setY1(int value) {
 void Point2D::setY2(int value) {
     y2 = value;
 }
+
+vector<PointF> parsePoints(const string& pointsStr) {
+    vector<PointF> points;
+    stringstream ss(pointsStr);
+    string token;
+
+    while (getline(ss, token, ' ')) {
+        if (token.empty()) continue;
+
+        size_t commaPos = token.find(',');
+        if (commaPos != string::npos) {
+            float x = stof(token.substr(0, commaPos));
+            float y = stof(token.substr(commaPos + 1));
+            points.push_back(PointF(x, y));
+        }
+    }
+    return points;
+}

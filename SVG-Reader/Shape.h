@@ -101,19 +101,6 @@ public:
 //};
 
 //lam polyline di
-class Polyline {
-	string fill, stroke, points;
-	float strokeWidth, strokeOpacity, fillOpacity;
-
-	void processAttribute(const char* name, const char* value) {
-		if (strcmp(name, "fill") == 0) fill = value;
-		if (strcmp(name, "stroke") == 0) stroke = value;
-		if (strcmp(name, "stroke-width") == 0) strokeWidth = atof(value);
-		if (strcmp(name, "stroke-opacity") == 0) strokeOpacity = atof(value);
-		if (strcmp(name, "fill-opacity") == 0) fillOpacity = atoi(value);
-		if (strcmp(name, "points") == 0) points = value;
-	}
-};
 
 class SVGEllipse {
 private:
@@ -156,34 +143,64 @@ public:
 //	}
 //};
 
-class Line {
+class SVGLine {
+private:  
 	int x1, x2, y1, y2;
-	string stroke;
-	float strokeOpacity, strokeWidth;
+	RGBColor stroke;  
+	double strokeOpacity, strokeWidth; 
 
-	void processAttribute(const char* name, const char* value) {
-		if (strcmp(name, "x1") == 0) x1 = atoi(value);
-		if (strcmp(name, "x2") == 0) x2 = atoi(value);
-		if (strcmp(name, "y1") == 0) y1 = atoi(value);
-		if (strcmp(name, "y2") == 0) y2 = atoi(value);
-		if (strcmp(name, "stroke") == 0) stroke = value;;
-		if (strcmp(name, "stroke-opacity") == 0) strokeOpacity = atof(value);
-		if (strcmp(name, "stroke-width") == 0) strokeWidth = atof(value);
+public:
+	SVGLine() {
+		x1 = x2 = y1 = y2 = 0;
+		stroke = RGBColor();
+		strokeOpacity = 1.0;
+		strokeWidth = 1.0;
 	}
+
+	VOID processAttribute(char* attributeName, char* attributeValue);  
+	VOID draw(Graphics& graphics);
 };
 
-class Polygon {
-	string fill, stroke, points;
-	float strokeWidth, strokeOpacity, fillOpacity;
+class SVGPolyline {
+private:  
+	RGBColor fill, stroke;  
+	string points;
+	double strokeWidth, strokeOpacity, fillOpacity; 
 
-	void processAttribute(const char* name, const char* value) {
-		if (strcmp(name, "fill") == 0) fill = value;
-		if (strcmp(name, "stroke") == 0) stroke = value;
-		if (strcmp(name, "stroke-width") == 0) strokeWidth = atof(value);
-		if (strcmp(name, "stroke-opacity") == 0) strokeOpacity = atof(value);
-		if (strcmp(name, "fill-opacity") == 0) fillOpacity = atoi(value);
-		if (strcmp(name, "points") == 0) points = value;
+public:
+	SVGPolyline() {
+		fill = RGBColor();
+		stroke = RGBColor();
+		points = "";
+		strokeWidth = 1.0;
+		strokeOpacity = 1.0;
+		fillOpacity = 1.0;
 	}
+
+	VOID processAttribute(char* attributeName, char* attributeValue);  
+	VOID draw(Graphics& graphics);
+};
+
+
+
+class SVGPolygon {
+private: 
+	RGBColor fill, stroke;  
+	string points;
+	double strokeWidth, strokeOpacity, fillOpacity;  
+
+public:
+	SVGPolygon() {
+		fill = RGBColor();
+		stroke = RGBColor();
+		points = "";
+		strokeWidth = 1.0;
+		strokeOpacity = 1.0;
+		fillOpacity = 1.0;
+	}
+
+	VOID processAttribute(char* attributeName, char* attributeValue);  
+	VOID draw(Graphics& graphics);
 };
 
 RGBColor textToRGB(char*);

@@ -85,9 +85,16 @@ VOID SVGText::setContent(char* attributeValue) {
 	content = attributeValue;
 }
 
-VOID SVGText::draw(Graphics& graphics)
-{
-	//ai do lam di
+VOID SVGText::draw(Graphics& graphics) {
+	SolidBrush brush(Color(255, fill.getRed(), fill.getGreen(), fill.getBlue()));
+	wstring wideContent(content.begin(), content.end()); //doi sang wide string de gdi+ dung`
+
+	FontFamily fontFamily(L"Arial");
+	Font font(&fontFamily, fontSize, FontStyleRegular, UnitPixel);
+
+	PointF drawPoint(position.getX(), position.getY());
+
+	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &brush);
 }
 
 //SVG-Circle
@@ -203,21 +210,136 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 
-	VOID SVGEllipse::draw(Graphics & graphics)
-	{
-		int alphaFill = static_cast<int>(fillOpacity * 255);
-		int alphaStroke = static_cast<int>(strokeOpacity * 255);
+VOID SVGEllipse::draw(Graphics & graphics)
+{
+	int alphaFill = static_cast<int>(fillOpacity * 255);
+	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-		SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
-		Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
+	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-		RectF rectF(
-			position.getCx() - rx,
-			position.getCy() - ry,
-			2 * rx,
-			2 * ry
-		);
+	RectF rectF(
+		position.getCx() - rx,
+		position.getCy() - ry,
+		2 * rx,
+		2 * ry
+	);
 
-		graphics.FillEllipse(&brush, rectF);
-		graphics.DrawEllipse(&pen, rectF);
+	graphics.FillEllipse(&brush, rectF);
+	graphics.DrawEllipse(&pen, rectF);
+}
+
+//LINEEEEEEEEEEEEEEEEEE
+VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
+	if (strcmp(attributeName, "x1") == 0) {
+		x1 = atoi(attributeValue);
 	}
+	else if (strcmp(attributeName, "x2") == 0) {
+		x2 = atoi(attributeValue);
+	}
+	else if (strcmp(attributeName, "y1") == 0) {
+		y1 = atoi(attributeValue);
+	}
+	else if (strcmp(attributeName, "y2") == 0) {
+		y2 = atoi(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke") == 0) {
+		stroke = textToRGB(attributeValue);  
+	}
+	else if (strcmp(attributeName, "stroke-opacity") == 0) {
+		strokeOpacity = atof(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke-width") == 0) {
+		strokeWidth = atof(attributeValue);
+	}
+}
+
+
+VOID SVGLine::draw(Graphics& graphics) {
+	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+
+	graphics.DrawLine(&pen, x1, y1, x2, y2);
+}
+
+
+
+//POLYLINEEEEEEEEEEEEEE
+VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
+	if (strcmp(attributeName, "fill") == 0) {
+		fill = textToRGB(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke") == 0) {
+		stroke = textToRGB(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke-width") == 0) {
+		strokeWidth = atof(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke-opacity") == 0) {
+		strokeOpacity = atof(attributeValue);
+	}
+	else if (strcmp(attributeName, "fill-opacity") == 0) {
+		fillOpacity = atof(attributeValue);  
+	}
+	else if (strcmp(attributeName, "points") == 0) {
+		points = attributeValue;
+	}
+}
+
+
+VOID SVGPolyline::draw(Graphics& graphics) {
+	vector<PointF> pointArray = parsePoints(points);
+	if (pointArray.size() < 2) 
+		return; 
+
+	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+
+	for (size_t i = 0; i < pointArray.size() - 1; i++) {
+		graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
+	}
+	 //graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); //co the dung cai nay?
+}
+
+
+
+//POLYGONNNNNNNNNNNNNNNNNNNNNNNNN
+VOID SVGPolygon::processAttribute(char* attributeName, char* attributeValue) {
+	if (strcmp(attributeName, "fill") == 0) {
+		fill = textToRGB(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke") == 0) {
+		stroke = textToRGB(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke-width") == 0) {
+		strokeWidth = atof(attributeValue);
+	}
+	else if (strcmp(attributeName, "stroke-opacity") == 0) {
+		strokeOpacity = atof(attributeValue);
+	}
+	else if (strcmp(attributeName, "fill-opacity") == 0) {
+		fillOpacity = atof(attributeValue);
+	}
+	else if (strcmp(attributeName, "points") == 0) {
+		points = attributeValue;
+	}
+}
+
+
+VOID SVGPolygon::draw(Graphics& graphics) {
+	vector<PointF> pointArray = parsePoints(points);
+	if (pointArray.size() < 3) 
+		return;
+
+	int alphaFill = static_cast<int>(fillOpacity * 255);
+	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+
+	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
+	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+
+	//fill 
+	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
+
+	//stroke oultine
+	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
+}
