@@ -2,19 +2,23 @@
 #include "SVGReader.h"
 
 
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
-	// init the variable with 2 arguments
-	SVGReader svgreader;
+	// SINGLETON PATTERN
+	//SVGReader& svgreader = SVGReader::getInstance();
 
 	// init GDI+, WNDCLASSEX, HWND,  
 	// and show the window
-	svgreader.init(hInstance, iCmdShow);
+	//svgreader.init(hInstance, iCmdShow);
+	SVGReader::getInstance().init(hInstance, iCmdShow);
 
 	// the main loop for processing messages
-	svgreader.messageLoop();
+	//svgreader.messageLoop();
+	SVGReader::getInstance().messageLoop();
 
 	// shutdown the gdi+
-	return svgreader.cleanup();
+	//return svgreader.cleanup();
+	return SVGReader::getInstance().cleanup();
 }  // WinMain
 
 
