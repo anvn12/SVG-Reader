@@ -65,8 +65,6 @@ VOID SVGRectangle::draw(Graphics& graphics) {
 	graphics.DrawRectangle(&pen, object);
 }
 
-
-
 //SVG-Text
 VOID SVGText::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x") == 0) {
@@ -99,16 +97,13 @@ VOID SVGText::draw(Graphics& graphics) {
 	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &brush);
 }
 
-
-
-
 //SVG-Circle
 VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "cx") == 0) {
-		cCenter.setX(atof(attributeValue));
+		position.setCx(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "cy") == 0) {
-		cCenter.setY(atof(attributeValue));
+		position.setCy(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "r") == 0) {
 		r = atof(attributeValue);
@@ -140,26 +135,56 @@ VOID SVGCircle::draw(Graphics& graphics)
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
 	graphics.FillEllipse(&brush,
-		static_cast<INT>(cCenter.getX() - r),
-		static_cast<INT>(cCenter.getY() - r),
+		static_cast<INT>(position.getCx() - r),
+		static_cast<INT>(position.getCy() - r),
 		static_cast<INT>(2 * r),
 		static_cast<INT>(2 * r));
 
 	graphics.DrawEllipse(&pen,
-		static_cast<INT>(cCenter.getX() - r),
-		static_cast<INT>(cCenter.getY() - r),
+		static_cast<INT>(position.getCx() - r),
+		static_cast<INT>(position.getCy() - r),
 		static_cast<INT>(2 * r),
 		static_cast<INT>(2 * r));
 }
 
 
 //SVG-Ellipse
+//VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
+//	if (strcmp(attributeName, "cx") == 0) {
+//		position.setCx(atof(attributeValue));
+//	}
+//	else if (strcmp(attributeName, "cy") == 0) {
+//		position.setCy(atof(attributeValue));
+//	}
+//	else if (strcmp(attributeName, "rx") == 0) {
+//		rx = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "ry") == 0) {
+//		ry = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "fill") == 0) {
+//		fill = textToRGB(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "stroke") == 0) {
+//		stroke = textToRGB(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "stroke-width") == 0) {
+//		strokeWidth = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "stroke-opacity") == 0) {
+//		strokeOpacity = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "fill-opacity") == 0) {
+//		fillOpacity = atoi(attributeValue);
+//	}
+//}
+
 VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "cx") == 0) {
-		eCenter.setX(atof(attributeValue));
+		position.setCx(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "cy") == 0) {
-		eCenter.setY(atof(attributeValue));
+		position.setCy(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "rx") == 0) {
 		rx = atof(attributeValue);
@@ -194,8 +219,8 @@ VOID SVGEllipse::draw(Graphics & graphics)
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
 	RectF rectF(
-		eCenter.getX() - rx,
-		eCenter.getY() - ry,
+		position.getCx() - rx,
+		position.getCy() - ry,
 		2 * rx,
 		2 * ry
 	);
@@ -204,21 +229,19 @@ VOID SVGEllipse::draw(Graphics & graphics)
 	graphics.DrawEllipse(&pen, rectF);
 }
 
-
-
 //LINEEEEEEEEEEEEEEEEEE
 VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x1") == 0) {
-		position1.setX(atoi(attributeValue));
+		x1 = atoi(attributeValue);
 	}
 	else if (strcmp(attributeName, "x2") == 0) {
-		position2.setX(atoi(attributeValue));
+		x2 = atoi(attributeValue);
 	}
 	else if (strcmp(attributeName, "y1") == 0) {
-		position1.setY(atoi(attributeValue));
+		y1 = atoi(attributeValue);
 	}
 	else if (strcmp(attributeName, "y2") == 0) {
-		position2.setY(atoi(attributeValue));
+		y2 = atoi(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke") == 0) {
 		stroke = textToRGB(attributeValue);  
@@ -236,7 +259,7 @@ VOID SVGLine::draw(Graphics& graphics) {
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
+	graphics.DrawLine(&pen, x1, y1, x2, y2);
 }
 
 

@@ -44,15 +44,37 @@ void RGBColor::setBlue(int b) {
 
 
 //Point 2d getter
-int Point2D::getX() const {
+double Point2D::getX() const {
     return x;
 }
 
-int Point2D::getY() const {
+double Point2D::getY() const {
     return y;
 }
 
+double Point2D::getCx() const {
+    return cx;
+}
 
+double Point2D::getCy() const {
+    return cy;
+}
+
+double Point2D::getX1() const {
+    return x1;
+}
+
+double Point2D::getX2() const {
+    return x2;
+}
+
+double Point2D::getY1() const {
+    return y1;
+}
+
+double Point2D::getY2() const {
+    return y2;
+}
 
 //Point 2d setter
 void Point2D::setX(int value) {
@@ -63,6 +85,30 @@ void Point2D::setY(int value) {
     y = value;
 }
 
+void Point2D::setCx(int value) {
+    cx = value;
+}
+
+void Point2D::setCy(int value) {
+    cy = value;
+}
+
+void Point2D::setX1(int value) {
+    x1 = value;
+}
+
+void Point2D::setX2(int value)
+{
+    x2 = value;
+}
+
+void Point2D::setY1(int value) {
+    y2 = value;
+}
+
+void Point2D::setY2(int value) {
+    y2 = value;
+}
 
 vector<PointF> parsePoints(const string& pointsStr) {
     vector<PointF> points;
