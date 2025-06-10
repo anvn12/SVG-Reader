@@ -38,8 +38,26 @@ VOID processXML(Graphics& graphics, string filename) {
 			}
 			// vẽ object lên màn hình
 			object.draw(graphics);
+			
 		}
-
+		else if (strcmp(nodeName, "ellipse") == 0) {
+			SVGEllipse object;
+			xml_attribute<>* curAttribute = node->first_attribute();
+			while (curAttribute != NULL) {
+				object.processAttribute(curAttribute->name(), curAttribute->value());
+				curAttribute = curAttribute->next_attribute();
+			}
+			object.draw(graphics);
+		}
+		else if (strcmp(nodeName, "circle") == 0) {
+			SVGCircle object;
+			xml_attribute<>* curAttribute = node->first_attribute();
+			while (curAttribute != NULL) {
+				object.processAttribute(curAttribute->name(), curAttribute->value());
+				curAttribute = curAttribute->next_attribute();
+			}
+			object.draw(graphics);
+		}
 		node = node->next_sibling();
 	}
 }

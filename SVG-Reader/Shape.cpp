@@ -111,19 +111,67 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 		strokeWidth = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);
+		strokeOpacity = atof(attributeValue);  //  atof, ko phai atoi
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atoi(attributeValue);
+		fillOpacity = atof(attributeValue);  // sua cho nay
 	}
 }
+
 
 VOID SVGCircle::draw(Graphics& graphics)
 {
-	//ai do lam di
+	int alphaFill = static_cast<int>(fillOpacity * 255);
+	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+
+	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
+	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+
+	graphics.FillEllipse(&brush,
+		static_cast<INT>(position.getCx() - r),
+		static_cast<INT>(position.getCy() - r),
+		static_cast<INT>(2 * r),
+		static_cast<INT>(2 * r));
+
+	graphics.DrawEllipse(&pen,
+		static_cast<INT>(position.getCx() - r),
+		static_cast<INT>(position.getCy() - r),
+		static_cast<INT>(2 * r),
+		static_cast<INT>(2 * r));
 }
 
+
 //SVG-Ellipse
+//VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
+//	if (strcmp(attributeName, "cx") == 0) {
+//		position.setCx(atof(attributeValue));
+//	}
+//	else if (strcmp(attributeName, "cy") == 0) {
+//		position.setCy(atof(attributeValue));
+//	}
+//	else if (strcmp(attributeName, "rx") == 0) {
+//		rx = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "ry") == 0) {
+//		ry = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "fill") == 0) {
+//		fill = textToRGB(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "stroke") == 0) {
+//		stroke = textToRGB(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "stroke-width") == 0) {
+//		strokeWidth = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "stroke-opacity") == 0) {
+//		strokeOpacity = atof(attributeValue);
+//	}
+//	else if (strcmp(attributeName, "fill-opacity") == 0) {
+//		fillOpacity = atoi(attributeValue);
+//	}
+//}
+
 VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "cx") == 0) {
 		position.setCx(atof(attributeValue));
@@ -147,14 +195,29 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 		strokeWidth = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);
+		strokeOpacity = atof(attributeValue);   
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atoi(attributeValue);
+		fillOpacity = atof(attributeValue);
 	}
 }
 
-VOID SVGEllipse::draw(Graphics& graphics)
-{
-	//ai do lam di
-}
+
+	VOID SVGEllipse::draw(Graphics & graphics)
+	{
+		int alphaFill = static_cast<int>(fillOpacity * 255);
+		int alphaStroke = static_cast<int>(strokeOpacity * 255);
+
+		SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
+		Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+
+		RectF rectF(
+			position.getCx() - rx,
+			position.getCy() - ry,
+			2 * rx,
+			2 * ry
+		);
+
+		graphics.FillEllipse(&brush, rectF);
+		graphics.DrawEllipse(&pen, rectF);
+	}
