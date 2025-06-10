@@ -58,6 +58,46 @@ VOID processXML(Graphics& graphics, string filename) {
 			}
 			object.draw(graphics);
 		}
+		else if (strcmp(nodeName, "text") == 0) {
+			SVGText object;
+			xml_attribute<>* curAttribute = node->first_attribute();
+
+			while (curAttribute) {
+				object.processAttribute(curAttribute->name(), curAttribute->value());
+				curAttribute = curAttribute->next_attribute();
+			}
+			object.draw(graphics);
+		}
+		else if (strcmp(nodeName, "line") == 0) {
+			SVGLine object;
+			xml_attribute<>* curAttribute = node->first_attribute();
+
+			while (curAttribute) {
+				object.processAttribute(curAttribute->name(), curAttribute->value());
+				curAttribute = curAttribute->next_attribute();
+			}
+			object.draw(graphics);
+		}
+		else if (strcmp(nodeName, "polyline") == 0) {
+			SVGPolyline object;
+			xml_attribute<>* curAttribute = node->first_attribute();
+			
+			while (curAttribute) {
+				object.processAttribute(curAttribute->name(), curAttribute->value());
+				curAttribute = curAttribute->next_attribute();
+			}
+			object.draw(graphics);
+		}
+		else if (strcmp(nodeName, "polygon") == 0) {
+			SVGPolygon object;
+			xml_attribute<>* curAttribute = node->first_attribute();
+
+			while (curAttribute) {
+				object.processAttribute(curAttribute->name(), curAttribute->value());
+				curAttribute = curAttribute->next_attribute();
+			}
+			object.draw(graphics);
+		}
 		node = node->next_sibling();
 	}
 }
