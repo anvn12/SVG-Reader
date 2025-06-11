@@ -61,7 +61,8 @@ VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 
 	SolidBrush solidBrush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
 
-	Rect object = Rect(position.getX() + SVGReader::getInstance().x, position.getY() + SVGReader::getInstance().y, width, height);
+	Rect object = Rect(position.getX() + SVGReader::getInstance().x, position.getY() + SVGReader::getInstance().y,
+		width * SVGReader::getInstance().scale, height * SVGReader::getInstance().scale);
 
 	graphics.FillRectangle(&solidBrush, object);
 	graphics.DrawRectangle(&pen, object);
