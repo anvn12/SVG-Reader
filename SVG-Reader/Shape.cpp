@@ -131,8 +131,7 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 
-VOID SVGCircle::draw(Graphics& graphics)
-{
+VOID SVGCircle::draw(Graphics& graphics) {
 	int alphaFill = static_cast<int>(fillOpacity * 255);
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
