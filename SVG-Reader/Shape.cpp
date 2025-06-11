@@ -90,15 +90,20 @@ VOID SVGText::draw(Graphics& graphics) {
 	SolidBrush brush(Color(255, fill.getRed(), fill.getGreen(), fill.getBlue()));
 	wstring wideContent(content.begin(), content.end()); //doi sang wide string de gdi+ dung`
 
-	FontFamily fontFamily(L"Arial");
-	Font font(&fontFamily, fontSize, FontStyleRegular, UnitPixel);
+	FontFamily fontFamily(L"Times New Roman");
+
+
+	//Font font(&fontFamily, fontSize, FontStyleRegular, UnitPixel);
+	Font font(&fontFamily, fontSize, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
 	PointF drawPoint(position.getX(), position.getY());
 
-	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &brush);
+	StringFormat format;
+	format.SetAlignment(Gdiplus::StringAlignmentNear);
+	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
+
+	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
 }
-
-
 
 
 //SVG-Circle
