@@ -60,6 +60,9 @@ VOID processXML(Graphics& graphics, string filename) {
 		}
 		else if (strcmp(nodeName, "text") == 0) {
 			SVGText object;
+
+			object.setContent(node->value());
+
 			xml_attribute<>* curAttribute = node->first_attribute();
 
 			while (curAttribute) {
