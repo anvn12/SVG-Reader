@@ -1,11 +1,21 @@
-#ifndef Shape_h
+﻿#ifndef Shape_h
 #define Shape_h
 #pragma once
 
 #include "General.h"
 #include <sstream>
 
-class SVGRectangle {
+
+// inheritance để những cái SVG class có cùng tên
+// polymorphism để mỗi hàm trong class làm việc khác nhau
+class SVGShape {
+public:
+	virtual VOID processAttribute(char* attributeName, char* attributeValue) = 0;
+	virtual VOID draw(Graphics& graphics) = 0;
+};
+
+// inherit 2 public methods
+class SVGRectangle : public SVGShape {
 private:
 	double fillOpacity;
 	RGBColor stroke;
@@ -25,8 +35,8 @@ public:
 		width = height = 0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);
-	VOID draw(Graphics &graphics);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics &graphics) override;
 };
 
 
