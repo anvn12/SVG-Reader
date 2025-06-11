@@ -24,8 +24,7 @@ RGBColor textToRGB(char* text) {
 }
 
 //SVG-Rectangle
-VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue)
-{
+VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "fill-opacity") == 0) {
 		fillOpacity = atof(attributeValue);
 	}
