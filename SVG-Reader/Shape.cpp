@@ -257,18 +257,28 @@ VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 
+
 VOID SVGPolyline::draw(Graphics& graphics) {
-	vector<PointF> pointArray = parsePoints(points);
-	if (pointArray.size() < 2) 
-		return; 
+    vector<PointF> pointArray = parsePoints(points);
+    if (pointArray.size() < 2) 
+        return; 
 
-	int alphaStroke = static_cast<int>(strokeOpacity * 255);
-	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+    int alphaFill = static_cast<int>(fillOpacity * 255);
+    int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	for (size_t i = 0; i < pointArray.size() - 1; i++) {
-		graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
-	}
-	 //graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); //co the dung cai nay?
+    SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
+    Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+
+    //t quen fill
+    if (fillOpacity > 0 && pointArray.size() >= 3) {
+        graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
+    }
+
+    for (size_t i = 0; i < pointArray.size() - 1; i++) {
+        graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
+    }
+    
+    // graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
 }
 
 
