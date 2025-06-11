@@ -64,7 +64,7 @@ public:
 class SVGCircle {
 private:
 	Point2D cCenter;
-	float r;
+	int r;
 	RGBColor fill, stroke;
 	double strokeWidth, strokeOpacity, fillOpacity;
 
@@ -86,7 +86,7 @@ public:
 
 class SVGEllipse {
 private:
-	float rx, ry;
+	int rx, ry;
 	Point2D eCenter;
 	RGBColor fill, stroke;
 	double strokeWidth, strokeOpacity, fillOpacity;
