@@ -146,17 +146,8 @@ VOID SVGCircle::draw(Graphics& graphics) {
 	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	graphics.FillEllipse(&brush,
-		static_cast<INT>(cCenter.getX() - r),
-		static_cast<INT>(cCenter.getY() - r),
-		static_cast<INT>(2 * r),
-		static_cast<INT>(2 * r));
-
-	graphics.DrawEllipse(&pen,
-		static_cast<INT>(cCenter.getX() - r),
-		static_cast<INT>(cCenter.getY() - r),
-		static_cast<INT>(2 * r),
-		static_cast<INT>(2 * r));
+	graphics.FillEllipse(&brush, (cCenter.getX() - r), (cCenter.getY() - r), (2 * r), (2 * r));
+	graphics.DrawEllipse(&pen, (cCenter.getX() - r), (cCenter.getY() - r), (2 * r), (2 * r));
 }
 
 
@@ -200,12 +191,7 @@ VOID SVGEllipse::draw(Graphics & graphics)
 	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	RectF rectF(
-		eCenter.getX() - rx,
-		eCenter.getY() - ry,
-		2 * rx,
-		2 * ry
-	);
+	RectF rectF(eCenter.getX() - rx, eCenter.getY() - ry, 2 * rx, 2 * ry);
 
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
