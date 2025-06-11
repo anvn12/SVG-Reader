@@ -38,7 +38,7 @@ public:
 	Point2D()
 		: x(0), y(0) {}
 
-	Point2D(double coorX, double coorY, double coorCx, double coorCy, double coorX1, double coorX2, double coorY1, double coorY2)
+	Point2D(double coorX, double coorY)
 		: x(coorX), y(coorY) {}
 
 	int getX() const;
