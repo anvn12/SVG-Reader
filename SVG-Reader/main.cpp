@@ -8,7 +8,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 
 	// init GDI+, WNDCLASSEX, HWND,  
 	// and show the window
-	SVGReader::getInstance().init(hInstance, iCmdShow);
+	SVGReader::getInstance().init(hInstance, iCmdShow, "sample.svg");
 
 	// the main loop for processing messages
 	SVGReader::getInstance().messageLoop();
