@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Shape.h"
 
+
+#include "SVGReader.h"
+
 using namespace std;
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
@@ -51,14 +54,14 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGRectangle::draw(Graphics& graphics) {
+VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 	fillOpacity *= 255; // cast to 255 in alpha (argb)
 	// argb color
 	Pen pen(Color(255, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
 	SolidBrush solidBrush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
 
-	Rect object = Rect(position.getX(), position.getY(), width, height);
+	Rect object = Rect(position.getX() + SVGReader::getInstance().x, position.getY() + SVGReader::getInstance().y, width, height);
 
 	graphics.FillRectangle(&solidBrush, object);
 	graphics.DrawRectangle(&pen, object);
