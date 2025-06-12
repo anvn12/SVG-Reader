@@ -12,6 +12,7 @@ class SVGShape {
 public:
 	virtual VOID processAttribute(char* attributeName, char* attributeValue) = 0;
 	virtual VOID draw(Graphics& graphics) = 0;
+	virtual ~SVGShape() {};
 };
 
 // inherit 2 public methods
@@ -40,7 +41,7 @@ public:
 };
 
 
-class SVGText {
+class SVGText : public SVGShape {
 private:
 	Point2D position;
 	RGBColor fill;
@@ -54,14 +55,14 @@ public:
 		fontSize = 0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID setContent(char* attributeValue);
 
-	VOID draw(Graphics& graphics);
+	VOID draw(Graphics& graphics) override;
 };
 
 
-class SVGCircle {
+class SVGCircle : public SVGShape {
 private:
 	Point2D cCenter;
 	int r;
@@ -79,12 +80,12 @@ public:
 		strokeOpacity = 0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);
-	VOID draw(Graphics& graphics);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
-class SVGEllipse {
+class SVGEllipse : public SVGShape {
 private:
 	int rx, ry;
 	Point2D eCenter;
@@ -103,12 +104,12 @@ public:
 		fillOpacity = 0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);
-	VOID draw(Graphics& graphics);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
-class SVGLine {
+class SVGLine : public SVGShape {
 private:  
 	Point2D position1, position2;
 	RGBColor stroke;  
@@ -125,12 +126,12 @@ public:
 		strokeWidth = 0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);  
-	VOID draw(Graphics& graphics);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
-class SVGPolyline {
+class SVGPolyline : public SVGShape {
 private:  
 	RGBColor fill, stroke;  
 	string points;
@@ -148,13 +149,13 @@ public:
 		fillOpacity = 1.0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);  
-	VOID draw(Graphics& graphics);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
 
-class SVGPolygon {
+class SVGPolygon : public SVGShape {
 private: 
 	RGBColor fill, stroke;  
 	string points;
@@ -170,8 +171,8 @@ public:
 		fillOpacity = 1.0;
 	}
 
-	VOID processAttribute(char* attributeName, char* attributeValue);  
-	VOID draw(Graphics& graphics);
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics& graphics) override;
 };
 
 RGBColor textToRGB(char*);
