@@ -119,8 +119,10 @@ public:
 		position1 = Point2D();
 		position2 = Point2D();
 		stroke = RGBColor();
-		strokeOpacity = 1.0;
-		strokeWidth = 1.0;
+		//strokeOpacity = 1.0;
+		//strokeWidth = 1.0;
+		strokeOpacity = 0;
+		strokeWidth = 0;
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue);  
@@ -139,8 +141,9 @@ public:
 		fill = RGBColor();
 		stroke = RGBColor();
 		points = "";
-		strokeWidth = 1.0;
+		//strokeWidth = 1.0;
 		//strokeOpacity = 1.0;
+		strokeWidth = 0;
 		strokeOpacity = 0;
 		fillOpacity = 1.0;
 	}
