@@ -140,7 +140,8 @@ public:
 		stroke = RGBColor();
 		points = "";
 		strokeWidth = 1.0;
-		strokeOpacity = 1.0;
+		//strokeOpacity = 1.0;
+		strokeOpacity = 0;
 		fillOpacity = 1.0;
 	}
 
