@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Shape.h"
+#include "ProcessXML.h"
 
 
 #include "SVGReader.h"
@@ -323,3 +324,4 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 	//stroke oultine
 	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
 }
+
