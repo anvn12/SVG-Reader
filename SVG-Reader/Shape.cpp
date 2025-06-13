@@ -101,7 +101,11 @@ VOID SVGText::draw(Graphics& graphics) {
 	//Font font(&fontFamily, fontSize, FontStyleRegular, UnitPixel);
 	Font font(&fontFamily, fontSize, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
-	PointF drawPoint(position.getX(), position.getY());
+	float x = position.getX() * SVGReader::getInstance().scale + SVGReader::getInstance().x;
+	float y = position.getY() * SVGReader::getInstance().scale + SVGReader::getInstance().y;
+	PointF drawPoint(x, y);
+
+	/*PointF drawPoint(position.getX(), position.getY());*/
 
 	StringFormat format;
 	format.SetAlignment(Gdiplus::StringAlignmentNear);
@@ -147,8 +151,12 @@ VOID SVGCircle::draw(Graphics& graphics) {
 	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	graphics.FillEllipse(&brush, (cCenter.getX() - r), (cCenter.getY() - r), (2 * r), (2 * r));
-	graphics.DrawEllipse(&pen, (cCenter.getX() - r), (cCenter.getY() - r), (2 * r), (2 * r));
+	float scaledR = r * SVGReader::getInstance().scale;
+	float x = cCenter.getX() + SVGReader::getInstance().x;
+	float y = cCenter.getY() + SVGReader::getInstance().y;
+
+	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
+	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 }
 
 
@@ -192,7 +200,12 @@ VOID SVGEllipse::draw(Graphics & graphics)
 	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	RectF rectF(eCenter.getX() - rx, eCenter.getY() - ry, 2 * rx, 2 * ry);
+	float scaledRx = rx * SVGReader::getInstance().scale;
+	float scaledRy = ry * SVGReader::getInstance().scale;
+	float x = eCenter.getX() + SVGReader::getInstance().x;
+	float y = eCenter.getY() + SVGReader::getInstance().y;
+
+	RectF rectF(x - scaledRx, y - scaledRy, 2 * scaledRx, 2 * scaledRy);
 
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
@@ -230,7 +243,14 @@ VOID SVGLine::draw(Graphics& graphics) {
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
+	float x1 = position1.getX() * SVGReader::getInstance().scale + SVGReader::getInstance().x;
+	float y1 = position1.getY() * SVGReader::getInstance().scale + SVGReader::getInstance().y;
+	float x2 = position2.getX() * SVGReader::getInstance().scale + SVGReader::getInstance().x;
+	float y2 = position2.getY() * SVGReader::getInstance().scale + SVGReader::getInstance().y;
+
+	graphics.DrawLine(&pen, x1, y1, x2, y2);
+
+	//graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
 }
 
 
