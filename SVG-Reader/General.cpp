@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "General.h"
+#include "SVGReader.h"
 
 //RGB Color private
 int RGBColor::clamp(int value) const    //clamp(value, low, high) -> nho hon low: tra ve low, lon hon high: tra ve high
@@ -64,20 +65,41 @@ void Point2D::setY(int value) {
 }
 
 
+//vector<PointF> parsePoints(const string& pointsStr) {
+//    vector<PointF> points;
+//    stringstream ss(pointsStr);
+//    string token;
+//
+//    while (getline(ss, token, ' ')) {
+//        if (token.empty()) continue;
+//
+//        size_t commaPos = token.find(',');
+//        if (commaPos != string::npos) {
+//            float x = stof(token.substr(0, commaPos));
+//            float y = stof(token.substr(commaPos + 1));
+//            points.push_back(PointF(x, y));
+//        }
+//    }
+//    return points;
+//}
+
 vector<PointF> parsePoints(const string& pointsStr) {
     vector<PointF> points;
-    stringstream ss(pointsStr);
-    string token;
+    istringstream iss(pointsStr);
+    char ch;
+    float x, y;
 
-    while (getline(ss, token, ' ')) {
-        if (token.empty()) continue;
+    const SVGReader& reader = SVGReader::getInstance();
+    float offsetX = reader.getX(); 
+    float offsetY = reader.getY();
+    float scale = reader.getScale();
 
-        size_t commaPos = token.find(',');
-        if (commaPos != string::npos) {
-            float x = stof(token.substr(0, commaPos));
-            float y = stof(token.substr(commaPos + 1));
-            points.push_back(PointF(x, y));
-        }
+    while (iss >> x >> ch >> y) {
+        points.emplace_back(
+            x * scale + offsetX,
+            y * scale + offsetY
+        );
+        while (iss.peek() == ' ' || iss.peek() == ',') iss.ignore();
     }
     return points;
 }
