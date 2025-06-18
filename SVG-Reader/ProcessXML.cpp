@@ -65,7 +65,7 @@ VOID processXML(Graphics& graphics, string filename) {
 
         if (shape) {
             renderShapes(shape, node, graphics);
-            delete shape; // Don't forget to clean up!
+            delete shape; 
         }
 
         node = node->next_sibling();
