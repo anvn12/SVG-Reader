@@ -57,13 +57,28 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 
 VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 	fillOpacity *= 255; // cast to 255 in alpha (argb)
+
 	// argb color
-	Pen pen(Color(255, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+	Pen pen(Color(255,
+			stroke.getRed(),
+			stroke.getGreen(),
+			stroke.getBlue()),
+			strokeWidth);
 
-	SolidBrush solidBrush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
+	SolidBrush solidBrush(Color((int)fillOpacity,
+						fill.getRed(),
+						fill.getGreen(),
+						fill.getBlue()));
 
-	Rect object = Rect(position.getX() + SVGReader::getInstance().x, position.getY() + SVGReader::getInstance().y,
-		width * SVGReader::getInstance().scale, height * SVGReader::getInstance().scale);
+	float x = position.getX() * SVGReader::getInstance().getScale()
+				+ SVGReader::getInstance().getX();
+
+	float y = position.getY() * SVGReader::getInstance().getScale()
+				+ SVGReader::getInstance().getY();
+
+	Rect object = Rect(x, y,
+						width * SVGReader::getInstance().getScale(),
+						height * SVGReader::getInstance().getScale());
 
 	graphics.FillRectangle(&solidBrush, object);
 	graphics.DrawRectangle(&pen, object);
@@ -92,27 +107,47 @@ VOID SVGText::setContent(char* attributeValue) {
 }
 
 VOID SVGText::draw(Graphics& graphics) {
-	SolidBrush brush(Color(255, fill.getRed(), fill.getGreen(), fill.getBlue()));
-	wstring wideContent(content.begin(), content.end()); //doi sang wide string de gdi+ dung`
+	SolidBrush brush(Color(255,
+						fill.getRed(),
+						fill.getGreen(),
+						fill.getBlue()));
+
+	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
+
 
 	FontFamily fontFamily(L"Times New Roman");
 
 
-	//Font font(&fontFamily, fontSize, FontStyleRegular, UnitPixel);
-	Font font(&fontFamily, fontSize, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
+	Font font(&fontFamily,
+			fontSize * SVGReader::getInstance().getScale(),
+			Gdiplus::FontStyleRegular,
+			Gdiplus::UnitPixel);
 
-	float x = position.getX() * SVGReader::getInstance().scale + SVGReader::getInstance().x;
-	float y = position.getY() * SVGReader::getInstance().scale + SVGReader::getInstance().y;
+	float x = position.getX() * SVGReader::getInstance().getScale() 
+				+ SVGReader::getInstance().getX();
+
+	float y = position.getY() * SVGReader::getInstance().getScale() 
+				+ SVGReader::getInstance().getY();
+
+
 	PointF drawPoint(x, y);
 
 	/*PointF drawPoint(position.getX(), position.getY());*/
 
+
+	// can dong cho text
+	/*
+		text__
+		|	  |
+		|_____|
+	*/
 	StringFormat format;
 	format.SetAlignment(Gdiplus::StringAlignmentNear);
 	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
 	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
 }
+
 
 
 //SVG-Circle
@@ -143,21 +178,35 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-
 VOID SVGCircle::draw(Graphics& graphics) {
+	// type cast to 255
 	int alphaFill = static_cast<int>(fillOpacity * 255);
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
-	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	float scaledR = r * SVGReader::getInstance().scale;
-	float x = cCenter.getX() + SVGReader::getInstance().x;
-	float y = cCenter.getY() + SVGReader::getInstance().y;
+	SolidBrush brush(Color(alphaFill,
+						fill.getRed(),
+						fill.getGreen(), 
+						fill.getBlue()));
+
+	Pen pen(Color(alphaStroke, 
+				stroke.getRed(), 
+				stroke.getGreen(), 
+				stroke.getBlue()), 
+				strokeWidth);
+
+	float scaledR = r * SVGReader::getInstance().getScale();
+
+	float x = cCenter.getX() * SVGReader::getInstance().getScale()
+				+ SVGReader::getInstance().getX();
+
+	float y = cCenter.getY() * SVGReader::getInstance().getScale()
+				+ SVGReader::getInstance().getY();
 
 	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 }
+
 
 
 //SVG-Ellipse
@@ -191,21 +240,34 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-
 VOID SVGEllipse::draw(Graphics & graphics)
 {
 	int alphaFill = static_cast<int>(fillOpacity * 255);
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
-	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+	SolidBrush brush(Color(alphaFill, 
+						fill.getRed(), 
+						fill.getGreen(), 
+						fill.getBlue()));
 
-	float scaledRx = rx * SVGReader::getInstance().scale;
-	float scaledRy = ry * SVGReader::getInstance().scale;
-	float x = eCenter.getX() + SVGReader::getInstance().x;
-	float y = eCenter.getY() + SVGReader::getInstance().y;
+	Pen pen(Color(alphaStroke, 
+				stroke.getRed(),
+				stroke.getGreen(), 
+				stroke.getBlue()), 
+				strokeWidth);
+
+	float scaledRx = rx * SVGReader::getInstance().getScale();
+	float scaledRy = ry * SVGReader::getInstance().getScale();
+
+	float x = eCenter.getX() * SVGReader::getInstance().getScale()
+				+ SVGReader::getInstance().getX();
+
+	float y = eCenter.getY() * SVGReader::getInstance().getScale()
+				+ SVGReader::getInstance().getY();
+
 
 	RectF rectF(x - scaledRx, y - scaledRy, 2 * scaledRx, 2 * scaledRy);
+
 
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
@@ -213,7 +275,7 @@ VOID SVGEllipse::draw(Graphics & graphics)
 
 
 
-//LINEEEEEEEEEEEEEEEEEE
+//SVG-Line
 VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x1") == 0) {
 		position1.setX(atoi(attributeValue));
@@ -238,15 +300,29 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-
 VOID SVGLine::draw(Graphics& graphics) {
+	// type cast to 255
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
-	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	float x1 = position1.getX() * SVGReader::getInstance().scale + SVGReader::getInstance().x;
-	float y1 = position1.getY() * SVGReader::getInstance().scale + SVGReader::getInstance().y;
-	float x2 = position2.getX() * SVGReader::getInstance().scale + SVGReader::getInstance().x;
-	float y2 = position2.getY() * SVGReader::getInstance().scale + SVGReader::getInstance().y;
+	Pen pen(Color(alphaStroke, 
+				stroke.getRed(), 
+				stroke.getGreen(), 
+				stroke.getBlue()), 
+				strokeWidth);
+
+	float x1 = position1.getX() * SVGReader::getInstance().getScale() 
+					+ SVGReader::getInstance().getX();
+
+	float y1 = position1.getY() * SVGReader::getInstance().getScale() 
+					+ SVGReader::getInstance().getY();
+
+	float x2 = position2.getX() * SVGReader::getInstance().getScale() 
+					+ SVGReader::getInstance().getX();
+
+	float y2 = position2.getY() * SVGReader::getInstance().getScale() 
+					+ SVGReader::getInstance().getY();
+
+
 
 	graphics.DrawLine(&pen, x1, y1, x2, y2);
 
@@ -255,7 +331,7 @@ VOID SVGLine::draw(Graphics& graphics) {
 
 
 
-//POLYLINEEEEEEEEEEEEEE
+//SVG-Polyline
 VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "fill") == 0) {
 		fill = textToRGB(attributeValue);
@@ -277,20 +353,30 @@ VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-
-
 VOID SVGPolyline::draw(Graphics& graphics) {
     vector<PointF> pointArray = parsePoints(points);
-    if (pointArray.size() < 2) 
-        return; 
 
+	if (pointArray.size() < 2) {
+        return; 
+	}
+
+	// type cast to 255
     int alphaFill = static_cast<int>(fillOpacity * 255);
     int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-    SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
-    Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+    SolidBrush brush(Color(alphaFill, 
+						fill.getRed(), 
+						fill.getGreen(), 
+						fill.getBlue()));
 
-    //t quen fill
+    Pen pen(Color(alphaStroke, 
+				stroke.getRed(), 
+				stroke.getGreen(), 
+				stroke.getBlue()), 
+				strokeWidth);
+
+
+    // t quen fill
     if (fillOpacity > 0 && pointArray.size() >= 3) {
         graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
     }
@@ -304,7 +390,7 @@ VOID SVGPolyline::draw(Graphics& graphics) {
 
 
 
-//POLYGONNNNNNNNNNNNNNNNNNNNNNNNN
+//SVG-Polygon
 VOID SVGPolygon::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "fill") == 0) {
 		fill = textToRGB(attributeValue);
@@ -326,17 +412,27 @@ VOID SVGPolygon::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-
 VOID SVGPolygon::draw(Graphics& graphics) {
 	vector<PointF> pointArray = parsePoints(points);
-	if (pointArray.size() < 3) 
-		return;
 
+	if (pointArray.size() < 3) {
+		return;
+	}
+
+	// type cast to 255
 	int alphaFill = static_cast<int>(fillOpacity * 255);
 	int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
-	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+	SolidBrush brush(Color(alphaFill, 
+						fill.getRed(), 
+						fill.getGreen(), 
+						fill.getBlue()));
+
+	Pen pen(Color(alphaStroke, 
+				stroke.getRed(),
+				stroke.getGreen(), 
+				stroke.getBlue()), 
+				strokeWidth);
 
 	//fill 
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
