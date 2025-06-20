@@ -63,7 +63,7 @@ VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 			stroke.getRed(),
 			stroke.getGreen(),
 			stroke.getBlue()),
-			strokeWidth);
+			strokeWidth * SVGReader::getInstance().getScale());
 
 	SolidBrush solidBrush(Color((int)fillOpacity,
 						fill.getRed(),
@@ -193,7 +193,7 @@ VOID SVGCircle::draw(Graphics& graphics) {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth);
+				strokeWidth * SVGReader::getInstance().getScale());
 
 	float scaledR = r * SVGReader::getInstance().getScale();
 
@@ -254,7 +254,7 @@ VOID SVGEllipse::draw(Graphics & graphics)
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth);
+				strokeWidth * SVGReader::getInstance().getScale());
 
 	float scaledRx = rx * SVGReader::getInstance().getScale();
 	float scaledRy = ry * SVGReader::getInstance().getScale();
@@ -308,7 +308,7 @@ VOID SVGLine::draw(Graphics& graphics) {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth);
+				strokeWidth * SVGReader::getInstance().getScale());
 
 	float x1 = position1.getX() * SVGReader::getInstance().getScale() 
 					+ SVGReader::getInstance().getX();
@@ -373,7 +373,7 @@ VOID SVGPolyline::draw(Graphics& graphics) {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth);
+				strokeWidth * SVGReader::getInstance().getScale());
 
 
     // t quen fill
@@ -432,7 +432,7 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth);
+				strokeWidth * SVGReader::getInstance().getScale());
 
 	//fill 
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
