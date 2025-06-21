@@ -38,4 +38,8 @@ Gom chung thuộc tính svg về svgshape: mục đích để tái sử dụng c
 
 
 
+
+Bat lai cai WM_CLOSE sau khi code xong
+
+
 taskkill /F /IM SVG-Reader.exe
