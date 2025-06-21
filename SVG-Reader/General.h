@@ -38,7 +38,7 @@ public:
 	Point2D()
 		: x(0), y(0) {}
 
-	Point2D(double coorX, double coorY)
+	Point2D(int coorX, int coorY)
 		: x(coorX), y(coorY) {}
 
 	int getX() const;
@@ -51,7 +51,7 @@ public:
 };
 
 
-//help for reading poly poitns
+//help for reading poly points
 vector<PointF> parsePoints(const string& pointsStr);
 
 #endif
