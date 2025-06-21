@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "General.h"
 #include "SVGReader.h"
 
@@ -86,6 +86,8 @@ void Point2D::setY(int value) {
 vector<PointF> parsePoints(const string& pointsStr) {
     vector<PointF> points;
     istringstream iss(pointsStr);
+    if (pointsStr.empty()) return points;
+
     char ch;
     float x, y;
 

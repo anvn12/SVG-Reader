@@ -9,32 +9,24 @@
 // inheritance để những cái SVG class có cùng tên
 // polymorphism để mỗi hàm trong class làm việc khác nhau
 class SVGShape {
+protected:
+	Point2D position;
+	RGBColor stroke, fill;
+	double strokeWidth, strokeOpacity, fillOpacity;
 public:
+	SVGShape();
 	virtual VOID processAttribute(char* attributeName, char* attributeValue) = 0;
 	virtual VOID draw(Graphics& graphics) = 0;
-	virtual ~SVGShape() {};
+	virtual ~SVGShape() = default;
 };
+
 
 // inherit 2 public methods
 class SVGRectangle : public SVGShape {
 private:
-	double fillOpacity;
-	RGBColor stroke;
-	RGBColor fill;
-	double strokeWidth;
-	Point2D position;
-	int width;
-	int height;
-
+	int width, height;
 public:
-	SVGRectangle() {
-		fillOpacity = 0;
-		stroke = RGBColor();
-		fill = RGBColor();
-		strokeWidth = 0;
-		position = Point2D();
-		width = height = 0;
-	}
+	SVGRectangle() : SVGShape(), width(0), height(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics &graphics) override;
@@ -43,17 +35,10 @@ public:
 
 class SVGText : public SVGShape {
 private:
-	Point2D position;
-	RGBColor fill;
 	double fontSize;
 	string content;
-
 public:
-	SVGText() {
-		position = Point2D();
-		fill = RGBColor();
-		fontSize = 0;
-	}
+	SVGText() : SVGShape(), fontSize(0.0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID setContent(char* attributeValue);
@@ -62,69 +47,34 @@ public:
 };
 
 
-class SVGCircle : public SVGShape {
-private:
-	Point2D cCenter;
-	int r;
-	RGBColor fill, stroke;
-	double strokeWidth, strokeOpacity, fillOpacity;
-
-public:
-	SVGCircle() {
-		cCenter = Point2D();
-		r = 0;
-		fill = RGBColor();
-		stroke = RGBColor();
-		strokeWidth = 0;
-		fillOpacity = 0;
-		strokeOpacity = 0;
-	}
-
-	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) override;
-};
 
 
 class SVGEllipse : public SVGShape {
-private:
+protected:
 	int rx, ry;
-	Point2D eCenter;
-	RGBColor fill, stroke;
-	double strokeWidth, strokeOpacity, fillOpacity;
-
 public:
-	SVGEllipse() {
-		rx = 0;
-		ry = 0;
-		eCenter = Point2D();
-		fill = RGBColor();
-		stroke = RGBColor();
-		strokeWidth = 0;
-		strokeOpacity = 0;
-		fillOpacity = 0;
-	}
+	SVGEllipse() : SVGShape(), rx(0), ry(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) override;
 };
 
+class SVGCircle : public SVGEllipse {
+public:
+	SVGCircle() : SVGEllipse() {
+		rx = ry = 0;
+	}
+
+	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	VOID draw(Graphics& graphics) override;
+};
 
 class SVGLine : public SVGShape {
 private:  
 	Point2D position1, position2;
-	RGBColor stroke;  
-	double strokeOpacity, strokeWidth; 
 
 public:
-	SVGLine() {
-		position1 = Point2D();
-		position2 = Point2D();
-		stroke = RGBColor();
-		//strokeOpacity = 1.0;
-		//strokeWidth = 1.0;
-		strokeOpacity = 0;
-		strokeWidth = 0;
-	}
+	SVGLine() : SVGShape(), position1(), position2() {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) override;
@@ -132,20 +82,11 @@ public:
 
 
 class SVGPolyline : public SVGShape {
-private:  
-	RGBColor fill, stroke;  
+private: 
 	string points;
-	double strokeWidth, strokeOpacity, fillOpacity; 
-
 public:
-	SVGPolyline() {
-		fill = RGBColor();
-		stroke = RGBColor();
+	SVGPolyline() : SVGShape() {
 		points = "";
-		//strokeWidth = 1.0;
-		//strokeOpacity = 1.0;
-		strokeWidth = 0;
-		strokeOpacity = 0;
 		fillOpacity = 1.0;
 	}
 
@@ -157,14 +98,9 @@ public:
 
 class SVGPolygon : public SVGShape {
 private: 
-	RGBColor fill, stroke;  
 	string points;
-	double strokeWidth, strokeOpacity, fillOpacity;  
-
 public:
-	SVGPolygon() {
-		fill = RGBColor();
-		stroke = RGBColor();
+	SVGPolygon() : SVGShape() {
 		points = "";
 		strokeWidth = 1.0;
 		strokeOpacity = 1.0;
