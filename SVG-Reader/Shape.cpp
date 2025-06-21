@@ -27,6 +27,10 @@ RGBColor textToRGB(char* text) {
 	return RGBColor(r, g, b);
 }
 
+SVGShape::SVGShape()
+	: position(), stroke(), fill(), 
+		strokeWidth(0.0), strokeOpacity(0.0), fillOpacity(0.0) {}
+
 //SVG-Rectangle
 VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "fill-opacity") == 0) {
@@ -118,29 +122,16 @@ VOID SVGText::draw(Graphics& graphics) {
 //SVG-Circle
 VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "cx") == 0) {
-		cCenter.setX(atof(attributeValue));
+		position.setX(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "cy") == 0) {
-		cCenter.setY(atof(attributeValue));
+		position.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "r") == 0) {
-		r = atof(attributeValue);
+		float r = atof(attributeValue);
+		rx = ry = r;
 	}
-	else if (strcmp(attributeName, "fill") == 0) {
-		fill = textToRGB(attributeValue);
-	}
-	else if (strcmp(attributeName, "stroke") == 0) {
-		stroke = textToRGB(attributeValue);
-	}
-	else if (strcmp(attributeName, "stroke-width") == 0) {
-		strokeWidth = atof(attributeValue);
-	}
-	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);  //  atof, ko phai atoi
-	}
-	else if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atof(attributeValue);  // sua cho nay
-	}
+	else SVGEllipse::processAttribute(attributeName, attributeValue);
 }
 
 
@@ -151,9 +142,9 @@ VOID SVGCircle::draw(Graphics& graphics) {
 	SolidBrush brush(Color(alphaFill, fill.getRed(), fill.getGreen(), fill.getBlue()));
 	Pen pen(Color(alphaStroke, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
-	float scaledR = r * SVGReader::getInstance().scale;
-	float x = cCenter.getX() + SVGReader::getInstance().x;
-	float y = cCenter.getY() + SVGReader::getInstance().y;
+	float scaledR = rx * SVGReader::getInstance().scale;
+	float x =position.getX() + SVGReader::getInstance().x;
+	float y = position.getY() + SVGReader::getInstance().y;
 
 	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
@@ -163,10 +154,10 @@ VOID SVGCircle::draw(Graphics& graphics) {
 //SVG-Ellipse
 VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "cx") == 0) {
-		eCenter.setX(atof(attributeValue));
+		position.setX(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "cy") == 0) {
-		eCenter.setY(atof(attributeValue));
+		position.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "rx") == 0) {
 		rx = atof(attributeValue);
@@ -202,8 +193,8 @@ VOID SVGEllipse::draw(Graphics & graphics)
 
 	float scaledRx = rx * SVGReader::getInstance().scale;
 	float scaledRy = ry * SVGReader::getInstance().scale;
-	float x = eCenter.getX() + SVGReader::getInstance().x;
-	float y = eCenter.getY() + SVGReader::getInstance().y;
+	float x = position.getX() + SVGReader::getInstance().x;
+	float y = position.getY() + SVGReader::getInstance().y;
 
 	RectF rectF(x - scaledRx, y - scaledRy, 2 * scaledRx, 2 * scaledRy);
 
@@ -344,4 +335,5 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 	//stroke oultine
 	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
 }
+
 
