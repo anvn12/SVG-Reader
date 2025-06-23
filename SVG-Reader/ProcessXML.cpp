@@ -1,76 +1,82 @@
 ﻿#include "stdafx.h"
-#include "ProcessXML.h"
-#include "Shape.h"
+//#include "ProcessXML.h"
+//#include "Shape.h"
+//
+//void renderShapes(SVGShape* shape, xml_node<>* node, Graphics& graphics) {
+//	SVGText* textShape = dynamic_cast<SVGText*>(shape);
+//	if (textShape && node->value()) {
+//		textShape->setContent(node->value());
+//	}
+//
+//	xml_attribute<>* curAttribute = node->first_attribute();
+//	while (curAttribute != NULL) {
+//		char* attributeName = curAttribute->name();
+//		char* attributeValue = curAttribute->value();
+//
+//		shape->processAttribute(attributeName, attributeValue);
+//
+//		curAttribute = curAttribute->next_attribute();
+//	}
+//
+//	shape->draw(graphics);
+//}
+//
+//VOID processXML(Graphics& graphics, string filename) {
+//    // Ref: http://rapidxml.sourceforge.net/manual.html
+//    // Read XML
+//    xml_document<> doc;
+//    xml_node<>* rootNode;
+//    // Read the xml file into a vector
+//    ifstream file(filename);
+//    vector<char> buffer((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+//    buffer.push_back('\0');
+//    // Parse the buffer using the xml file parsing library into doc 
+//    doc.parse<0>(&buffer[0]);
+//
+//    rootNode = doc.first_node();
+//    xml_node<>* node = rootNode->first_node();
+//
+//    while (node != NULL) {
+//        char* nodeName = node->name();
+//        SVGShape* shape = nullptr;
+//
+//        // Create shape based on type
+//        if (strcmp(nodeName, "rect") == 0) {
+//            shape = new SVGRectangle();
+//        }
+//        else if (strcmp(nodeName, "ellipse") == 0) {
+//            shape = new SVGEllipse();
+//        }
+//        else if (strcmp(nodeName, "circle") == 0) {
+//            shape = new SVGCircle();
+//        }
+//        else if (strcmp(nodeName, "text") == 0) {
+//            shape = new SVGText();
+//        }
+//        else if (strcmp(nodeName, "line") == 0) {
+//            shape = new SVGLine();
+//        }
+//        else if (strcmp(nodeName, "polyline") == 0) {
+//            shape = new SVGPolyline();
+//        }
+//        else if (strcmp(nodeName, "polygon") == 0) {
+//            shape = new SVGPolygon();
+//        }
+//
+//        if (shape) {
+//            renderShapes(shape, node, graphics);
+//            delete shape; 
+//        }
+//
+//        node = node->next_sibling();
+//    }
+//}
 
-void renderShapes(SVGShape* shape, xml_node<>* node, Graphics& graphics) {
-	SVGText* textShape = dynamic_cast<SVGText*>(shape);
-	if (textShape && node->value()) {
-		textShape->setContent(node->value());
-	}
 
-	xml_attribute<>* curAttribute = node->first_attribute();
-	while (curAttribute != NULL) {
-		char* attributeName = curAttribute->name();
-		char* attributeValue = curAttribute->value();
+// ====================
 
-		shape->processAttribute(attributeName, attributeValue);
 
-		curAttribute = curAttribute->next_attribute();
-	}
 
-	shape->draw(graphics);
-}
-
-VOID processXML(Graphics& graphics, string filename) {
-    // Ref: http://rapidxml.sourceforge.net/manual.html
-    // Read XML
-    xml_document<> doc;
-    xml_node<>* rootNode;
-    // Read the xml file into a vector
-    ifstream file(filename);
-    vector<char> buffer((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-    buffer.push_back('\0');
-    // Parse the buffer using the xml file parsing library into doc 
-    doc.parse<0>(&buffer[0]);
-
-    rootNode = doc.first_node();
-    xml_node<>* node = rootNode->first_node();
-
-    while (node != NULL) {
-        char* nodeName = node->name();
-        SVGShape* shape = nullptr;
-
-        // Create shape based on type
-        if (strcmp(nodeName, "rect") == 0) {
-            shape = new SVGRectangle();
-        }
-        else if (strcmp(nodeName, "ellipse") == 0) {
-            shape = new SVGEllipse();
-        }
-        else if (strcmp(nodeName, "circle") == 0) {
-            shape = new SVGCircle();
-        }
-        else if (strcmp(nodeName, "text") == 0) {
-            shape = new SVGText();
-        }
-        else if (strcmp(nodeName, "line") == 0) {
-            shape = new SVGLine();
-        }
-        else if (strcmp(nodeName, "polyline") == 0) {
-            shape = new SVGPolyline();
-        }
-        else if (strcmp(nodeName, "polygon") == 0) {
-            shape = new SVGPolygon();
-        }
-
-        if (shape) {
-            renderShapes(shape, node, graphics);
-            delete shape; 
-        }
-
-        node = node->next_sibling();
-    }
-}
 
 //VOID processXML(Graphics& graphics, string filename) {
 //	// Ref: http://rapidxml.sourceforge.net/manual.html
