@@ -33,21 +33,19 @@
     <ClInclude Include="General.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessXML.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProcessMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessXML.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SVGReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProcessXML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">
@@ -62,6 +60,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProcessMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessXML.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

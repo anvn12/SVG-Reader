@@ -10,7 +10,7 @@
 using namespace std;
 using namespace rapidxml;
 
-void renderShapes(SVGShape* shape, xml_node<>* node, Graphics& graphics);
-VOID processXML(Graphics& graphics, string filename);
+//void renderShapes(SVGShape* shape, xml_node<>* node, Graphics& graphics);
+//VOID processXML(Graphics& graphics, string filename);
 
 #endif

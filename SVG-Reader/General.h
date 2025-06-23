@@ -50,7 +50,6 @@ public:
 	
 };
 
-
 //help for reading poly points
 vector<PointF> parsePoints(const string& pointsStr);
 

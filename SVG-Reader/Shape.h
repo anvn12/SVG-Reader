@@ -16,7 +16,7 @@ protected:
 public:
 	SVGShape();
 	virtual VOID processAttribute(char* attributeName, char* attributeValue) = 0;
-	virtual VOID draw(Graphics& graphics) = 0;
+	virtual VOID draw(Graphics& graphics) const = 0;
 	virtual ~SVGShape() = default;
 };
 
@@ -29,7 +29,7 @@ public:
 	SVGRectangle() : SVGShape(), width(0), height(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics &graphics) override;
+	VOID draw(Graphics &graphics) const override;
 };
 
 
@@ -43,7 +43,7 @@ public:
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID setContent(char* attributeValue);
 
-	VOID draw(Graphics& graphics) override;
+	VOID draw(Graphics& graphics) const override;
 };
 
 
@@ -56,7 +56,7 @@ public:
 	SVGEllipse() : SVGShape(), rx(0), ry(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) override;
+	VOID draw(Graphics& graphics) const override;
 };
 
 class SVGCircle : public SVGEllipse {
@@ -66,7 +66,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) override;
+	VOID draw(Graphics& graphics) const override;
 };
 
 class SVGLine : public SVGShape {
@@ -77,7 +77,7 @@ public:
 	SVGLine() : SVGShape(), position1(), position2() {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) override;
+	VOID draw(Graphics& graphics) const override;
 };
 
 
@@ -91,7 +91,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) override;
+	VOID draw(Graphics& graphics) const override;
 };
 
 
@@ -108,7 +108,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) override;
+	VOID draw(Graphics& graphics) const override;
 };
 
 RGBColor textToRGB(char*);
