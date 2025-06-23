@@ -29,17 +29,16 @@ hwnd: chỉ tạo ra cái màn hình không có chức năng -> cần có cái s
 
 
 #
-SVGReader cần thêm chỗ chứa shape; có biến chứa có code, hàm đọc xml bỏ vô đây luôn
-Cần renderer class để render riêng (vẽ SVGShape, ): mục đích là khi mở rộng thêm vẽ hình gì thì có thể thêm vào đây
+[x] SVGReader cần thêm chỗ chứa shape; có biến chứa có code, hàm đọc xml bỏ vô đây luôn
+[ ] Cần renderer class để render riêng (vẽ SVGShape, ): mục đích là khi mở rộng thêm vẽ hình gì thì có thể thêm vào đây
 
-Gom chung thuộc tính svg về svgshape: mục đích để tái sử dụng code
-
-
+[ ] Gom chung thuộc tính svg về svgshape: mục đích để tái sử dụng code
 
 
 
 
-Bat lai cai WM_CLOSE sau khi code xong
+[ ] Bat lai cai WM_CLOSE sau khi code xong
+
 
 # Optional
 Đổi hàm mở file sang IFileDialog  
