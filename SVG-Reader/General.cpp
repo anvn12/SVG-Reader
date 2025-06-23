@@ -83,8 +83,7 @@ void Point2D::setY(int value) {
 //    return points;
 //}
 
-//vector<PointF> parsePoints(const string& pointsStr) {
-vector<PointF> parsePoints(string pointsStr) {
+vector<PointF> parsePoints(const string& pointsStr) {
     vector<PointF> points;
     istringstream iss(pointsStr);
     if (pointsStr.empty()) return points;
