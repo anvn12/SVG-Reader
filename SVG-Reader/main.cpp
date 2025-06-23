@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "SVGReader.h"
 
-
-
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 	// SINGLETON PATTERN
 

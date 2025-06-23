@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Shape.h"
-#include "ProcessXML.h"
+
+//#include "ProcessXML.h"
 
 
 #include "SVGReader.h"
