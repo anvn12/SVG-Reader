@@ -52,6 +52,7 @@ public:
 
 
 //help for reading poly points
-vector<PointF> parsePoints(const string& pointsStr);
+vector<Gdiplus::PointF> parsePoints(std::string pointsStr);
+//vector<Gdiplus::PointF> parsePoints(const std::string& pointsStr);
 
 #endif

@@ -35,7 +35,8 @@ SVGShape::SVGShape()
 //SVG-Rectangle
 VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atof(attributeValue);
+		// cast to 255 in alpha (argb)
+		fillOpacity = atof(attributeValue) * 255; 
 	}
 	else if (strcmp(attributeName, "x") == 0) {
 		position.setX(atof(attributeValue));
@@ -60,9 +61,7 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
-	fillOpacity *= 255; // cast to 255 in alpha (argb)
-
+VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) const {
 	// argb color
 	Pen pen(Color(255,
 			stroke.getRed(),
@@ -111,7 +110,7 @@ VOID SVGText::setContent(char* attributeValue) {
 	content = attributeValue;
 }
 
-VOID SVGText::draw(Graphics& graphics) {
+VOID SVGText::draw(Graphics& graphics) const {
 	SolidBrush brush(Color(255,
 						fill.getRed(),
 						fill.getGreen(),
@@ -137,7 +136,7 @@ VOID SVGText::draw(Graphics& graphics) {
 
 	PointF drawPoint(x, y);
 
-	/*PointF drawPoint(position.getX(), position.getY());*/
+	//PointF drawPoint(position.getX(), position.getY());
 
 
 	// can dong cho text
@@ -170,17 +169,17 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	else SVGEllipse::processAttribute(attributeName, attributeValue);
 }
 
-VOID SVGCircle::draw(Graphics& graphics) {
-	// type cast to 255
-	int alphaFill = static_cast<int>(fillOpacity * 255);
-	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+VOID SVGCircle::draw(Graphics& graphics) const {
+	//// type cast to 255
+	//int alphaFill = static_cast<int>(fillOpacity * 255);
+	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	SolidBrush brush(Color(alphaFill,
+	SolidBrush brush(Color(fillOpacity,
 						fill.getRed(),
 						fill.getGreen(), 
 						fill.getBlue()));
 
-	Pen pen(Color(alphaStroke, 
+	Pen pen(Color(strokeOpacity, 
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
@@ -224,24 +223,25 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 		strokeWidth = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);   
+		// type cast to 255
+		strokeOpacity = atof(attributeValue) * 255;   
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atof(attributeValue);
+		// type cast to 255
+		fillOpacity = atof(attributeValue) * 255;
 	}
 }
 
-VOID SVGEllipse::draw(Graphics & graphics)
-{
-	int alphaFill = static_cast<int>(fillOpacity * 255);
-	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+VOID SVGEllipse::draw(Graphics & graphics) const {
+	//int alphaFill = static_cast<int>(fillOpacity * 255);
+	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	SolidBrush brush(Color(alphaFill, 
+	SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
 						fill.getBlue()));
 
-	Pen pen(Color(alphaStroke, 
+	Pen pen(Color(strokeOpacity,
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
@@ -283,18 +283,19 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 		stroke = textToRGB(attributeValue);  
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);
+		// cast to 255
+		strokeOpacity = atof(attributeValue) * 255;
 	}
 	else if (strcmp(attributeName, "stroke-width") == 0) {
 		strokeWidth = atof(attributeValue);
 	}
 }
 
-VOID SVGLine::draw(Graphics& graphics) {
+VOID SVGLine::draw(Graphics& graphics) const {
 	// type cast to 255
-	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	Pen pen(Color(alphaStroke, 
+	Pen pen(Color(strokeOpacity,
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
@@ -333,17 +334,19 @@ VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
 		strokeWidth = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);
+		// cast to 255
+		strokeOpacity = atof(attributeValue) * 255;
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atof(attributeValue);  
+		// cast to 255
+		fillOpacity = atof(attributeValue) * 255;  
 	}
 	else if (strcmp(attributeName, "points") == 0) {
 		points = attributeValue;
 	}
 }
 
-VOID SVGPolyline::draw(Graphics& graphics) {
+VOID SVGPolyline::draw(Graphics& graphics) const {
     vector<PointF> pointArray = parsePoints(points);
 
 	if (pointArray.size() < 2) {
@@ -351,15 +354,15 @@ VOID SVGPolyline::draw(Graphics& graphics) {
 	}
 
 	// type cast to 255
-    int alphaFill = static_cast<int>(fillOpacity * 255);
-    int alphaStroke = static_cast<int>(strokeOpacity * 255);
+    //int alphaFill = static_cast<int>(fillOpacity * 255);
+    //int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-    SolidBrush brush(Color(alphaFill, 
+    SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
 						fill.getBlue()));
 
-    Pen pen(Color(alphaStroke, 
+    Pen pen(Color(strokeOpacity,
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
@@ -392,17 +395,19 @@ VOID SVGPolygon::processAttribute(char* attributeName, char* attributeValue) {
 		strokeWidth = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
-		strokeOpacity = atof(attributeValue);
+		// cast to 255
+		strokeOpacity = atof(attributeValue) * 255;
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
-		fillOpacity = atof(attributeValue);
+		// cast to 255
+		fillOpacity = atof(attributeValue) * 255;
 	}
 	else if (strcmp(attributeName, "points") == 0) {
 		points = attributeValue;
 	}
 }
 
-VOID SVGPolygon::draw(Graphics& graphics) {
+VOID SVGPolygon::draw(Graphics& graphics) const {
 	vector<PointF> pointArray = parsePoints(points);
 
 	if (pointArray.size() < 3) {
@@ -410,15 +415,15 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 	}
 
 	// type cast to 255
-	int alphaFill = static_cast<int>(fillOpacity * 255);
-	int alphaStroke = static_cast<int>(strokeOpacity * 255);
+	//int alphaFill = static_cast<int>(fillOpacity * 255);
+	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	SolidBrush brush(Color(alphaFill, 
+	SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
 						fill.getBlue()));
 
-	Pen pen(Color(alphaStroke, 
+	Pen pen(Color(strokeOpacity,
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
