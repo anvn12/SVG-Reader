@@ -41,5 +41,11 @@ Gom chung thuộc tính svg về svgshape: mục đích để tái sử dụng c
 
 Bat lai cai WM_CLOSE sau khi code xong
 
+# Optional
+Đổi hàm mở file sang IFileDialog  
+https://stackoverflow.com/questions/74864930/open-file-explorer-and-select-input-file-in-c-win32
+https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-ifileopendialog
+
+
 
 taskkill /F /IM SVG-Reader.exe
