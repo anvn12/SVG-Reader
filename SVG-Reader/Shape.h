@@ -12,13 +12,19 @@ class SVGShape {
 protected:
 	Point2D position;
 	RGBColor stroke, fill;
-	double strokeWidth, strokeOpacity, fillOpacity;
+	float strokeWidth, strokeOpacity, fillOpacity;
 public:
 	SVGShape();
-	virtual VOID processAttribute(char* attributeName, char* attributeValue) = 0;
-	virtual VOID draw(Graphics& graphics) const = 0;
 	virtual ~SVGShape() = default;
+
+
+	// process SVGShape common attributes
+	virtual VOID processAttribute(char* attributeName, char* attributeValue);
+
+	// each shape has distinct draw function -> pure virtual
+	virtual VOID draw(Graphics& graphics) const = 0;
 };
+
 
 
 // inherit 2 public methods
@@ -33,9 +39,10 @@ public:
 };
 
 
+
 class SVGText : public SVGShape {
 private:
-	double fontSize;
+	float fontSize;
 	string content;
 public:
 	SVGText() : SVGShape(), fontSize(0.0) {}
@@ -45,7 +52,6 @@ public:
 
 	VOID draw(Graphics& graphics) const override;
 };
-
 
 
 
@@ -59,6 +65,8 @@ public:
 	VOID draw(Graphics& graphics) const override;
 };
 
+
+
 class SVGCircle : public SVGEllipse {
 public:
 	SVGCircle() : SVGEllipse() {
@@ -68,6 +76,8 @@ public:
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) const override;
 };
+
+
 
 class SVGLine : public SVGShape {
 private:  
@@ -79,6 +89,7 @@ public:
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) const override;
 };
+
 
 
 class SVGPolyline : public SVGShape {
@@ -111,7 +122,6 @@ public:
 	VOID draw(Graphics& graphics) const override;
 };
 
-RGBColor textToRGB(char*);
 
 
 #endif
