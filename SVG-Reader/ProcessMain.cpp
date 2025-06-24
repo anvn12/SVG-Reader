@@ -60,11 +60,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 
 			// zoom in and out
 		case 'I': // in
-			SVGReader::getInstance().setScale(0.05);
+			SVGReader::getInstance().setScale(0.05f);
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 		case 'O':
-			SVGReader::getInstance().setScale(-0.05);
+			SVGReader::getInstance().setScale(-0.05f);
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 		}
@@ -100,12 +100,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 
 					 // zoom in and out, reset zoom in menu view
 		case ID_VIEW_ZOOMIN:
-			SVGReader::getInstance().setScale(0.05);
+			SVGReader::getInstance().setScale(0.05f);
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 
 		case ID_VIEW_ZOOMOUT:
-			SVGReader::getInstance().setScale(-0.05);
+			SVGReader::getInstance().setScale(-0.05f);
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 
