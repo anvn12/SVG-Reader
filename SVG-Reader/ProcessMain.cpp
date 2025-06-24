@@ -148,7 +148,8 @@ LRESULT CALLBACK DlgProc(HWND hWnd, UINT message,
 
 	case WM_COMMAND:
 		switch (wParam) {
-		case IDOK: case WM_DESTROY: // close or X
+		// close or X or press close (default name is ok)
+		case IDOK: case WM_DESTROY: 
 			EndDialog(hWnd, 0);
 			return TRUE;
 		}

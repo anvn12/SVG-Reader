@@ -3,7 +3,8 @@
 #include "SVGReader.h"
 
 //RGB Color private
-int RGBColor::clamp(int value) const    //clamp(value, low, high) -> nho hon low: tra ve low, lon hon high: tra ve high
+//clamp(value, low, high) force value to be in range [low, high]
+int RGBColor::clamp(int value) const    
 {
     if (value < 0) {
         return 0;
@@ -14,74 +15,25 @@ int RGBColor::clamp(int value) const    //clamp(value, low, high) -> nho hon low
     return value;
 }
 
-//RGB Color
-RGBColor RGBColor::getColor() {
-    return *this;
+
+RGBColor textToRGB(char* text) {
+    // rgb(200,200,200)
+    // c-style string to string
+    string stext = text;
+    int r, g, b;
+    stext.erase(0, 4);
+    stringstream ss(stext);
+    string temp;
+    getline(ss, temp, ',');
+    r = stoi(temp);
+    getline(ss, temp, ',');
+    g = stoi(temp);
+    getline(ss, temp, ')');
+    b = stoi(temp);
+
+    return RGBColor(r, g, b);
 }
 
-int RGBColor::getRed() const {
-    return red;
-}
-
-int RGBColor::getGreen() const {
-    return green;
-}
-
-int RGBColor::getBlue() const {
-    return blue;
-}
-
-void RGBColor::setRed(int r) {
-    red = clamp(r);
-}
-
-void RGBColor::setGreen(int g) {
-    green = clamp(g);
-}
-
-void RGBColor::setBlue(int b) {
-    blue = clamp(b);
-}
-
-
-//Point 2d getter
-int Point2D::getX() const {
-    return x;
-}
-
-int Point2D::getY() const {
-    return y;
-}
-
-
-
-//Point 2d setter
-void Point2D::setX(int value) {
-    x = value;
-}
-
-void Point2D::setY(int value) {
-    y = value;
-}
-
-
-//vector<PointF> parsePoints(const string& pointsStr) {
-//    vector<PointF> points;
-//    stringstream ss(pointsStr);
-//    string token;
-//
-//    while (getline(ss, token, ' ')) {
-//        if (token.empty()) continue;
-//
-//        size_t commaPos = token.find(',');
-//        if (commaPos != string::npos) {
-//            float x = stof(token.substr(0, commaPos));
-//            float y = stof(token.substr(commaPos + 1));
-//            points.push_back(PointF(x, y));
-//        }
-//    }
-//    return points;
-//}
 
 vector<PointF> parsePoints(const string& pointsStr) {
     vector<PointF> points;
@@ -105,3 +57,22 @@ vector<PointF> parsePoints(const string& pointsStr) {
     }
     return points;
 }
+
+
+//vector<PointF> parsePoints(const string& pointsStr) {
+//    vector<PointF> points;
+//    stringstream ss(pointsStr);
+//    string token;
+//
+//    while (getline(ss, token, ' ')) {
+//        if (token.empty()) continue;
+//
+//        size_t commaPos = token.find(',');
+//        if (commaPos != string::npos) {
+//            float x = stof(token.substr(0, commaPos));
+//            float y = stof(token.substr(commaPos + 1));
+//            points.push_back(PointF(x, y));
+//        }
+//    }
+//    return points;
+//}

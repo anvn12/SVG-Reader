@@ -1,38 +1,15 @@
 #include "stdafx.h"
 #include "Shape.h"
-
-//#include "ProcessXML.h"
-
-
 #include "SVGReader.h"
-
+//#include "ProcessXML.h"
 using namespace std;
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
-RGBColor textToRGB(char* text) {
-	// rgb(200,200,200)
-	// c-style string to string
-	string stext = text;
-	int r, g, b;
-	stext.erase(0, 4);
-	stringstream ss(stext);
-	string temp;
-	getline(ss, temp, ',');
-	r = stoi(temp);
-	getline(ss, temp, ',');
-	g = stoi(temp);
-	getline(ss, temp, ')');
-	b = stoi(temp);
-
-	return RGBColor(r, g, b);
-}
 
 SVGShape::SVGShape()
 	: position(), stroke(), fill(), 
 		strokeWidth(0.0), strokeOpacity(0.0), fillOpacity(0.0) {}
-
-
 
 VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x") == 0) {
@@ -59,6 +36,7 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		fillOpacity = atof(attributeValue) * 255;
 	}
 }
+
 
 
 //SVG-Rectangle
@@ -251,7 +229,6 @@ VOID SVGCircle::draw(Graphics& graphics) const {
 	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 }
-
 
 
 
