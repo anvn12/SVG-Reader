@@ -43,6 +43,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessXML.h" />
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SVGReader.cpp">
@@ -64,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProcessXML.cpp" />
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -79,6 +85,9 @@
     </None>
     <None Include="note.md" />
     <None Include="test.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="dragon.svg">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
