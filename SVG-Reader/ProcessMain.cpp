@@ -118,17 +118,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 		break;
 	}
 	// press X
-	//case WM_CLOSE: { 
-	//	// message box to exit
-	//		// yes no options
-	//	int value = MessageBox(hWnd, L"Are you sure?", L"Exit", MB_YESNO | MB_ICONEXCLAMATION);
-	//	if (value == IDYES) {		// click yes
-	//		PostQuitMessage(0);
-	//		return 0;
-	//	}
-	//	// click no or X
-	//	break;
-	//}
+	case WM_CLOSE: { 
+		// message box to exit
+			// yes no options
+		int value = MessageBox(hWnd, L"Are you sure?", L"Exit", MB_YESNO | MB_ICONEXCLAMATION);
+		if (value == IDYES) {		// click yes
+			PostQuitMessage(0);
+			return 0;
+		}
+		// click no or X
+		break;
+	}
 	case WM_DESTROY: // click X
 		PostQuitMessage(0);
 		return 0;

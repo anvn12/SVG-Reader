@@ -178,11 +178,8 @@
     <Image Include="SVGReader.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dragon.svg" />
     <None Include="note.md" />
     <None Include="sample.svg" />
-    <None Include="sample2.svg" />
-    <None Include="test.svg" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVGReader.rc" />
