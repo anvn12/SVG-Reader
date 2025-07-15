@@ -23,8 +23,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 
 	// init GDI+, WNDCLASSEX, HWND, and show the window with just the default file name
 	// (abstraction)
-	//SVGReader::getInstance().init("sample.svg");
-	SVGReader::getInstance().init("test.svg");
+	SVGReader::getInstance().init("sample.svg");
 
 	// the main loop for processing messages
 	SVGReader::getInstance().messageLoop();
