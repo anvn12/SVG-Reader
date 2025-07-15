@@ -76,6 +76,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 		case IDM_ABOUT: // about in view
 			DialogBoxW(SVGReader::getInstance().hInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, DlgProc);
 			break;
+		case IDM_GUIDE: // guide in view
+			DialogBoxW(SVGReader::getInstance().hInstance, MAKEINTRESOURCE(IDD_GUIDE), hWnd, DlgProc);
+			break;
 
 			// open file in file menu bar
 		case ID_FILE_OPEN:
