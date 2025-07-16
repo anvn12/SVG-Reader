@@ -75,7 +75,6 @@
     <None Include="sample.svg">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="note.md" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVGReader.rc">

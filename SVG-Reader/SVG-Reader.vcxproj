@@ -174,7 +174,6 @@
     <Image Include="SVGReader.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="note.md" />
     <None Include="sample.svg" />
   </ItemGroup>
   <ItemGroup>
