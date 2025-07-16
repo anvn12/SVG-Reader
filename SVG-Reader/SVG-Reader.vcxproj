@@ -149,7 +149,6 @@
   <ItemGroup>
     <ClInclude Include="General.h" />
     <ClInclude Include="ProcessMain.h" />
-    <ClInclude Include="ProcessXML.h" />
     <ClInclude Include="rapidxml.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shape.h" />
@@ -161,7 +160,6 @@
     <ClCompile Include="General.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ProcessMain.cpp" />
-    <ClCompile Include="ProcessXML.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

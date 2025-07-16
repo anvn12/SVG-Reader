@@ -42,7 +42,6 @@
     <ClInclude Include="ProcessMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessXML.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SVGReader.cpp">
@@ -63,7 +62,6 @@
     <ClCompile Include="ProcessMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessXML.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
