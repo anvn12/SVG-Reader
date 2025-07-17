@@ -23,6 +23,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 	SVGReader::getInstance().setWinParams(hInstance, nCmdShow);
 
 
+	// ref: https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw?redirectedfrom=MSDN
 	// command line proc
 	LPWSTR* szArglist;
 	int nArgs;
