@@ -14,12 +14,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 					_In_ LPSTR lpCmdLine,
 					_In_ int nCmdShow) {
 
+
+	// set hInstance and nCmdShow before command line proc
+	//because if the command line takes no arguments, it will display
+	//to the screen and these 2 variables direct the screen
+	// 
 	// set the window parameters
 	SVGReader::getInstance().setWinParams(hInstance, nCmdShow);
 
-	LPWSTR* szArglist;
 
-	szArglist = CommandLineToArgvW(GetCommandLineW(), &nCmdShow);
+	// command line proc
+	LPWSTR* szArglist;
+	int nArgs;
+
+	szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
 	if (NULL == szArglist)
 	{
 		wprintf(L"CommandLineToArgvW failed\n");
@@ -27,7 +35,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 	}
 	
 	
-	if (nCmdShow != 2)
+	if (nArgs != 2)
 	{
 		SVGReader::getInstance().showCmdNoArgumentBox();
 		return -1;
