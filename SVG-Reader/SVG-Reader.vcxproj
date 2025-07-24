@@ -183,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="sample.svg" />
+    <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVGReader.rc" />
