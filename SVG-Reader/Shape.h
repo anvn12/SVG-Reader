@@ -22,6 +22,7 @@ public:
 	virtual VOID processAttribute(char* attributeName, char* attributeValue);
 
 	// each shape has distinct draw function -> pure virtual
+	// (abstract class)
 	virtual VOID draw(Graphics& graphics) const = 0;
 };
 
