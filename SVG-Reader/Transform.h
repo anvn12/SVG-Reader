@@ -7,7 +7,7 @@
 #include <string>
 using namespace std;
 
-enum TransformType {
+enum TransformType {    //de dinh nghia cac hang so co ten. Kiêu nhu la khi goi TRANSLATE thì no tu hieu la tinh tien...
     TRANSLATE,
     ROTATE,
     SCALE
