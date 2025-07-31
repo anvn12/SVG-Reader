@@ -125,7 +125,7 @@ public:
 
 struct PathCommand {
 	char type; // 'M', 'L', 'C', 'Z'
-	vector<Point2D> data;
+	vector<Point2D> data; //for x,y and control points
 };
 
 class SVGPath : public SVGShape {
@@ -137,6 +137,7 @@ public:
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) const override;
 	
+	VOID handleCommand(char cmd, const vector<float>& nums);
 };
 
 #endif

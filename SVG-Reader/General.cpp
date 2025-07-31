@@ -59,20 +59,4 @@ vector<PointF> parsePoints(const string& pointsStr) {
 }
 
 
-vector<Point2D> parsePathData(const string& d) {
-    vector<Point2D> points;
-    stringstream ss(d);
-    string token;
 
-    while (getline(ss, token, ' ')) {
-        if (token.empty()) continue;
-
-        size_t commaPos = token.find(',');
-        if (commaPos != string::npos) {
-            int x = stof(token.substr(0, commaPos));
-            int y = stof(token.substr(commaPos + 1));
-            points.push_back(Point2D(x, y));
-        }
-    }
-    return points;
-}
