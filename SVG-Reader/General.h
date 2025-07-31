@@ -32,20 +32,20 @@ public:
 
 class Point2D {
 private:
-	int x, y;
+	float x, y;
 
 public:
 	Point2D()
 		: x(0), y(0) {}
 
-	Point2D(int coorX, int coorY)
+	Point2D(float coorX, float coorY)
 		: x(coorX), y(coorY) {}
 
-	int getX() const { return x; }
-	int getY() const { return y; }
+	float getX() const { return x; }
+	float getY() const { return y; }
 	
-	void setX(int value) { x = value; }
-	void setY(int value) { y = value; }
+	void setX(float value) { x = value; }
+	void setY(float value) { y = value; }
 };
 
 
@@ -56,4 +56,5 @@ RGBColor textToRGB(char*);
 //help for reading poly points
 vector<PointF> parsePoints(const string& pointsStr);
 
+vector<Point2D> parsePathData(const string& d);
 #endif
