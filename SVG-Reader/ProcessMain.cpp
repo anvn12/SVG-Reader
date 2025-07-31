@@ -41,19 +41,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 			break;
 
 			// press arrow keys to move around
-		case VK_LEFT:
+		case VK_RIGHT:
 			SVGReader::getInstance().x -= 20;
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
-		case VK_UP:
+		case VK_DOWN:
 			SVGReader::getInstance().y -= 20;
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
-		case VK_RIGHT:
+		case VK_LEFT:
 			SVGReader::getInstance().x += 20;
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
-		case VK_DOWN:
+		case VK_UP:
 			SVGReader::getInstance().y += 20;
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
