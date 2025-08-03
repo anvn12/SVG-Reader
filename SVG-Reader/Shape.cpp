@@ -54,7 +54,7 @@ VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 	graphics.TranslateTransform(SVGReader::getInstance().getX() /* + transform X*/, SVGReader::getInstance().getY() /* + transform Y*/);
 	graphics.ScaleTransform(SVGReader::getInstance().getScale() /* + Scale X */ , SVGReader::getInstance().getScale()) /* + Scale Y */;
 	//graphics.RotateTransform(rotate transform);
-	graphics.RotateTransform(45);
+	//graphics.RotateTransform(45);
 }
 
 
