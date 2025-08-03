@@ -35,8 +35,8 @@ RGBColor textToRGB(char* text) {
 }
 
 
-vector<PointF> parsePoints(const string& pointsStr) {
-    vector<PointF> points;
+vector<Gdiplus::PointF> parsePoints(const string& pointsStr) {
+    vector<Gdiplus::PointF> points;
     istringstream iss(pointsStr);
     if (pointsStr.empty()) return points;
 
