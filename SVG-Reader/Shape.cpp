@@ -266,6 +266,8 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGLine::draw(Graphics& graphics) {
+	SVGShape::setGraphicsTransform(graphics);
+
 	// type cast to 255
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
@@ -275,33 +277,6 @@ VOID SVGLine::draw(Graphics& graphics) {
 				stroke.getBlue()), 
 				strokeWidth);
 
-	/*float x1 = position1.getX() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getX();
-
-	float y1 = position1.getY() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getY();
-
-	float x2 = position2.getX() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getX();
-
-	float y2 = position2.getY() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getY();*/
-	//float x1 = position1.getX(), y1 = position1.getY();
-	//float x2 = position2.getX(), y2 = position2.getY();
-
-	//transform.applyTransform(x1, y1);
-	//transform.applyTransform(x2, y2);
-
-	//x1 = x1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	//y1 = y1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-	//x2 = x2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	//y2 = y2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-
-
-	SVGShape::setGraphicsTransform(graphics);
-
-
-	//graphics.DrawLine(&pen, x1, y1, x2, y2);
 	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
 
 	graphics.ResetTransform();
@@ -326,16 +301,18 @@ VOID SVGPolyline::draw(Graphics& graphics) {
         return; 
 	}
 
+	SVGShape::setGraphicsTransform(graphics);
+
 	// type cast to 255
     //int alphaFill = static_cast<int>(fillOpacity * 255);
     //int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
-	for (auto& pt : pointArray) {
+	/*for (auto& pt : pointArray) {
 		float x = pt.X, y = pt.Y;
-		transform.applyTransform(x, y);
+
 		pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
 		pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-	}
+	}*/
 
     SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
@@ -346,19 +323,24 @@ VOID SVGPolyline::draw(Graphics& graphics) {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
+	// fill
+	/*if (fillOpacity > 0 && pointArray.size() >= 3) {
+		graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
+	}*/
 
-    // t quen fill
-    if (fillOpacity > 0 && pointArray.size() >= 3) {
-        graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
-    }
+	/*for (size_t i = 0; i < pointArray.size() - 1; i++) {
+		graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
+	}*/
 
-    for (size_t i = 0; i < pointArray.size() - 1; i++) {
-        graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
-    }
-    
-     graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
+	// fill
+	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
+
+	// draw
+	graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
+
+	graphics.ResetTransform();
 }
 
 
@@ -380,12 +362,12 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 		return;
 	}
 
-	for (auto& pt : pointArray) {
-		float x = pt.X, y = pt.Y;
-		transform.applyTransform(x, y);
-		pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-		pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-	}
+	//for (auto& pt : pointArray) {
+	//	float x = pt.X, y = pt.Y;
+	//	transform.applyTransform(x, y);
+	//	pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	//	pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	//}
 
 
 	// type cast to 255
@@ -401,13 +383,17 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
+
+	SVGShape::setGraphicsTransform(graphics);
 	//fill 
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
 
 	//stroke oultine
 	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
+
+	graphics.ResetTransform();
 }
 
 
