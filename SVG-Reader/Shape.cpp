@@ -325,20 +325,21 @@ VOID SVGPolyline::draw(Graphics& graphics) {
 				stroke.getBlue()), 
 				strokeWidth);
 
-	// fill
+
 	/*if (fillOpacity > 0 && pointArray.size() >= 3) {
 		graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
-	}*/
+	}
 
-	/*for (size_t i = 0; i < pointArray.size() - 1; i++) {
+	for (size_t i = 0; i < pointArray.size() - 1; i++) {
 		graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
 	}*/
 
+
 	// fill
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
-
+	
 	// draw
-	graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
+	graphics.DrawLines(&pen, pointArray.data(), pointArray.size());
 
 	graphics.ResetTransform();
 }

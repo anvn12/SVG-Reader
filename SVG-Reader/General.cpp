@@ -43,16 +43,8 @@ vector<PointF> parsePoints(const string& pointsStr) {
     char ch;
     float x, y;
 
-    const SVGReader& reader = SVGReader::getInstance();
-    float offsetX = reader.getX(); 
-    float offsetY = reader.getY();
-    float scale = reader.getScale();
-
     while (iss >> x >> ch >> y) {
-        points.emplace_back(
-            x * scale + offsetX,
-            y * scale + offsetY
-        );
+        points.emplace_back(x, y);
         while (iss.peek() == ' ' || iss.peek() == ',') iss.ignore();
     }
     return points;
