@@ -27,6 +27,7 @@ public:
 	// (abstract class)
 	virtual VOID draw(Graphics& graphics) = 0;
 
+	// set transform attribute: translate, rotate, scale
 	VOID setGraphicsTransform(Graphics& graphics);
 };
 

@@ -48,6 +48,7 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 
 }
 
+// set transform attribute: translate, rotate, scale
 VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 	// + them transform attribute cua svg
 	graphics.TranslateTransform(SVGReader::getInstance().getX() /* + transform X*/, SVGReader::getInstance().getY() /* + transform Y*/);
@@ -71,39 +72,20 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
+	// set transform attribute: translate, rotate, scale
+	SVGShape::setGraphicsTransform(graphics);
+
 	// argb color
 	Pen pen(Color(255,
 			stroke.getRed(),
 			stroke.getGreen(),
 			stroke.getBlue()),
-			strokeWidth * SVGReader::getInstance().getScale());
+			strokeWidth);
 
 	SolidBrush solidBrush(Color((int)fillOpacity,
 						fill.getRed(),
 						fill.getGreen(),
 						fill.getBlue()));
-
-	/*float x = position.getX() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getX();
-
-	float y = position.getY() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getY();*/
-	//float x = position.getX();
-	//float y = position.getY();
-	//transform.applyTransform(x, y);
-
-	//graphics.TranslateTransform(SVGReader::getInstance().getX(), SVGReader::getInstance().getY());
-	//x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	//y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-
-
-	//graphics.ScaleTransform(SVGReader::getInstance().getScale(), SVGReader::getInstance().getScale());
-
-	//RectF object = RectF(x, y,
-	//	width * SVGReader::getInstance().getScale(),
-	//	height * SVGReader::getInstance().getScale());
-
-	SVGShape::setGraphicsTransform(graphics);
 
 
 	RectF object = RectF(position.getX(), position.getY(),
@@ -113,6 +95,7 @@ VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 
 	graphics.DrawRectangle(&pen, object);
 
+	// reset graphics after drawing
 	graphics.ResetTransform();
 }
 
@@ -133,10 +116,13 @@ VOID SVGText::setContent(char* attributeValue) {
 }
 
 VOID SVGText::draw(Graphics& graphics) {
+	SVGShape::setGraphicsTransform(graphics);
+
 	SolidBrush brush(Color(255,
 						fill.getRed(),
 						fill.getGreen(),
 						fill.getBlue()));
+
 
 	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
 
@@ -145,27 +131,12 @@ VOID SVGText::draw(Graphics& graphics) {
 
 
 	Font font(&fontFamily,
-			fontSize * SVGReader::getInstance().getScale(),
+			fontSize,
 			Gdiplus::FontStyleRegular,
 			Gdiplus::UnitPixel);
 
-	/*float x = position.getX() * SVGReader::getInstance().getScale() 
-				+ SVGReader::getInstance().getX();
 
-	float y = position.getY() * SVGReader::getInstance().getScale() 
-				+ SVGReader::getInstance().getY();*/
-	float x = position.getX();
-	float y = position.getY();
-	transform.applyTransform(x, y);
-
-	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-
-
-
-	PointF drawPoint(x, y);
-
-	//PointF drawPoint(position.getX(), position.getY());
+	PointF drawPoint(position.getX(), position.getY());
 
 
 	// can dong cho text
@@ -179,6 +150,8 @@ VOID SVGText::draw(Graphics& graphics) {
 	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
 	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+
+	graphics.ResetTransform();
 }
 
 
@@ -203,6 +176,9 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGEllipse::draw(Graphics & graphics) {
+
+	SVGShape::setGraphicsTransform(graphics);
+
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
@@ -215,29 +191,15 @@ VOID SVGEllipse::draw(Graphics & graphics) {
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
-	float scaledRx = rx * SVGReader::getInstance().getScale();
-	float scaledRy = ry * SVGReader::getInstance().getScale();
-
-	/*float x = position.getX() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getX();
-
-	float y = position.getY() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getY();*/
-	float x = position.getX();
-	float y = position.getY();
-	transform.applyTransform(x, y);
-
-	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-
-
-	RectF rectF(x - scaledRx, y - scaledRy, 2 * scaledRx, 2 * scaledRy);
+	RectF rectF(position.getX() - rx, position.getY() - ry, 2 * rx, 2 * ry);
 
 
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
+
+	graphics.ResetTransform();
 }
 
 
@@ -254,6 +216,8 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGCircle::draw(Graphics& graphics) {
+	SVGShape::setGraphicsTransform(graphics);
+
 	//// type cast to 255
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
@@ -267,24 +231,17 @@ VOID SVGCircle::draw(Graphics& graphics) {
 		stroke.getRed(),
 		stroke.getGreen(),
 		stroke.getBlue()),
-		strokeWidth * SVGReader::getInstance().getScale());
+		strokeWidth);
 
-	float scaledR = rx * SVGReader::getInstance().getScale();
 
-	/*float x = position.getX() * SVGReader::getInstance().getScale()
-		+ SVGReader::getInstance().getX();
+	RectF rectF(position.getX() - rx, position.getY() - rx, 2 * rx, 2 * rx);
 
-	float y = position.getY() * SVGReader::getInstance().getScale()
-		+ SVGReader::getInstance().getY();*/
-	float x = position.getX();
-	float y = position.getY();
-	transform.applyTransform(x, y);
 
-	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	graphics.FillEllipse(&brush, rectF);
+	graphics.DrawEllipse(&pen, rectF);
 
-	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
-	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
+
+	graphics.ResetTransform();
 }
 
 
@@ -316,7 +273,7 @@ VOID SVGLine::draw(Graphics& graphics) {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
 	/*float x1 = position1.getX() * SVGReader::getInstance().getScale() 
 					+ SVGReader::getInstance().getX();
@@ -329,23 +286,25 @@ VOID SVGLine::draw(Graphics& graphics) {
 
 	float y2 = position2.getY() * SVGReader::getInstance().getScale() 
 					+ SVGReader::getInstance().getY();*/
-	float x1 = position1.getX(), y1 = position1.getY();
-	float x2 = position2.getX(), y2 = position2.getY();
+	//float x1 = position1.getX(), y1 = position1.getY();
+	//float x2 = position2.getX(), y2 = position2.getY();
 
-	transform.applyTransform(x1, y1);
-	transform.applyTransform(x2, y2);
+	//transform.applyTransform(x1, y1);
+	//transform.applyTransform(x2, y2);
 
-	x1 = x1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	y1 = y1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-	x2 = x2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	y2 = y2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-
-
+	//x1 = x1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	//y1 = y1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	//x2 = x2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	//y2 = y2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
 
 
-	graphics.DrawLine(&pen, x1, y1, x2, y2);
+	SVGShape::setGraphicsTransform(graphics);
 
-	//graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
+
+	//graphics.DrawLine(&pen, x1, y1, x2, y2);
+	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
+
+	graphics.ResetTransform();
 }
 
 
