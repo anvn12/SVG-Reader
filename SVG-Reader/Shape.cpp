@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shape.h"
 #include "SVGReader.h"
+#include "Transform.h"
+
 //#include "ProcessXML.h"
 using namespace std;
 using namespace Gdiplus;
@@ -35,6 +37,10 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		// cast to 255 in alpha (argb)
 		fillOpacity = atof(attributeValue) * 255;
 	}
+	else if (strcmp(attributeName, "transform") == 0) {
+		transform.parseTransform(attributeValue);
+	}
+
 }
 
 
@@ -42,10 +48,10 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 //SVG-Rectangle
 VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "width") == 0) {
-		width = atoi(attributeValue);
+		width = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "height") == 0) {
-		height = atoi(attributeValue);
+		height = atof(attributeValue);
 	}
 	else {
 		SVGShape::processAttribute(attributeName, attributeValue);
@@ -65,13 +71,19 @@ VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) const {
 						fill.getGreen(),
 						fill.getBlue()));
 
-	float x = position.getX() * SVGReader::getInstance().getScale()
+	/*float x = position.getX() * SVGReader::getInstance().getScale()
 				+ SVGReader::getInstance().getX();
 
 	float y = position.getY() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getY();
+				+ SVGReader::getInstance().getY();*/
+	float x = position.getX();
+	float y = position.getY();
+	transform.applyTransform(x, y);
 
-	Rect object = Rect(x, y,
+	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+
+	RectF object = RectF(x, y,
 						width * SVGReader::getInstance().getScale(),
 						height * SVGReader::getInstance().getScale());
 
@@ -112,11 +124,18 @@ VOID SVGText::draw(Graphics& graphics) const {
 			Gdiplus::FontStyleRegular,
 			Gdiplus::UnitPixel);
 
-	float x = position.getX() * SVGReader::getInstance().getScale() 
+	/*float x = position.getX() * SVGReader::getInstance().getScale() 
 				+ SVGReader::getInstance().getX();
 
 	float y = position.getY() * SVGReader::getInstance().getScale() 
-				+ SVGReader::getInstance().getY();
+				+ SVGReader::getInstance().getY();*/
+	float x = position.getX();
+	float y = position.getY();
+	transform.applyTransform(x, y);
+
+	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+
 
 
 	PointF drawPoint(x, y);
@@ -176,11 +195,18 @@ VOID SVGEllipse::draw(Graphics & graphics) const {
 	float scaledRx = rx * SVGReader::getInstance().getScale();
 	float scaledRy = ry * SVGReader::getInstance().getScale();
 
-	float x = position.getX() * SVGReader::getInstance().getScale()
+	/*float x = position.getX() * SVGReader::getInstance().getScale()
 				+ SVGReader::getInstance().getX();
 
 	float y = position.getY() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getY();
+				+ SVGReader::getInstance().getY();*/
+	float x = position.getX();
+	float y = position.getY();
+	transform.applyTransform(x, y);
+
+	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+
 
 	RectF rectF(x - scaledRx, y - scaledRy, 2 * scaledRx, 2 * scaledRy);
 
@@ -220,11 +246,17 @@ VOID SVGCircle::draw(Graphics& graphics) const {
 
 	float scaledR = rx * SVGReader::getInstance().getScale();
 
-	float x = position.getX() * SVGReader::getInstance().getScale()
+	/*float x = position.getX() * SVGReader::getInstance().getScale()
 		+ SVGReader::getInstance().getX();
 
 	float y = position.getY() * SVGReader::getInstance().getScale()
-		+ SVGReader::getInstance().getY();
+		+ SVGReader::getInstance().getY();*/
+	float x = position.getX();
+	float y = position.getY();
+	transform.applyTransform(x, y);
+
+	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
 
 	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
 	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
@@ -235,16 +267,16 @@ VOID SVGCircle::draw(Graphics& graphics) const {
 //SVG-Line
 VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x1") == 0) {
-		position1.setX(atoi(attributeValue));
+		position1.setX(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "x2") == 0) {
-		position2.setX(atoi(attributeValue));
+		position2.setX(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "y1") == 0) {
-		position1.setY(atoi(attributeValue));
+		position1.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "y2") == 0) {
-		position2.setY(atoi(attributeValue));
+		position2.setY(atof(attributeValue));
 	}
 	else {
 		SVGShape::processAttribute(attributeName, attributeValue);
@@ -261,7 +293,7 @@ VOID SVGLine::draw(Graphics& graphics) const {
 				stroke.getBlue()), 
 				strokeWidth * SVGReader::getInstance().getScale());
 
-	float x1 = position1.getX() * SVGReader::getInstance().getScale() 
+	/*float x1 = position1.getX() * SVGReader::getInstance().getScale() 
 					+ SVGReader::getInstance().getX();
 
 	float y1 = position1.getY() * SVGReader::getInstance().getScale() 
@@ -271,7 +303,18 @@ VOID SVGLine::draw(Graphics& graphics) const {
 					+ SVGReader::getInstance().getX();
 
 	float y2 = position2.getY() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getY();
+					+ SVGReader::getInstance().getY();*/
+	float x1 = position1.getX(), y1 = position1.getY();
+	float x2 = position2.getX(), y2 = position2.getY();
+
+	transform.applyTransform(x1, y1);
+	transform.applyTransform(x2, y2);
+
+	x1 = x1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	y1 = y1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	x2 = x2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	y2 = y2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+
 
 
 
@@ -303,6 +346,13 @@ VOID SVGPolyline::draw(Graphics& graphics) const {
     //int alphaFill = static_cast<int>(fillOpacity * 255);
     //int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
+	for (auto& pt : pointArray) {
+		float x = pt.X, y = pt.Y;
+		transform.applyTransform(x, y);
+		pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+		pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	}
+
     SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
@@ -324,7 +374,7 @@ VOID SVGPolyline::draw(Graphics& graphics) const {
         graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
     }
     
-    // graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
+     graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
 }
 
 
@@ -345,6 +395,14 @@ VOID SVGPolygon::draw(Graphics& graphics) const {
 	if (pointArray.size() < 3) {
 		return;
 	}
+
+	for (auto& pt : pointArray) {
+		float x = pt.X, y = pt.Y;
+		transform.applyTransform(x, y);
+		pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+		pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	}
+
 
 	// type cast to 255
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
@@ -381,6 +439,8 @@ VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
 	else {
 		return;
 	}
+
+	commands.push_back(command);
 }
 
 VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
@@ -422,5 +482,88 @@ VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
 	}
 	else {
 		SVGShape::processAttribute(attributeName, attributeValue);
+	}
+}
+VOID SVGPath::draw(Graphics& graphics) const {
+	if (commands.empty()) return;
+
+	GraphicsPath path;
+	Point2D currentPos(0, 0);
+	Point2D pathStart(0, 0);
+
+	for (const auto& cmd : commands) {
+		switch (cmd.type) {
+		case 'M': // Move absolute
+			if (!cmd.data.empty()) {
+				currentPos = cmd.data[0];
+				pathStart = currentPos;
+			}
+			break;
+		case 'm': // Move relative
+			if (!cmd.data.empty()) {
+				currentPos.setX(currentPos.getX() + cmd.data[0].getX());
+				currentPos.setY(currentPos.getY() + cmd.data[0].getY());
+				pathStart = currentPos;
+			}
+			break;
+		case 'L': // Line absolute
+			for (const auto& point : cmd.data) {
+				float x1 = currentPos.getX(), y1 = currentPos.getY();
+				float x2 = point.getX(), y2 = point.getY();
+
+				transform.applyTransform(x1, y1);
+				transform.applyTransform(x2, y2);
+
+				x1 = x1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+				y1 = y1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+				x2 = x2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+				y2 = y2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+
+				path.AddLine(x1, y1, x2, y2);
+				currentPos = point;
+			}
+			break;
+		case 'l': // Line relative
+			for (const auto& point : cmd.data) {
+				float x1 = currentPos.getX(), y1 = currentPos.getY();
+				currentPos.setX(currentPos.getX() + point.getX());
+				currentPos.setY(currentPos.getY() + point.getY());
+				float x2 = currentPos.getX(), y2 = currentPos.getY();
+
+				transform.applyTransform(x1, y1);
+				transform.applyTransform(x2, y2);
+
+				x1 = x1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+				y1 = y1 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+				x2 = x2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+				y2 = y2 * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+
+				path.AddLine(x1, y1, x2, y2);
+			}
+			break;
+		case 'Z':
+		case 'z': // Close path
+			path.CloseFigure();
+			currentPos = pathStart;
+			break;
+		}
+	}
+
+	SolidBrush brush(Color((BYTE)fillOpacity,
+		fill.getRed(),
+		fill.getGreen(),
+		fill.getBlue()));
+
+	Pen pen(Color((BYTE)strokeOpacity,
+		stroke.getRed(),
+		stroke.getGreen(),
+		stroke.getBlue()),
+		strokeWidth * SVGReader::getInstance().getScale());
+
+	if (fillOpacity > 0) {
+		graphics.FillPath(&brush, &path);
+	}
+	if (strokeWidth > 0 && strokeOpacity > 0) {
+		graphics.DrawPath(&pen, &path);
 	}
 }

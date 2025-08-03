@@ -3,6 +3,7 @@
 #pragma once
 
 #include "General.h"
+#include "Transform.h"
 #include <sstream>
 
 
@@ -10,6 +11,7 @@
 // polymorphism để mỗi hàm trong class làm việc khác nhau
 class SVGShape {
 protected:
+	Transform transform;
 	Point2D position;
 	RGBColor stroke, fill;
 	float strokeWidth, strokeOpacity, fillOpacity;
@@ -135,6 +137,7 @@ public:
 	SVGPath() : SVGShape() {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
+
 	VOID draw(Graphics& graphics) const override;
 	
 	VOID handleCommand(char cmd, const vector<float>& nums);
