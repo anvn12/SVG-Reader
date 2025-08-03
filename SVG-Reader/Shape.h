@@ -25,7 +25,9 @@ public:
 
 	// each shape has distinct draw function -> pure virtual
 	// (abstract class)
-	virtual VOID draw(Graphics& graphics) const = 0;
+	virtual VOID draw(Graphics& graphics) = 0;
+
+	VOID setGraphicsTransform(Graphics& graphics);
 };
 
 
@@ -38,7 +40,7 @@ public:
 	SVGRectangle() : SVGShape(), width(0), height(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics &graphics) const override;
+	VOID draw(Graphics &graphics) override;
 };
 
 
@@ -53,7 +55,7 @@ public:
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID setContent(char* attributeValue);
 
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -65,7 +67,7 @@ public:
 	SVGEllipse() : SVGShape(), rx(0), ry(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -77,7 +79,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -90,7 +92,7 @@ public:
 	SVGLine() : SVGShape(), position1(), position2() {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -105,7 +107,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -122,7 +124,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 struct PathCommand {
@@ -138,7 +140,7 @@ public:
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 	
 	VOID handleCommand(char cmd, const vector<float>& nums);
 };

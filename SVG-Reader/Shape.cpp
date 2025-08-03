@@ -39,10 +39,22 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	}
 	else if (strcmp(attributeName, "transform") == 0) {
 		transform.parseTransform(attributeValue);
+	/*	float tempX = position.getX();
+		float tempY = position.getY();
+		transform.applyTransform(tempX, tempY);
+		position.setX(tempX);
+		position.setY(tempY);*/
 	}
 
 }
 
+VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
+	// + them transform attribute cua svg
+	graphics.TranslateTransform(SVGReader::getInstance().getX() /* + transform X*/, SVGReader::getInstance().getY() /* + transform Y*/);
+	graphics.ScaleTransform(SVGReader::getInstance().getScale() /* + Scale X */ , SVGReader::getInstance().getScale()) /* + Scale Y */;
+	//graphics.RotateTransform(rotate transform);
+	//graphics.RotateTransform(45);
+}
 
 
 //SVG-Rectangle
@@ -58,7 +70,7 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) const {
+VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 	// argb color
 	Pen pen(Color(255,
 			stroke.getRed(),
@@ -76,19 +88,32 @@ VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) const {
 
 	float y = position.getY() * SVGReader::getInstance().getScale()
 				+ SVGReader::getInstance().getY();*/
-	float x = position.getX();
-	float y = position.getY();
-	transform.applyTransform(x, y);
+	//float x = position.getX();
+	//float y = position.getY();
+	//transform.applyTransform(x, y);
 
-	x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	//graphics.TranslateTransform(SVGReader::getInstance().getX(), SVGReader::getInstance().getY());
+	//x = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	//y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
 
-	RectF object = RectF(x, y,
-						width * SVGReader::getInstance().getScale(),
-						height * SVGReader::getInstance().getScale());
 
+	//graphics.ScaleTransform(SVGReader::getInstance().getScale(), SVGReader::getInstance().getScale());
+
+	//RectF object = RectF(x, y,
+	//	width * SVGReader::getInstance().getScale(),
+	//	height * SVGReader::getInstance().getScale());
+
+	SVGShape::setGraphicsTransform(graphics);
+
+
+	RectF object = RectF(position.getX(), position.getY(),
+						width, height);
 	graphics.FillRectangle(&solidBrush, object);
+
+
 	graphics.DrawRectangle(&pen, object);
+
+	graphics.ResetTransform();
 }
 
 
@@ -107,7 +132,7 @@ VOID SVGText::setContent(char* attributeValue) {
 	content = attributeValue;
 }
 
-VOID SVGText::draw(Graphics& graphics) const {
+VOID SVGText::draw(Graphics& graphics) {
 	SolidBrush brush(Color(255,
 						fill.getRed(),
 						fill.getGreen(),
@@ -177,7 +202,7 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGEllipse::draw(Graphics & graphics) const {
+VOID SVGEllipse::draw(Graphics & graphics) {
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
@@ -228,7 +253,7 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGCircle::draw(Graphics& graphics) const {
+VOID SVGCircle::draw(Graphics& graphics) {
 	//// type cast to 255
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
@@ -283,7 +308,7 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGLine::draw(Graphics& graphics) const {
+VOID SVGLine::draw(Graphics& graphics) {
 	// type cast to 255
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
@@ -335,7 +360,7 @@ VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGPolyline::draw(Graphics& graphics) const {
+VOID SVGPolyline::draw(Graphics& graphics) {
     vector<PointF> pointArray = parsePoints(points);
 
 	if (pointArray.size() < 2) {
@@ -389,7 +414,7 @@ VOID SVGPolygon::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGPolygon::draw(Graphics& graphics) const {
+VOID SVGPolygon::draw(Graphics& graphics) {
 	vector<PointF> pointArray = parsePoints(points);
 
 	if (pointArray.size() < 3) {
@@ -484,7 +509,7 @@ VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
 		SVGShape::processAttribute(attributeName, attributeValue);
 	}
 }
-VOID SVGPath::draw(Graphics& graphics) const {
+VOID SVGPath::draw(Graphics& graphics) {
 	if (commands.empty()) return;
 
 	GraphicsPath path;

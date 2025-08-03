@@ -23,35 +23,39 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 	//because if the command line takes no arguments, it will display
 	//to the screen by these 2 variables 
 	// 
-	// set the window parameters
+	//// set the window parameters
 	SVGReader::getInstance().setWinParams(hInstance, nCmdShow);
 
-	// if launch by MSVS (not by command line), it shows the "sample.svg" file as default file name
 
-	// ref: https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw?redirectedfrom=MSDN
-	// command line proc
-	LPWSTR* szArglist;
-	int nArgs;
+	//=======================
+	//// ref: https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw?redirectedfrom=MSDN
+	//// command line proc
+	//LPWSTR* szArglist;
+	//int nArgs;
 
-	szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
-	if (NULL == szArglist) {
-		wprintf(L"CommandLineToArgvW failed\n");
-		return 0;
-	}
-	
-	if (nArgs != 2)	{
-		SVGReader::getInstance().showCmdNoArgumentBox();
-		return -1;
-	}
+	//szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+	//if (NULL == szArglist) {
+	//	wprintf(L"CommandLineToArgvW failed\n");
+	//	return 0;
+	//}
+	//
+	//if (nArgs != 2)	{
+	//	SVGReader::getInstance().showCmdNoArgumentBox();
+	//	return -1;
+	//}
 
-	wstring ws(szArglist[1]);	// buffer variable to convert wstring to string
-	string filename = string(ws.begin(), ws.end());
+	//wstring ws(szArglist[1]);	// buffer variable to convert wstring to string
+	//string filename = string(ws.begin(), ws.end());
 
-	// Free memory allocated for CommandLineToArgvW arguments because the file name is passed to 
-	LocalFree(szArglist);
+	//// Free memory allocated for CommandLineToArgvW arguments because the file name is passed to 
+	//LocalFree(szArglist);
 
 	// init the program with file name given in command line
-	SVGReader::getInstance().init(filename);
+	//SVGReader::getInstance().init(filename);
+	//=======================
+
+
+	SVGReader::getInstance().init("sample.svg");
 
 	// the main loop for processing messages
 	SVGReader::getInstance().messageLoop();
