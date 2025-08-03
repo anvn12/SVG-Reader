@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shape.h"
 #include "SVGReader.h"
+#include "Transform.h"
+
 //#include "ProcessXML.h"
 using namespace std;
 using namespace Gdiplus;
@@ -35,48 +37,66 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		// cast to 255 in alpha (argb)
 		fillOpacity = atof(attributeValue) * 255;
 	}
+	else if (strcmp(attributeName, "transform") == 0) {
+		transform.parseTransform(attributeValue);
+	/*	float tempX = position.getX();
+		float tempY = position.getY();
+		transform.applyTransform(tempX, tempY);
+		position.setX(tempX);
+		position.setY(tempY);*/
+	}
+
 }
 
+// set transform attribute: translate, rotate, scale
+VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
+	// + them transform attribute cua svg
+	graphics.TranslateTransform(SVGReader::getInstance().getX() /* + transform X*/, SVGReader::getInstance().getY() /* + transform Y*/);
+	graphics.ScaleTransform(SVGReader::getInstance().getScale() /* + Scale X */ , SVGReader::getInstance().getScale()) /* + Scale Y */;
+	//graphics.RotateTransform(rotate transform);
+	//graphics.RotateTransform(45);
+}
 
 
 //SVG-Rectangle
 VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "width") == 0) {
-		width = atoi(attributeValue);
+		width = atof(attributeValue);
 	}
 	else if (strcmp(attributeName, "height") == 0) {
-		height = atoi(attributeValue);
+		height = atof(attributeValue);
 	}
 	else {
 		SVGShape::processAttribute(attributeName, attributeValue);
 	}
 }
 
-VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) const {
+VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
+	// set transform attribute: translate, rotate, scale
+	SVGShape::setGraphicsTransform(graphics);
+
 	// argb color
 	Pen pen(Color(255,
 			stroke.getRed(),
 			stroke.getGreen(),
 			stroke.getBlue()),
-			strokeWidth * SVGReader::getInstance().getScale());
+			strokeWidth);
 
 	SolidBrush solidBrush(Color((int)fillOpacity,
 						fill.getRed(),
 						fill.getGreen(),
 						fill.getBlue()));
 
-	float x = position.getX() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getX();
 
-	float y = position.getY() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getY();
-
-	Rect object = Rect(x, y,
-						width * SVGReader::getInstance().getScale(),
-						height * SVGReader::getInstance().getScale());
-
+	RectF object = RectF(position.getX(), position.getY(),
+						width, height);
 	graphics.FillRectangle(&solidBrush, object);
+
+
 	graphics.DrawRectangle(&pen, object);
+
+	// reset graphics after drawing
+	graphics.ResetTransform();
 }
 
 
@@ -95,11 +115,14 @@ VOID SVGText::setContent(char* attributeValue) {
 	content = attributeValue;
 }
 
-VOID SVGText::draw(Graphics& graphics) const {
+VOID SVGText::draw(Graphics& graphics) {
+	SVGShape::setGraphicsTransform(graphics);
+
 	SolidBrush brush(Color(255,
 						fill.getRed(),
 						fill.getGreen(),
 						fill.getBlue()));
+
 
 	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
 
@@ -108,20 +131,12 @@ VOID SVGText::draw(Graphics& graphics) const {
 
 
 	Font font(&fontFamily,
-			fontSize * SVGReader::getInstance().getScale(),
+			fontSize,
 			Gdiplus::FontStyleRegular,
 			Gdiplus::UnitPixel);
 
-	float x = position.getX() * SVGReader::getInstance().getScale() 
-				+ SVGReader::getInstance().getX();
 
-	float y = position.getY() * SVGReader::getInstance().getScale() 
-				+ SVGReader::getInstance().getY();
-
-
-	PointF drawPoint(x, y);
-
-	//PointF drawPoint(position.getX(), position.getY());
+	PointF drawPoint(position.getX(), position.getY());
 
 
 	// can dong cho text
@@ -135,6 +150,8 @@ VOID SVGText::draw(Graphics& graphics) const {
 	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
 	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+
+	graphics.ResetTransform();
 }
 
 
@@ -158,7 +175,10 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGEllipse::draw(Graphics & graphics) const {
+VOID SVGEllipse::draw(Graphics & graphics) {
+
+	SVGShape::setGraphicsTransform(graphics);
+
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
@@ -171,22 +191,15 @@ VOID SVGEllipse::draw(Graphics & graphics) const {
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
-	float scaledRx = rx * SVGReader::getInstance().getScale();
-	float scaledRy = ry * SVGReader::getInstance().getScale();
-
-	float x = position.getX() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getX();
-
-	float y = position.getY() * SVGReader::getInstance().getScale()
-				+ SVGReader::getInstance().getY();
-
-	RectF rectF(x - scaledRx, y - scaledRy, 2 * scaledRx, 2 * scaledRy);
+	RectF rectF(position.getX() - rx, position.getY() - ry, 2 * rx, 2 * ry);
 
 
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
+
+	graphics.ResetTransform();
 }
 
 
@@ -202,7 +215,9 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGCircle::draw(Graphics& graphics) const {
+VOID SVGCircle::draw(Graphics& graphics) {
+	SVGShape::setGraphicsTransform(graphics);
+
 	//// type cast to 255
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
@@ -216,18 +231,17 @@ VOID SVGCircle::draw(Graphics& graphics) const {
 		stroke.getRed(),
 		stroke.getGreen(),
 		stroke.getBlue()),
-		strokeWidth * SVGReader::getInstance().getScale());
+		strokeWidth);
 
-	float scaledR = rx * SVGReader::getInstance().getScale();
 
-	float x = position.getX() * SVGReader::getInstance().getScale()
-		+ SVGReader::getInstance().getX();
+	RectF rectF(position.getX() - rx, position.getY() - rx, 2 * rx, 2 * rx);
 
-	float y = position.getY() * SVGReader::getInstance().getScale()
-		+ SVGReader::getInstance().getY();
 
-	graphics.FillEllipse(&brush, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
-	graphics.DrawEllipse(&pen, x - scaledR, y - scaledR, 2 * scaledR, 2 * scaledR);
+	graphics.FillEllipse(&brush, rectF);
+	graphics.DrawEllipse(&pen, rectF);
+
+
+	graphics.ResetTransform();
 }
 
 
@@ -235,23 +249,25 @@ VOID SVGCircle::draw(Graphics& graphics) const {
 //SVG-Line
 VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x1") == 0) {
-		position1.setX(atoi(attributeValue));
+		position1.setX(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "x2") == 0) {
-		position2.setX(atoi(attributeValue));
+		position2.setX(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "y1") == 0) {
-		position1.setY(atoi(attributeValue));
+		position1.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "y2") == 0) {
-		position2.setY(atoi(attributeValue));
+		position2.setY(atof(attributeValue));
 	}
 	else {
 		SVGShape::processAttribute(attributeName, attributeValue);
 	}
 }
 
-VOID SVGLine::draw(Graphics& graphics) const {
+VOID SVGLine::draw(Graphics& graphics) {
+	SVGShape::setGraphicsTransform(graphics);
+
 	// type cast to 255
 	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
 
@@ -259,25 +275,11 @@ VOID SVGLine::draw(Graphics& graphics) const {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
-	float x1 = position1.getX() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getX();
+	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
 
-	float y1 = position1.getY() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getY();
-
-	float x2 = position2.getX() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getX();
-
-	float y2 = position2.getY() * SVGReader::getInstance().getScale() 
-					+ SVGReader::getInstance().getY();
-
-
-
-	graphics.DrawLine(&pen, x1, y1, x2, y2);
-
-	//graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
+	graphics.ResetTransform();
 }
 
 
@@ -292,16 +294,25 @@ VOID SVGPolyline::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGPolyline::draw(Graphics& graphics) const {
+VOID SVGPolyline::draw(Graphics& graphics) {
     vector<PointF> pointArray = parsePoints(points);
 
 	if (pointArray.size() < 2) {
         return; 
 	}
 
+	SVGShape::setGraphicsTransform(graphics);
+
 	// type cast to 255
     //int alphaFill = static_cast<int>(fillOpacity * 255);
     //int alphaStroke = static_cast<int>(strokeOpacity * 255);
+
+	/*for (auto& pt : pointArray) {
+		float x = pt.X, y = pt.Y;
+
+		pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+		pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	}*/
 
     SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
@@ -312,19 +323,25 @@ VOID SVGPolyline::draw(Graphics& graphics) const {
 				stroke.getRed(), 
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
 
-    // t quen fill
-    if (fillOpacity > 0 && pointArray.size() >= 3) {
-        graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
-    }
+	/*if (fillOpacity > 0 && pointArray.size() >= 3) {
+		graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
+	}
 
-    for (size_t i = 0; i < pointArray.size() - 1; i++) {
-        graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
-    }
-    
-    // graphics.DrawLines(&pen, pointArray.data(), pointArray.size()); ////co the dung cai nay?
+	for (size_t i = 0; i < pointArray.size() - 1; i++) {
+		graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
+	}*/
+
+
+	// fill
+	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
+	
+	// draw
+	graphics.DrawLines(&pen, pointArray.data(), pointArray.size());
+
+	graphics.ResetTransform();
 }
 
 
@@ -339,12 +356,20 @@ VOID SVGPolygon::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGPolygon::draw(Graphics& graphics) const {
+VOID SVGPolygon::draw(Graphics& graphics) {
 	vector<PointF> pointArray = parsePoints(points);
 
 	if (pointArray.size() < 3) {
 		return;
 	}
+
+	//for (auto& pt : pointArray) {
+	//	float x = pt.X, y = pt.Y;
+	//	transform.applyTransform(x, y);
+	//	pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
+	//	pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
+	//}
+
 
 	// type cast to 255
 	//int alphaFill = static_cast<int>(fillOpacity * 255);
@@ -359,68 +384,15 @@ VOID SVGPolygon::draw(Graphics& graphics) const {
 				stroke.getRed(),
 				stroke.getGreen(), 
 				stroke.getBlue()), 
-				strokeWidth * SVGReader::getInstance().getScale());
+				strokeWidth);
 
+
+	SVGShape::setGraphicsTransform(graphics);
 	//fill 
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
 
 	//stroke oultine
 	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
-}
 
-
-VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
-	PathCommand command;
-	command.type = cmd;
-	if (cmd == 'M' || cmd == 'L' || cmd == 'm' || cmd == 'l') {
-		for (size_t i = 0; i + 1 < nums.size(); i += 2) { //M 100 100 L 300 100 L 200 300 z, bat dau tu i + 1 de bo qua cai 'M' +=2 do co dau cach
-			command.data.push_back(Point2D(nums[i], nums[i + 1]));
-		}
-	}
-	else if (cmd == 'Z' || cmd == 'z') {}
-	else {
-		return;
-	}
-}
-
-VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
-	if (strcmp(attributeName, "d") == 0) {
-		string d(attributeValue);
-		stringstream ss;
-		char currCmd = '\0';
-		float num;
-		vector<float> nums;
-
-		//M 100 100 L 300 100 L 200 300 z
-		for (size_t i = 0; i < d.size(); i++) {
-			char c = d[i];
-			if (isalpha(c)) { //la 1 alphabet thi la lenh m c z v, ...
-				if (currCmd != '\0') { //xoa lenh truoc do
-					handleCommand(currCmd, nums);
-					nums.clear();
-				}
-				currCmd = c;
-			}
-			else if (isdigit(c) || c == '-' || c == '.' || c == '+') { //M10.5,-20.25L30+40
-				ss.str("");
-				ss.clear();
-				ss << c;
-				size_t j = i + 1;
-				while (j < d.size() && (isdigit(d[j]) || d[j] == '-' || d[j] == '.' || d[j] == '+')) {
-					ss << d[j];
-					j++;
-				}
-				i = j - 1; //ipdate lai pos
-				ss >> num;
-				nums.push_back(num);
-			}
-			//gap ' ' hay ',' thi bo qua
-		}
-		if (currCmd != '\0') {
-			handleCommand(currCmd, nums);
-		}
-	}
-	else {
-		SVGShape::processAttribute(attributeName, attributeValue);
-	}
+	graphics.ResetTransform();
 }

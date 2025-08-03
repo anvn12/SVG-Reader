@@ -26,6 +26,7 @@ struct TransformOperation {
 class Transform {
 private:
     vector<TransformOperation> operations;
+    void parseParameters(const string& paramStr, vector<float>& values);
 
 public:
     Transform() {}
@@ -33,6 +34,8 @@ public:
     void parseTransform(const string& transformStr);
     void applyTransform(float& x, float& y) const;
     bool hasTransform() const { return !operations.empty(); }
+
+    size_t getOperationCount() const { return operations.size(); }
 };
 
 #endif

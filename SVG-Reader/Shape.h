@@ -3,6 +3,7 @@
 #pragma once
 
 #include "General.h"
+#include "Transform.h"
 #include <sstream>
 
 
@@ -10,6 +11,7 @@
 // polymorphism để mỗi hàm trong class làm việc khác nhau
 class SVGShape {
 protected:
+	Transform transform;
 	Point2D position;
 	RGBColor stroke, fill;
 	float strokeWidth, strokeOpacity, fillOpacity;
@@ -23,7 +25,10 @@ public:
 
 	// each shape has distinct draw function -> pure virtual
 	// (abstract class)
-	virtual VOID draw(Graphics& graphics) const = 0;
+	virtual VOID draw(Graphics& graphics) = 0;
+
+	// set transform attribute: translate, rotate, scale
+	VOID setGraphicsTransform(Graphics& graphics);
 };
 
 
@@ -36,7 +41,7 @@ public:
 	SVGRectangle() : SVGShape(), width(0), height(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics &graphics) const override;
+	VOID draw(Graphics &graphics) override;
 };
 
 
@@ -51,7 +56,7 @@ public:
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID setContent(char* attributeValue);
 
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -63,7 +68,7 @@ public:
 	SVGEllipse() : SVGShape(), rx(0), ry(0) {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -75,7 +80,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -88,7 +93,7 @@ public:
 	SVGLine() : SVGShape(), position1(), position2() {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -103,7 +108,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 
@@ -120,7 +125,7 @@ public:
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+	VOID draw(Graphics& graphics) override;
 };
 
 struct PathCommand {
@@ -135,7 +140,8 @@ public:
 	SVGPath() : SVGShape() {}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
-	VOID draw(Graphics& graphics) const override;
+
+	VOID draw(Graphics& graphics) override;
 	
 	VOID handleCommand(char cmd, const vector<float>& nums);
 };
