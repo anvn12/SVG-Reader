@@ -46,23 +46,21 @@ enum TransformType {    //de dinh nghia cac hang so co ten. Kiêu nhu la khi goi
 
 class Transform {
 private:
-    float translateX = 0.0f;
-    float translateY = 0.0f;
-    float scaleX = 1.0f;
-    float scaleY = 1.0f;
-    float rotateAngle = 0.0f; // radians
-    float rotateCX = 0.0f;
-    float rotateCY = 0.0f;
+    float translateX, translateY;
+    float scaleX, scaleY;
+    float rotateAngle; // radians
+    float rotateCX, rotateCY;
 
     void parseParameters(const string& paramStr, vector<float>& values);
 
 public:
-    Transform() {}
+    Transform() 
+        : translateX(0.0f), translateY(0.0f), scaleX(1.0f), scaleY(1.0f),
+        rotateAngle(0.0f), rotateCX(0.0f), rotateCY(0.0f) 
+    {}
 
     void parseTransform(const string& transformStr);
 
-    // Apply transform to a single point
-    void applyTransform(float& x, float& y) const;
 
     // Apply transform to Graphics object
     void applyToGraphics(Graphics* g) const {
@@ -73,9 +71,9 @@ public:
 
         // Apply rotate
         if (rotateAngle != 0.0f) {
-            g->TranslateTransform(rotateCX, rotateCY, MatrixOrderAppend);
+            //g->TranslateTransform(rotateCX, rotateCY, MatrixOrderAppend);
             g->RotateTransform(rotateAngle * 180.0f / static_cast<float>(M_PI), MatrixOrderAppend);
-            g->TranslateTransform(-rotateCX, -rotateCY, MatrixOrderAppend);
+            //g->TranslateTransform(-rotateCX, -rotateCY, MatrixOrderAppend);
         }
 
         // Apply scale
@@ -83,25 +81,6 @@ public:
             g->ScaleTransform(scaleX, scaleY, MatrixOrderAppend);
         }
     }
-
-    // Reset transform after drawing
-    void resetGraphics(Graphics* g) const {
-        g->ResetTransform();
-    }
-
-    bool hasTransform() const {
-        return translateX != 0.0f || translateY != 0.0f ||
-            scaleX != 1.0f || scaleY != 1.0f || rotateAngle != 0.0f;
-    }
-
-    // Getter methods
-    float getTranslateX() const { return translateX; }
-    float getTranslateY() const { return translateY; }
-    float getScaleX() const { return scaleX; }
-    float getScaleY() const { return scaleY; }
-    float getRotateAngle() const { return rotateAngle; }
-    float getRotateCX() const { return rotateCX; }
-    float getRotateCY() const { return rotateCY; }
 };
 
 #endif
