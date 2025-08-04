@@ -2,6 +2,7 @@
 #include "Shape.h"
 #include "SVGReader.h"
 #include "Transform.h"
+#include <algorithm>
 
 //#include "ProcessXML.h"
 using namespace std;
@@ -21,10 +22,20 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		position.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "stroke") == 0) {
-		stroke = textToRGB(attributeValue);
+		if (strcmp(attributeValue, "none") == 0) {
+			strokeOpacity = 0.0; 
+		}
+		else {
+			stroke = textToRGB(attributeValue);
+		}
 	}
 	else if (strcmp(attributeName, "fill") == 0) {
-		fill = textToRGB(attributeValue);
+		if (strcmp(attributeValue, "none") == 0) {
+			fillOpacity = 0.0;  
+		}
+		else {
+			fill = textToRGB(attributeValue);
+		}
 	}
 	else if (strcmp(attributeName, "stroke-width") == 0) {
 		strokeWidth = atof(attributeValue);
@@ -401,50 +412,56 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
 	PathCommand command;
 	command.type = cmd;
-	if (cmd == 'M' || cmd == 'L' || cmd == 'm' || cmd == 'l') {
-		for (size_t i = 0; i + 1 < nums.size(); i += 2) { //M 100 100 L 300 100 L 200 300 z, bat dau tu i + 1 de bo qua cai 'M' +=2 do co dau cach
-			command.data.push_back(Point2D(nums[i], nums[i + 1]));
+
+    if (cmd == 'M' || cmd == 'L' || cmd == 'm' || cmd == 'l') {
+        for (size_t i = 0; i + 1 < nums.size(); i += 2) {
+            command.data.push_back(Point2D(nums[i], nums[i + 1]));
+        }
+    }
+	else if (cmd == 'C' || cmd == 'c') { //(x1,y1,x2,y2,x,y)
+		for (size_t i = 0; i + 5 < nums.size(); i += 6) {
+			command.data.push_back(Point2D(nums[i], nums[i + 1]));     
+			command.data.push_back(Point2D(nums[i + 2], nums[i + 3])); 
+			command.data.push_back(Point2D(nums[i + 4], nums[i + 5])); 
 		}
 	}
 	else if (cmd == 'Z' || cmd == 'z') {}
-	else {
-		return;
-	}
+	commands.push_back(command);
 }
 
 VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "d") == 0) {
 		string d(attributeValue);
-		stringstream ss;
+		istringstream iss(d);
 		char currCmd = '\0';
-		float num;
+		string token;
 		vector<float> nums;
 
-		//M 100 100 L 300 100 L 200 300 z
-		for (size_t i = 0; i < d.size(); i++) {
-			char c = d[i];
-			if (isalpha(c)) { //la 1 alphabet thi la lenh m c z v, ...
-				if (currCmd != '\0') { //xoa lenh truoc do
+		while (iss >> token) {
+			if (token.length() == 1 && isalpha(token[0])) {
+				if (currCmd != '\0') {
+					// them lenh truoc do vao
 					handleCommand(currCmd, nums);
 					nums.clear();
 				}
-				currCmd = c;
+				currCmd = token[0];
 			}
-			else if (isdigit(c) || c == '-' || c == '.' || c == '+') { //M10.5,-20.25L30+40
-				ss.str("");
-				ss.clear();
-				ss << c;
-				size_t j = i + 1;
-				while (j < d.size() && (isdigit(d[j]) || d[j] == '-' || d[j] == '.' || d[j] == '+')) {
-					ss << d[j];
-					j++;
+			else {
+				string cleanToken = token;
+				// xoa ' ', ','
+				cleanToken.erase(remove(cleanToken.begin(), cleanToken.end(), ','), cleanToken.end());
+
+				if (!cleanToken.empty()) {
+					try {
+						float num = stof(cleanToken);
+						nums.push_back(num);
+					}
+					catch (...) {
+					}
 				}
-				i = j - 1; //ipdate lai pos
-				ss >> num;
-				nums.push_back(num);
 			}
-			//gap ' ' hay ',' thi bo qua
 		}
+
 		if (currCmd != '\0') {
 			handleCommand(currCmd, nums);
 		}
@@ -461,35 +478,39 @@ VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
 //	< / svg >
 VOID SVGPath::draw(Graphics& graphics) {
 	GraphicsPath gp;
+	PointF current(0, 0);
 
-	PointF current(0, 0); 
 	for (auto& cmd : commands) {
 		switch (cmd.type) {
 		case 'M':
-			gp.StartFigure(); //start path
-			current = PointF(cmd.data[0].getX(), cmd.data[0].getY());
+			if (!cmd.data.empty()) {
+				gp.StartFigure();
+				current = PointF(cmd.data[0].getX(), cmd.data[0].getY());
+			}
 			break;
 		case 'm':
-			gp.StartFigure();
-			current.X += cmd.data[0].getX();
-			current.Y += cmd.data[0].getY();
+			if (!cmd.data.empty()) {
+				gp.StartFigure();
+				current.X += cmd.data[0].getX();
+				current.Y += cmd.data[0].getY();
+			}
 			break;
 		case 'L':
-			for (auto& points : cmd.data) {
-				PointF point(points.getX(), points.getY());
-				gp.AddLine(current, point);
-				current = point;
+			for (auto& point : cmd.data) {
+				PointF newPoint(point.getX(), point.getY());
+				gp.AddLine(current, newPoint);
+				current = newPoint;
 			}
 			break;
 		case 'l':
-			for (auto& points : cmd.data) {
-				PointF point(current.X + points.getX(), current.Y + points.getY());
-				gp.AddLine(current, point);
-				current = point;
+			for (auto& point : cmd.data) {
+				PointF newPoint(current.X + point.getX(), current.Y + point.getY());
+				gp.AddLine(current, newPoint);
+				current = newPoint;
 			}
 			break;
 		case 'C':
-			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) { //moi lenh C luon co 3 diem: control 1, control 2, end
+			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) {
 				PointF c1(cmd.data[i].getX(), cmd.data[i].getY());
 				PointF c2(cmd.data[i + 1].getX(), cmd.data[i + 1].getY());
 				PointF endPoint(cmd.data[i + 2].getX(), cmd.data[i + 2].getY());
@@ -500,29 +521,26 @@ VOID SVGPath::draw(Graphics& graphics) {
 		case 'c':
 			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) {
 				PointF c1(current.X + cmd.data[i].getX(), current.Y + cmd.data[i].getY());
-				PointF c2(current.X + cmd.data[i + 1].getX(),current.Y + cmd.data[i + 1].getY());
-				PointF ep(current.X + cmd.data[i + 2].getX(), current.Y + cmd.data[i + 2].getY());
-				gp.AddBezier(current, c1, c2, ep);
-				current = ep;
+				PointF c2(current.X + cmd.data[i + 1].getX(), current.Y + cmd.data[i + 1].getY());
+				PointF endPoint(current.X + cmd.data[i + 2].getX(), current.Y + cmd.data[i + 2].getY());
+				gp.AddBezier(current, c1, c2, endPoint);
+				current = endPoint;
 			}
 			break;
-		case 'Z' : case 'z':
+		case 'Z':
+		case 'z':
 			gp.CloseFigure();
 			break;
 		}
 	}
 
-	SolidBrush brush(Color(fillOpacity,
-		fill.getRed(),
-		fill.getGreen(),
-		fill.getBlue()));
+	if (fillOpacity > 0) {
+		SolidBrush brush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
+		graphics.FillPath(&brush, &gp);
+	}
 
-	Pen pen(Color(strokeOpacity,
-		stroke.getRed(),
-		stroke.getGreen(),
-		stroke.getBlue()),
-		strokeWidth);
-
-	graphics.FillPath(&brush, &gp);
-	graphics.DrawPath(&pen, &gp);
+	if (strokeOpacity > 0) {
+		Pen pen(Color((int)strokeOpacity, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+		graphics.DrawPath(&pen, &gp);
+	}
 }

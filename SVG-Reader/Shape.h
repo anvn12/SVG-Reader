@@ -137,7 +137,10 @@ class SVGPath : public SVGShape {
 private:
 	vector<PathCommand> commands;
 public:
-	SVGPath() : SVGShape() {}
+	SVGPath() : SVGShape() {
+		strokeOpacity = 255.0; 
+		fillOpacity = 0.0;
+	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 

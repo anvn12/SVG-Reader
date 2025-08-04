@@ -19,6 +19,7 @@ int RGBColor::clamp(int value) const
 RGBColor textToRGB(char* text) {
     // rgb(200,200,200)
     // c-style string to string
+    //fill = "none"
     string stext = text;
     int r, g, b;
     stext.erase(0, 4);
