@@ -184,8 +184,6 @@
     <Image Include="SVGReader.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\x64\Debug\test.svg" />
-    <None Include="..\x64\Debug\translate.svg" />
     <None Include="sample.svg" />
     <None Include="TODO.md" />
   </ItemGroup>
