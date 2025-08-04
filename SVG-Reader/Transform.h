@@ -48,39 +48,22 @@ class Transform {
 private:
     float translateX, translateY;
     float scaleX, scaleY;
-    float rotateAngle; // radians
-    float rotateCX, rotateCY;
+    float rotateAngle;
 
     void parseParameters(const string& paramStr, vector<float>& values);
 
 public:
-    Transform() 
-        : translateX(0.0f), translateY(0.0f), scaleX(1.0f), scaleY(1.0f),
-        rotateAngle(0.0f), rotateCX(0.0f), rotateCY(0.0f) 
-    {}
+    Transform()
+        : translateX(0.0f), translateY(0.0f),
+        scaleX(1.0f), scaleY(1.0f),
+        rotateAngle(0.0f)
+    {
+    }
 
     void parseTransform(const string& transformStr);
 
+    void applyToGraphics(Graphics* g) const;
 
-    // Apply transform to Graphics object
-    void applyToGraphics(Graphics* g) const {
-        // Apply translate
-        if (translateX != 0.0f || translateY != 0.0f) {
-            g->TranslateTransform(translateX, translateY, MatrixOrderAppend);
-        }
-
-        // Apply rotate
-        if (rotateAngle != 0.0f) {
-            //g->TranslateTransform(rotateCX, rotateCY, MatrixOrderAppend);
-            g->RotateTransform(rotateAngle * 180.0f / static_cast<float>(M_PI), MatrixOrderAppend);
-            //g->TranslateTransform(-rotateCX, -rotateCY, MatrixOrderAppend);
-        }
-
-        // Apply scale
-        if (scaleX != 1.0f || scaleY != 1.0f) {
-            g->ScaleTransform(scaleX, scaleY, MatrixOrderAppend);
-        }
-    }
 };
 
 #endif
