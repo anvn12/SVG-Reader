@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Shape.h"
 #include "SVGReader.h"
 #include "Transform.h"
@@ -417,18 +417,17 @@ VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
 		if (nums.size() >= 2) {
 			command.data.push_back(Point2D(nums[0], nums[1]));
 			commands.push_back(command);
-
-			// Additional coordinate pairs after MoveTo are treated as LineTo
+			//xu ly cac truong hop nhu m50 100 100 100 nghia la co line bat dau tu 50,100 den 100,100 du 0 co L/l
 			if (nums.size() > 2) {
 				PathCommand lineCommand;
-				lineCommand.type = (cmd == 'M') ? 'L' : 'l'; // Same case as MoveTo
+				lineCommand.type = (cmd == 'M') ? 'L' : 'l'; 
 				for (size_t i = 2; i + 1 < nums.size(); i += 2) {
 					lineCommand.data.push_back(Point2D(nums[i], nums[i + 1]));
 				}
 				commands.push_back(lineCommand);
 			}
 		}
-		return; // Early return since we handled MoveTo specially
+		return;
     }
 	else if (cmd == 'C' || cmd == 'c') { //(x1,y1,x2,y2,x,y)
 		for (size_t i = 0; i + 5 < nums.size(); i += 6) {
@@ -545,13 +544,16 @@ VOID SVGPath::draw(Graphics& graphics) {
 		}
 	}
 
-	if (fillOpacity > 0) {
-		SolidBrush brush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
-		graphics.FillPath(&brush, &gp);
-	}
+	SolidBrush brush(Color(fillOpacity,
+		fill.getRed(),
+		fill.getGreen(),
+		fill.getBlue()));
+	graphics.FillPath(&brush, &gp);
 
-	if (strokeOpacity > 0) {
-		Pen pen(Color((int)strokeOpacity, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
-		graphics.DrawPath(&pen, &gp);
-	}
+	Pen pen(Color(strokeOpacity,
+		stroke.getRed(),
+		stroke.getGreen(),
+		stroke.getBlue()),
+		strokeWidth);
+	graphics.DrawPath(&pen, &gp);
 }

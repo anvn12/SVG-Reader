@@ -139,7 +139,7 @@ private:
 public:
 	SVGPath() : SVGShape() {
 		strokeOpacity = 255.0; 
-		fillOpacity = 0.0;
+		fillOpacity = 255.0;
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
