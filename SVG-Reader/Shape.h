@@ -5,6 +5,8 @@
 #include "General.h"
 #include "Transform.h"
 #include <sstream>
+#include <gdiplus.h>
+
 
 
 // inheritance để những cái SVG class có cùng tên
@@ -175,7 +177,7 @@ public:
 
 	void processAttribute(char* attributeName, char* attributeValue) override;
 
-	void draw(Graphics& graphics) override;
+	void draw(Gdiplus::Graphics& graphics) override;
 
 	// Getter cho children (neu can)
 	const std::vector<SVGShape*>& getChildren() const { return children; }
