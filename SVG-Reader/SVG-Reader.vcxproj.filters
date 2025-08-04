@@ -82,11 +82,11 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="TODO.md" />
-    <None Include="..\x64\Debug\test.svg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\x64\Debug\translate.svg">
-      <Filter>Resource Files</Filter>
+    <None Include="..\..\svgreader\x64\Debug\sample.svg" />
+    <None Include="..\..\svgreader\x64\Debug\test.svg" />
+    <None Include="..\..\svgreader\x64\Debug\transform_output.svg" />
+    <None Include="..\Testcase\test_svg_transforms.svg">
+      <Filter>src</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
