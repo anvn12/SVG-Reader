@@ -56,5 +56,4 @@ RGBColor textToRGB(char*);
 //help for reading poly points
 vector<PointF> parsePoints(const string& pointsStr);
 
-vector<Point2D> parsePathData(const string& d);
 #endif
