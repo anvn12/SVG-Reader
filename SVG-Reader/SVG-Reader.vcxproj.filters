@@ -88,6 +88,7 @@
     <None Include="..\x64\Debug\translate.svg">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="testGroup.svg" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVGReader.rc">
