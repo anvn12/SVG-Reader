@@ -307,3 +307,133 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 	//stroke oultine
 	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
 }
+
+
+VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
+	PathCommand command;
+	command.type = cmd;
+	if (cmd == 'M' || cmd == 'L' || cmd == 'm' || cmd == 'l') {
+		for (size_t i = 0; i + 1 < nums.size(); i += 2) { //M 100 100 L 300 100 L 200 300 z, bat dau tu i + 1 de bo qua cai 'M' +=2 do co dau cach
+			command.data.push_back(Point2D(nums[i], nums[i + 1]));
+		}
+	}
+	else if (cmd == 'Z' || cmd == 'z') {}
+	else {
+		return;
+	}
+}
+
+VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
+	if (strcmp(attributeName, "d") == 0) {
+		string d(attributeValue);
+		stringstream ss;
+		char currCmd = '\0';
+		float num;
+		vector<float> nums;
+
+		//M 100 100 L 300 100 L 200 300 z
+		for (size_t i = 0; i < d.size(); i++) {
+			char c = d[i];
+			if (isalpha(c)) { //la 1 alphabet thi la lenh m c z v, ...
+				if (currCmd != '\0') { //xoa lenh truoc do
+					handleCommand(currCmd, nums);
+					nums.clear();
+				}
+				currCmd = c;
+			}
+			else if (isdigit(c) || c == '-' || c == '.' || c == '+') { //M10.5,-20.25L30+40
+				ss.str("");
+				ss.clear();
+				ss << c;
+				size_t j = i + 1;
+				while (j < d.size() && (isdigit(d[j]) || d[j] == '-' || d[j] == '.' || d[j] == '+')) {
+					ss << d[j];
+					j++;
+				}
+				i = j - 1; //ipdate lai pos
+				ss >> num;
+				nums.push_back(num);
+			}
+			//gap ' ' hay ',' thi bo qua
+		}
+		if (currCmd != '\0') {
+			handleCommand(currCmd, nums);
+		}
+	}
+	else {
+		SVGShape::processAttribute(attributeName, attributeValue);
+	}
+}
+//i need to read and draw this
+//<svg xmlns = "http://www.w3.org/2000/svg">
+//< path fill = "none" stroke = "rgb(255,0,0)" stroke - width = "5"
+//	d = "M100,200 C100,100 250,100 250,200
+//	C250, 300 400, 300 400, 200" />
+//	< / svg >
+VOID SVGPath::draw(Graphics& graphics) {
+	GraphicsPath gp;
+
+	PointF current(0, 0); 
+	for (auto& cmd : commands) {
+		switch (cmd.type) {
+		case 'M':
+			gp.StartFigure(); //start path
+			current = PointF(cmd.data[0].getX(), cmd.data[0].getY());
+			break;
+		case 'm':
+			gp.StartFigure();
+			current.X += cmd.data[0].getX();
+			current.Y += cmd.data[0].getY();
+			break;
+		case 'L':
+			for (auto& points : cmd.data) {
+				PointF point(points.getX(), points.getY());
+				gp.AddLine(current, point);
+				current = point;
+			}
+			break;
+		case 'l':
+			for (auto& points : cmd.data) {
+				PointF point(current.X + points.getX(), current.Y + points.getY());
+				gp.AddLine(current, point);
+				current = point;
+			}
+			break;
+		case 'C':
+			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) { //moi lenh C luon co 3 diem: control 1, control 2, end
+				PointF c1(cmd.data[i].getX(), cmd.data[i].getY());
+				PointF c2(cmd.data[i + 1].getX(), cmd.data[i + 1].getY());
+				PointF endPoint(cmd.data[i + 2].getX(), cmd.data[i + 2].getY());
+				gp.AddBezier(current, c1, c2, endPoint);
+				current = endPoint;
+			}
+			break;
+		case 'c':
+			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) {
+				PointF c1(current.X + cmd.data[i].getX(), current.Y + cmd.data[i].getY());
+				PointF c2(current.X + cmd.data[i + 1].getX(),current.Y + cmd.data[i + 1].getY());
+				PointF ep(current.X + cmd.data[i + 2].getX(), current.Y + cmd.data[i + 2].getY());
+				gp.AddBezier(current, c1, c2, ep);
+				current = ep;
+			}
+			break;
+		case 'Z' : case 'z':
+			gp.CloseFigure();
+			break;
+		}
+	}
+
+	SolidBrush brush(Color(fillOpacity,
+		fill.getRed(),
+		fill.getGreen(),
+		fill.getBlue()));
+
+	Pen pen(Color(strokeOpacity,
+		stroke.getRed(),
+		stroke.getGreen(),
+		stroke.getBlue()),
+		strokeWidth);
+
+	graphics.FillPath(&brush, &gp);
+	graphics.DrawPath(&pen, &gp);
+}
