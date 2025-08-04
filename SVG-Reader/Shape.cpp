@@ -58,6 +58,58 @@ VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 }
 
 
+// Getters
+RGBColor SVGShape::getStroke() const {
+	return stroke;
+}
+
+RGBColor SVGShape::getFill() const {
+	return fill;
+}
+
+float SVGShape::getStrokeWidth() const {
+	return strokeWidth;
+}
+
+float SVGShape::getStrokeOpacity() const {
+	return strokeOpacity;
+}
+
+float SVGShape::getFillOpacity() const {
+	return fillOpacity;
+}
+
+const Transform& SVGShape::getTransform() const {
+	return transform;
+}
+
+// Setters
+VOID SVGShape::setStroke(const RGBColor& color) {
+	stroke = color;
+}
+
+VOID SVGShape::setFill(const RGBColor& color) {
+	fill = color;
+}
+
+VOID SVGShape::setStrokeWidth(float width) {
+	strokeWidth = width;
+}
+
+VOID SVGShape::setStrokeOpacity(float opacity) {
+	strokeOpacity = opacity;
+}
+
+VOID SVGShape::setFillOpacity(float opacity) {
+	fillOpacity = opacity;
+}
+
+VOID SVGShape::setTransform(const Transform& transf) {
+	transform = transf;
+}
+
+
+
 //SVG-Rectangle
 VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "width") == 0) {
@@ -396,3 +448,60 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 
 	graphics.ResetTransform();
 }
+
+
+SVGGroup::SVGGroup() {}
+
+SVGGroup::~SVGGroup() {
+	for (SVGShape* shape : children) {
+		delete shape;
+	}
+}
+
+VOID SVGGroup::appendChild(SVGShape* shape) {
+	//noi chung la thang strokeopacity = 0 thi coi nhu thang stroke ko co, fill - fillopacity cung tuong tu
+	if (shape->getStrokeOpacity() == 0.0f) {
+		shape->setStroke(this->getStroke());
+		shape->setStrokeOpacity(this->getStrokeOpacity());
+	}
+	if (shape->getStrokeWidth() == 0.0f) {
+		shape->setStrokeWidth(this->getStrokeWidth());
+	}
+	if (shape->getFillOpacity() == 0.0f) {
+		shape->setFill(this->getFill());
+		shape->setFillOpacity(this->getFillOpacity());
+	}
+
+	children.push_back(shape);
+}
+
+VOID SVGGroup::processAttribute(char* attributeName, char* attributeValue) {
+	SVGShape::processAttribute(attributeName, attributeValue);
+}
+
+VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
+	GraphicsState state = graphics.Save();	//snapshot trang thai hien tai
+
+	for (const auto& op : getTransform().getOperations()) {		//bien doi
+		switch (op.type) {
+		case TRANSLATE:
+			graphics.TranslateTransform(op.values[0], op.values[1]);
+			break;
+		case ROTATE:
+			graphics.TranslateTransform(op.values[1], op.values[2]);
+			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			break;
+		case SCALE:
+			graphics.ScaleTransform(op.values[0], op.values[1]);
+			break;
+		}
+	}
+
+	for (SVGShape* shape : children) {
+		if (shape) shape->draw(graphics);
+	}
+
+	graphics.Restore(state);	//khoi phuc, tranh anh huong cac group hoac shape khong lien quan
+}
+
