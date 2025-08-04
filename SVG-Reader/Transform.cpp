@@ -3,10 +3,7 @@
 #include <sstream>
 #include <cmath>
 
-// Dinh nghia pi
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+
 
 //void Transform::parseTransform(const string& transformStr) {
 //    operations.clear();
@@ -111,7 +108,14 @@
 //}
 
 void Transform::parseTransform(const string& transformStr) {
-    operations.clear();
+    // Reset all transform values to default
+    translateX = 0.0f;
+    translateY = 0.0f;
+    scaleX = 1.0f;
+    scaleY = 1.0f;
+    rotateAngle = 0.0f;
+    rotateCX = 0.0f;
+    rotateCY = 0.0f;
 
     if (transformStr.empty()) return;
 
@@ -155,56 +159,41 @@ void Transform::parseTransform(const string& transformStr) {
         vector<float> values;
         parseParameters(params, values);
 
-        // Tạo transform operation
+        // Xử lý từng loại transform
         if (transformName == "translate") {
-            TransformOperation op(TRANSLATE);
             if (values.size() >= 1) {
-                op.values[0] = values[0];
-                op.valueCount++;
+                translateX = values[0];
                 if (values.size() >= 2) {
-                    op.values[1] = values[1];
-                    op.valueCount++;
+                    translateY = values[1];
                 }
                 else {
-                    op.values[1] = 0.0f; // mặc định ty = 0
-                    op.valueCount++;
+                    translateY = 0.0f; // mặc định ty = 0
                 }
             }
-            operations.push_back(op);
         }
         else if (transformName == "rotate") {
-            TransformOperation op(ROTATE);
             if (values.size() >= 1) {
-                op.values[0] = values[0] * M_PI / 180.0f; // chuyển sang radian
-                op.valueCount++;
+                rotateAngle = values[0] * M_PI / 180.0f; // chuyển sang radian
                 if (values.size() >= 3) {
-                    op.values[1] = values[1]; // cx
-                    op.values[2] = values[2]; // cy
-                    op.valueCount = 3;
+                    rotateCX = values[1]; // cx
+                    rotateCY = values[2]; // cy
                 }
                 else {
-                    op.values[1] = 0.0f; // mặc định cx = 0
-                    op.values[2] = 0.0f; // mặc định cy = 0
-                    op.valueCount = 3;
+                    rotateCX = 0.0f; // mặc định cx = 0
+                    rotateCY = 0.0f; // mặc định cy = 0
                 }
             }
-            operations.push_back(op);
         }
         else if (transformName == "scale") {
-            TransformOperation op(SCALE);
             if (values.size() >= 1) {
-                op.values[0] = values[0];
-                op.valueCount++;
+                scaleX = values[0];
                 if (values.size() >= 2) {
-                    op.values[1] = values[1];
-                    op.valueCount++;
+                    scaleY = values[1];
                 }
                 else {
-                    op.values[1] = op.values[0]; // scale đồng đều
-                    op.valueCount++;
+                    scaleY = scaleX; // scale đồng đều
                 }
             }
-            operations.push_back(op);
         }
     }
 }
@@ -251,12 +240,12 @@ void Transform::parseParameters(const string& paramStr, vector<float>& values) {
         size_t pos = 0;
 
         while (pos < str.length()) {
-          
+      
             while (pos < str.length() && (isspace(str[pos]) || str[pos] == ',')) pos++;
             if (pos >= str.length()) break;
 
             size_t numStart = pos;
-            if (pos < str.length() && (str[pos] == '-' || str[pos] == '+')) pos++; // dấu âm/dương
+            if (pos < str.length() && (str[pos] == '-' || str[pos] == '+')) pos++; 
 
             bool hasDot = false;
             while (pos < str.length() && (isdigit(str[pos]) || (str[pos] == '.' && !hasDot))) {
@@ -271,7 +260,7 @@ void Transform::parseParameters(const string& paramStr, vector<float>& values) {
                     values.push_back(value);
                 }
                 catch (const std::exception&) {
-                
+                    // Ignore invalid numbers
                     continue;
                 }
             }
@@ -282,46 +271,63 @@ void Transform::parseParameters(const string& paramStr, vector<float>& values) {
         values.clear();
     }
 }
+//void Transform::applyTransform(float& x, float& y) const {
+//    for (const auto& op : operations) {
+//        switch (op.type) {
+//        case TRANSLATE:
+//            x += op.values[0];
+//            y += op.values[1];
+//            break;
+//
+//     /*   case ROTATE: {
+//            float angle = op.values[0];
+//            float newX = x * cos(angle) - y * sin(angle);
+//            float newY = x * sin(angle) + y * cos(angle);
+//            x = newX;
+//            y = newY;
+//            break;
+//        }*/
+//        case ROTATE: {
+//            float angle = op.values[0];
+//            float cx = (op.valueCount >= 2) ? op.values[1] : 0.0f;
+//            float cy = (op.valueCount >= 3) ? op.values[2] : 0.0f;
+//
+//            // translate to origin
+//            float tx = x - cx;
+//            float ty = y - cy;
+//
+//            float newX = tx * cos(angle) - ty * sin(angle);
+//            float newY = tx * sin(angle) + ty * cos(angle);
+//
+//            // translate back
+//            x = newX + cx;
+//            y = newY + cy;
+//            break;
+//        }
+//
+//
+//        case SCALE:
+//            x *= op.values[0];
+//            y *= op.values[1];
+//            break;
+//        }
+//    }
+//}
 
 void Transform::applyTransform(float& x, float& y) const {
-    for (const auto& op : operations) {
-        switch (op.type) {
-        case TRANSLATE:
-            x += op.values[0];
-            y += op.values[1];
-            break;
+    // Translate to origin for rotation
+    float tx = x - rotateCX;
+    float ty = y - rotateCY;
 
-     /*   case ROTATE: {
-            float angle = op.values[0];
-            float newX = x * cos(angle) - y * sin(angle);
-            float newY = x * sin(angle) + y * cos(angle);
-            x = newX;
-            y = newY;
-            break;
-        }*/
-        case ROTATE: {
-            float angle = op.values[0];
-            float cx = (op.valueCount >= 2) ? op.values[1] : 0.0f;
-            float cy = (op.valueCount >= 3) ? op.values[2] : 0.0f;
+    // Rotate
+    float rotatedX = tx * cos(rotateAngle) - ty * sin(rotateAngle);
+    float rotatedY = tx * sin(rotateAngle) + ty * cos(rotateAngle);
 
-            // translate to origin
-            float tx = x - cx;
-            float ty = y - cy;
+    // Scale
+    rotatedX *= scaleX;
+    rotatedY *= scaleY;
 
-            float newX = tx * cos(angle) - ty * sin(angle);
-            float newY = tx * sin(angle) + ty * cos(angle);
-
-            // translate back
-            x = newX + cx;
-            y = newY + cy;
-            break;
-        }
-
-
-        case SCALE:
-            x *= op.values[0];
-            y *= op.values[1];
-            break;
-        }
-    }
+    // Translate back and apply translate
+    x = rotatedX + rotateCX + translateX;
+    y = rotatedY + rotateCY + translateY;
 }
