@@ -161,20 +161,29 @@ void Transform::applyToGraphics(Gdiplus::Graphics* g) const {
 void TransformTranslate::applyToGraphics(Graphics* g) {
     // Translate
     if (translateX != 0.0f || translateY != 0.0f) {
-        g->TranslateTransform(translateX, translateY, Gdiplus::MatrixOrderAppend);
+        // prepend for the left to right order in transform
+
+        //g->TranslateTransform(translateX, translateY, Gdiplus::MatrixOrderAppend);
+        g->TranslateTransform(translateX, translateY, Gdiplus::MatrixOrderPrepend);
     }
 }
 
 void TransformScale::applyToGraphics(Graphics* g) {
     // Scale
     if (scaleX != 1.0f || scaleY != 1.0f) {
-        g->ScaleTransform(scaleX, scaleY, Gdiplus::MatrixOrderAppend);
+        // prepend for the left to right order in transform
+
+        //g->ScaleTransform(scaleX, scaleY, Gdiplus::MatrixOrderAppend);
+        g->ScaleTransform(scaleX, scaleY, Gdiplus::MatrixOrderPrepend);
     }
 }
 
 void TransformRotate::applyToGraphics(Graphics* g) {
     // Rotate
     if (rotateAngle != 0.0f) {
-        g->RotateTransform(rotateAngle, Gdiplus::MatrixOrderAppend);
+        // prepend for the left to right order in transform
+
+        //g->RotateTransform(rotateAngle, Gdiplus::MatrixOrderAppend);
+        g->RotateTransform(rotateAngle, Gdiplus::MatrixOrderPrepend);
     }
 }
