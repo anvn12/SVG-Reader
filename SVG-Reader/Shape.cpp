@@ -396,3 +396,60 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 
 	graphics.ResetTransform();
 }
+
+
+VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
+	PathCommand command;
+	command.type = cmd;
+	if (cmd == 'M' || cmd == 'L' || cmd == 'm' || cmd == 'l') {
+		for (size_t i = 0; i + 1 < nums.size(); i += 2) { //M 100 100 L 300 100 L 200 300 z, bat dau tu i + 1 de bo qua cai 'M' +=2 do co dau cach
+			command.data.push_back(Point2D(nums[i], nums[i + 1]));
+		}
+	}
+	else if (cmd == 'Z' || cmd == 'z') {}
+	else {
+		return;
+	}
+}
+
+VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
+	if (strcmp(attributeName, "d") == 0) {
+		string d(attributeValue);
+		stringstream ss;
+		char currCmd = '\0';
+		float num;
+		vector<float> nums;
+
+		//M 100 100 L 300 100 L 200 300 z
+		for (size_t i = 0; i < d.size(); i++) {
+			char c = d[i];
+			if (isalpha(c)) { //la 1 alphabet thi la lenh m c z v, ...
+				if (currCmd != '\0') { //xoa lenh truoc do
+					handleCommand(currCmd, nums);
+					nums.clear();
+				}
+				currCmd = c;
+			}
+			else if (isdigit(c) || c == '-' || c == '.' || c == '+') { //M10.5,-20.25L30+40
+				ss.str("");
+				ss.clear();
+				ss << c;
+				size_t j = i + 1;
+				while (j < d.size() && (isdigit(d[j]) || d[j] == '-' || d[j] == '.' || d[j] == '+')) {
+					ss << d[j];
+					j++;
+				}
+				i = j - 1; //ipdate lai pos
+				ss >> num;
+				nums.push_back(num);
+			}
+			//gap ' ' hay ',' thi bo qua
+		}
+		if (currCmd != '\0') {
+			handleCommand(currCmd, nums);
+		}
+	}
+	else {
+		SVGShape::processAttribute(attributeName, attributeValue);
+	}
+}
