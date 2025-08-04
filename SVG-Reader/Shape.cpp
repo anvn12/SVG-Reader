@@ -414,9 +414,21 @@ VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
 	command.type = cmd;
 
     if (cmd == 'M' || cmd == 'L' || cmd == 'm' || cmd == 'l') {
-        for (size_t i = 0; i + 1 < nums.size(); i += 2) {
-            command.data.push_back(Point2D(nums[i], nums[i + 1]));
-        }
+		if (nums.size() >= 2) {
+			command.data.push_back(Point2D(nums[0], nums[1]));
+			commands.push_back(command);
+
+			// Additional coordinate pairs after MoveTo are treated as LineTo
+			if (nums.size() > 2) {
+				PathCommand lineCommand;
+				lineCommand.type = (cmd == 'M') ? 'L' : 'l'; // Same case as MoveTo
+				for (size_t i = 2; i + 1 < nums.size(); i += 2) {
+					lineCommand.data.push_back(Point2D(nums[i], nums[i + 1]));
+				}
+				commands.push_back(lineCommand);
+			}
+		}
+		return; // Early return since we handled MoveTo specially
     }
 	else if (cmd == 'C' || cmd == 'c') { //(x1,y1,x2,y2,x,y)
 		for (size_t i = 0; i + 5 < nums.size(); i += 6) {
@@ -432,36 +444,35 @@ VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
 VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "d") == 0) {
 		string d(attributeValue);
-		istringstream iss(d);
+		stringstream ss;
 		char currCmd = '\0';
-		string token;
+		float num;
 		vector<float> nums;
 
-		while (iss >> token) {
-			if (token.length() == 1 && isalpha(token[0])) {
-				if (currCmd != '\0') {
-					// them lenh truoc do vao
+		// M100,350 250,50
+		for (size_t i = 0; i < d.size(); i++) {
+			char c = d[i];
+			if (isalpha(c)) { 
+				if (currCmd != '\0') { 
 					handleCommand(currCmd, nums);
 					nums.clear();
 				}
-				currCmd = token[0];
+				currCmd = c;
 			}
-			else {
-				string cleanToken = token;
-				// xoa ' ', ','
-				cleanToken.erase(remove(cleanToken.begin(), cleanToken.end(), ','), cleanToken.end());
-
-				if (!cleanToken.empty()) {
-					try {
-						float num = stof(cleanToken);
-						nums.push_back(num);
-					}
-					catch (...) {
-					}
+			else if (isdigit(c) || c == '-' || c == '.' || c == '+') { 
+				ss.str("");
+				ss.clear();
+				ss << c;
+				size_t j = i + 1;
+				while (j < d.size() && (isdigit(d[j]) || d[j] == '.' || d[j] == 'e' || d[j] == 'E')) {
+					ss << d[j];
+					j++;
 				}
+				i = j - 1; 
+				ss >> num;
+				nums.push_back(num);
 			}
 		}
-
 		if (currCmd != '\0') {
 			handleCommand(currCmd, nums);
 		}
