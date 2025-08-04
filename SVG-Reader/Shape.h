@@ -29,6 +29,22 @@ public:
 
 	// set transform attribute: translate, rotate, scale
 	VOID setGraphicsTransform(Graphics& graphics);
+
+	//getters
+	RGBColor getStroke() const;
+	RGBColor getFill() const;
+	float getStrokeWidth() const;
+	float getStrokeOpacity() const;
+	float getFillOpacity() const;
+	const Transform& getTransform() const;
+
+	//setters
+	VOID setStroke(const RGBColor& color);
+	VOID setFill(const RGBColor& color);
+	VOID setStrokeWidth(float width);
+	VOID setStrokeOpacity(float opacity);
+	VOID setFillOpacity(float opacity);
+	VOID setTransform(const Transform& transf);
 };
 
 
@@ -128,22 +144,43 @@ public:
 	VOID draw(Graphics& graphics) override;
 };
 
-struct PathCommand {
-	char type; // 'M', 'L', 'C', 'Z'
-	vector<Point2D> data; //for x,y and control points
-};
+//struct PathCommand {
+//	char type; // 'M', 'L', 'C', 'Z'
+//	vector<Point2D> data; //for x,y and control points
+//};
 
-class SVGPath : public SVGShape {
+//class SVGPath : public SVGShape {
+//private:
+//	vector<PathCommand> commands;
+//public:
+//	SVGPath() : SVGShape() {}
+//
+//	VOID processAttribute(char* attributeName, char* attributeValue) override;
+//
+//	VOID draw(Graphics& graphics) override;
+//	
+//	VOID handleCommand(char cmd, const vector<float>& nums);
+//};
+
+
+class SVGGroup : public SVGShape {
 private:
-	vector<PathCommand> commands;
+	std::vector<SVGShape*> children;
+
 public:
-	SVGPath() : SVGShape() {}
+	SVGGroup();
+	~SVGGroup();
 
-	VOID processAttribute(char* attributeName, char* attributeValue) override;
+	void appendChild(SVGShape* shape);
 
-	VOID draw(Graphics& graphics) override;
-	
-	VOID handleCommand(char cmd, const vector<float>& nums);
+	void processAttribute(char* attributeName, char* attributeValue) override;
+
+	void draw(Graphics& graphics) override;
+
+	// Getter cho children (neu can)
+	const std::vector<SVGShape*>& getChildren() const { return children; }
+
 };
+
 
 #endif
