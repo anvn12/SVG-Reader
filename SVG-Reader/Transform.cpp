@@ -3,10 +3,10 @@
 #include <sstream>
 #include <cmath>
 
-// Dinh nghia pi
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+//// Dinh nghia pi
+//#ifndef M_PI
+//#define M_PI 3.14159265358979323846
+//#endif
 
 //void Transform::parseTransform(const string& transformStr) {
 //    operations.clear();
@@ -324,4 +324,8 @@ void Transform::applyTransform(float& x, float& y) const {
             break;
         }
     }
+}
+
+const vector<TransformOperation>& Transform::getOperations() const {
+    return operations;
 }
