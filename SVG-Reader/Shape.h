@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include <sstream>
 
+class SVGShape;
+SVGShape* createShapeFromNode(xml_node<>* node);
 
 
 // inheritance để những cái SVG class có cùng tên
@@ -32,18 +34,20 @@ public:
 	VOID setGraphicsTransform(Graphics& graphics);
 
 	// getters
-	float getStrokeWidth() const;
-	float getStrokeOpacity() const;
-	float getFillOpacity() const;
-	RGBColor getStroke() const;
-	RGBColor getFill() const;
+	float getStrokeWidth() const { return strokeWidth; }
+	float getStrokeOpacity() const { return strokeOpacity; }
+	float getFillOpacity() const { return fillOpacity; }
+	RGBColor getStroke() const { return stroke; }
+	RGBColor getFill() const { return fill; }
 
 	// setters
-	void setStrokeWidth(float &width);
-	void setStrokeOpacity(float &opacity);
-	void setFillOpacity(float &opacity);
-	void setStroke(RGBColor &color);
-	void setFill(RGBColor& color);
+	void setStrokeWidth(const float &width) { strokeWidth = width; }
+	void setStrokeOpacity(const float &opacity) { strokeOpacity = opacity; }
+	void setFillOpacity(const float &opacity) { fillOpacity = opacity; }
+	void setStroke(const RGBColor &color) { stroke = color; }
+	void setFill(const RGBColor& color) { fill = color; }
+	
+
 };
 
 
@@ -169,12 +173,18 @@ private:
 	std::vector<SVGShape*> children;
 
 public:
-	SVGGroup();
-	~SVGGroup();
+	SVGGroup() {}
+	~SVGGroup() {
+		for (SVGShape* shape : children) {
+			delete shape;
+		}
+	}
 
 	void appendChild(SVGShape* shape);
 
-	void processAttribute(char* attributeName, char* attributeValue) override;
+	void processAttribute(char* attributeName, char* attributeValue) override {
+		SVGShape::processAttribute(attributeName, attributeValue);
+	}
 
 	void draw(Gdiplus::Graphics& graphics) override;
 
@@ -183,43 +193,6 @@ public:
 
 };
 
-SVGShape* createShapeFromNode(xml_node<>* node) {
-	if (!node) return nullptr;
 
-	const char* nodeName = node->name();
-	SVGShape* shape = nullptr;
-
-	// Khởi tạo shape tương ứng
-	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle();
-	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse();
-	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle();
-	else if (strcmp(nodeName, "text") == 0) shape = new SVGText();
-	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine();
-	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline();
-	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon();
-	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup();
-
-	if (!shape) return nullptr;
-
-	// Nếu là text thì set nội dung
-	if (auto textShape = dynamic_cast<SVGText*>(shape)) {
-		if (node->value()) textShape->setContent(node->value());
-	}
-
-	// Parse các attribute
-	for (xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute()) {
-		shape->processAttribute(attr->name(), attr->value());
-	}
-
-	// Nếu là group -> đệ quy duyệt con
-	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
-		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
-			SVGShape* childShape = createShapeFromNode(child);
-			if (childShape) group->appendChild(childShape);
-		}
-	}
-
-	return shape;
-}
 
 #endif

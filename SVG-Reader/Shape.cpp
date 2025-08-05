@@ -9,6 +9,44 @@ using namespace std;
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
+SVGShape* createShapeFromNode(xml_node<>* node) {
+	if (!node) return nullptr;
+
+	const char* nodeName = node->name();
+	SVGShape* shape = nullptr;
+
+	// Khởi tạo shape tương ứng
+	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle();
+	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse();
+	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle();
+	else if (strcmp(nodeName, "text") == 0) shape = new SVGText();
+	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine();
+	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline();
+	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon();
+	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup();
+
+	if (!shape) return nullptr;
+
+	// Nếu là text thì set nội dung
+	if (auto textShape = dynamic_cast<SVGText*>(shape)) {
+		if (node->value()) textShape->setContent(node->value());
+	}
+
+	// Parse các attribute
+	for (xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute()) {
+		shape->processAttribute(attr->name(), attr->value());
+	}
+
+	// Nếu là group -> đệ quy duyệt con
+	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
+		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
+			SVGShape* childShape = createShapeFromNode(child);
+			if (childShape) group->appendChild(childShape);
+		}
+	}
+
+	return shape;
+}
 
 SVGShape::SVGShape()
 	: position(), stroke(), fill(), 
@@ -61,46 +99,6 @@ VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 	transform.applyToGraphics(&graphics);
 	
 }
-
-float SVGShape::getStrokeWidth() const {
-	return strokeWidth;
-}
-
-float SVGShape::getStrokeOpacity() const {
-	return strokeOpacity;
-}
-
-float SVGShape::getFillOpacity() const {
-	return fillOpacity;
-}
-
-RGBColor SVGShape::getStroke() const {
-	return stroke;
-}
-
-RGBColor SVGShape::getFill() const {
-	return fill;
-}
-
-void SVGShape::setStrokeWidth(float &width) {
-	strokeWidth = width;
-}
-
-void SVGShape::setStrokeOpacity(float &opacity) {
-	strokeOpacity = opacity;
-}
-
-void SVGShape::setFillOpacity(float &opacity) {
-	fillOpacity = opacity;
-}
-
-void SVGShape::setStroke(RGBColor &color) {
-	stroke = color;
-}
-
-void SVGShape::setFill(RGBColor &color) {
-	fill = color;
-} 
 
 
 //SVG-Rectangle
@@ -543,13 +541,7 @@ VOID SVGPath::draw(Graphics& graphics) {
 	graphics.DrawPath(&pen, &gp);
 }
 
-SVGGroup::SVGGroup() {}
 
-SVGGroup::~SVGGroup() {
-	for (SVGShape* shape : children) {
-		delete shape;
-	}
-}
 
 //VOID SVGGroup::appendChild(SVGShape* shape) {
 //	//noi chung la thang strokeopacity = 0 thi coi nhu thang stroke ko co, fill - fillopacity cung tuong tu
@@ -586,9 +578,7 @@ VOID SVGGroup::appendChild(SVGShape* shape) {
 	children.push_back(shape);
 }
 
-VOID SVGGroup::processAttribute(char* attributeName, char* attributeValue) {
-	SVGShape::processAttribute(attributeName, attributeValue);
-}
+
 
 //VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
 //	GraphicsState state = graphics.Save();	//snapshot trang thai hien tai
@@ -624,28 +614,28 @@ VOID SVGGroup::draw(Graphics& graphics) {
 	SVGShape::setGraphicsTransform(graphics);
 
 	// Sau đó áp dụng group transforms
-	for (const auto& op : getTransform().getOperations()) {
-		switch (op.type) {
-		case TRANSLATE:
-			graphics.TranslateTransform(op.values[0], op.values[1]);
-			break;
-		case ROTATE:
-			// Xử lý rotation với center point chính xác
-			if (op.valueCount >= 3) {
-				graphics.TranslateTransform(op.values[1], op.values[2]);
-				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
-				graphics.TranslateTransform(-op.values[1], -op.values[2]);
-			}
-			else {
-				// Rotation around origin
-				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
-			}
-			break;
-		case SCALE:
-			graphics.ScaleTransform(op.values[0], op.values[1]);
-			break;
-		}
-	}
+	//for (const auto& op : getTransform().getOperations()) {
+	//	switch (op.type) {
+	//	case TRANSLATE:
+	//		graphics.TranslateTransform(op.values[0], op.values[1]);
+	//		break;
+	//	case ROTATE:
+	//		// Xử lý rotation với center point chính xác
+	//		if (op.valueCount >= 3) {
+	//			graphics.TranslateTransform(op.values[1], op.values[2]);
+	//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+	//			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+	//		}
+	//		else {
+	//			// Rotation around origin
+	//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+	//		}
+	//		break;
+	//	case SCALE:
+	//		graphics.ScaleTransform(op.values[0], op.values[1]);
+	//		break;
+	//	}
+	//}
 
 	// Draw all child shapes
 	for (SVGShape* shape : children) {
@@ -653,7 +643,4 @@ VOID SVGGroup::draw(Graphics& graphics) {
 			shape->draw(graphics);
 		}
 	}
-
-	// Restore original graphics state
-	graphics.Restore(groupState);
 }
