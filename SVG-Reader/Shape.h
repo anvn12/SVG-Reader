@@ -163,4 +163,23 @@ public:
 	VOID handleCommand(char cmd, const vector<float>& nums);
 };
 
+class SVGGroup : public SVGShape {
+private:
+	std::vector<SVGShape*> children;
+
+public:
+	SVGGroup();
+	~SVGGroup();
+
+	void appendChild(SVGShape* shape);
+
+	void processAttribute(char* attributeName, char* attributeValue) override;
+
+	void draw(Gdiplus::Graphics& graphics) override;
+
+	// Getter cho children (neu can)
+	const std::vector<SVGShape*>& getChildren() const { return children; }
+
+};
+
 #endif
