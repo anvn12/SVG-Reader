@@ -542,3 +542,118 @@ VOID SVGPath::draw(Graphics& graphics) {
 		strokeWidth);
 	graphics.DrawPath(&pen, &gp);
 }
+
+SVGGroup::SVGGroup() {}
+
+SVGGroup::~SVGGroup() {
+	for (SVGShape* shape : children) {
+		delete shape;
+	}
+}
+
+//VOID SVGGroup::appendChild(SVGShape* shape) {
+//	//noi chung la thang strokeopacity = 0 thi coi nhu thang stroke ko co, fill - fillopacity cung tuong tu
+//	if (shape->getStrokeOpacity() == 0.0f) {
+//		shape->setStroke(this->getStroke());
+//		shape->setStrokeOpacity(this->getStrokeOpacity());
+//	}
+//	if (shape->getStrokeWidth() == 0.0f) {
+//		shape->setStrokeWidth(this->getStrokeWidth());
+//	}
+//	if (shape->getFillOpacity() == 0.0f) {
+//		shape->setFill(this->getFill());
+//		shape->setFillOpacity(this->getFillOpacity());
+//	}
+//
+//	children.push_back(shape);
+//}
+
+VOID SVGGroup::appendChild(SVGShape* shape) {
+	// Chỉ inherit properties từ parent group khi child không có thuộc tính đó
+	// VÀ parent group có thuộc tính đó
+	if (shape->getStrokeOpacity() == 0.0f && this->getStrokeOpacity() > 0.0f) {
+		shape->setStroke(this->getStroke());
+		shape->setStrokeOpacity(this->getStrokeOpacity());
+	}
+	if (shape->getStrokeWidth() == 0.0f && this->getStrokeWidth() > 0.0f) {
+		shape->setStrokeWidth(this->getStrokeWidth());
+	}
+	if (shape->getFillOpacity() == 0.0f && this->getFillOpacity() > 0.0f) {
+		shape->setFill(this->getFill());
+		shape->setFillOpacity(this->getFillOpacity());
+	}
+
+	children.push_back(shape);
+}
+
+VOID SVGGroup::processAttribute(char* attributeName, char* attributeValue) {
+	SVGShape::processAttribute(attributeName, attributeValue);
+}
+
+//VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
+//	GraphicsState state = graphics.Save();	//snapshot trang thai hien tai
+//
+//	for (const auto& op : getTransform().getOperations()) {		//bien doi
+//		switch (op.type) {
+//		case TRANSLATE:
+//			graphics.TranslateTransform(op.values[0], op.values[1]);
+//			break;
+//		case ROTATE:
+//			graphics.TranslateTransform(op.values[1], op.values[2]);
+//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+//			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+//			break;
+//		case SCALE:
+//			graphics.ScaleTransform(op.values[0], op.values[1]);
+//			break;
+//		}
+//	}
+//
+//	for (SVGShape* shape : children) {
+//		if (shape) shape->draw(graphics);
+//	}
+//
+//	graphics.Restore(state);	//khoi phuc, tranh anh huong cac group hoac shape khong lien quan
+//}
+
+VOID SVGGroup::draw(Graphics& graphics) {
+	// Save current graphics state
+	GraphicsState groupState = graphics.Save();
+
+	// QUAN TRỌNG: Áp dụng SVG reader transforms trước
+	SVGShape::setGraphicsTransform(graphics);
+
+	// Sau đó áp dụng group transforms
+	for (const auto& op : getTransform().getOperations()) {
+		switch (op.type) {
+		case TRANSLATE:
+			graphics.TranslateTransform(op.values[0], op.values[1]);
+			break;
+		case ROTATE:
+			// Xử lý rotation với center point chính xác
+			if (op.valueCount >= 3) {
+				graphics.TranslateTransform(op.values[1], op.values[2]);
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+				graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			}
+			else {
+				// Rotation around origin
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			}
+			break;
+		case SCALE:
+			graphics.ScaleTransform(op.values[0], op.values[1]);
+			break;
+		}
+	}
+
+	// Draw all child shapes
+	for (SVGShape* shape : children) {
+		if (shape) {
+			shape->draw(graphics);
+		}
+	}
+
+	// Restore original graphics state
+	graphics.Restore(groupState);
+}
