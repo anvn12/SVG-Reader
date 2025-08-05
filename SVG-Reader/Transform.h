@@ -49,7 +49,6 @@ public:
 // base class to store translate, rotate, scale in transform svg
 class TransformAttribute {
 public:
-    TransformAttribute() {}
     virtual ~TransformAttribute() {}
 
     virtual void applyToGraphics(Graphics* g) = 0;

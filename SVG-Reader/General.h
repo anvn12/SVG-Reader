@@ -19,6 +19,8 @@ public:
 	RGBColor(int r, int g, int b)
 		: red(clamp(r)), green(clamp(g)), blue(clamp(b)) {}
 
+	~RGBColor() {}
+
 	RGBColor getColor() { return *this; }
 
 	int getRed() const { return red; }
@@ -40,6 +42,8 @@ public:
 
 	Point2D(float coorX, float coorY)
 		: x(coorX), y(coorY) {}
+
+	~Point2D() {}
 
 	float getX() const { return x; }
 	float getY() const { return y; }
