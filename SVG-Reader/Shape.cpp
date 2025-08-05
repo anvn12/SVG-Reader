@@ -41,7 +41,61 @@ SVGShape* createShapeFromNode(xml_node<>* node) {
 	// Nếu là group -> đệ quy duyệt con
 	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
 		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
-			SVGShape* childShape = createShapeFromNode(child);
+			SVGShape* childShape = createShapeFromNode(child, group);
+			if (childShape) group->appendChild(childShape);
+		}
+	}
+
+	return shape;
+}
+
+SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
+	if (!node) return nullptr;
+
+	const char* nodeName = node->name();
+	SVGShape* shape = nullptr;
+
+	// them mấy cái constructor vô -> thay vì new thì new + thuộc tính của groupParent
+	// // nếu ở dưới có xử lí thêm thuộc tính -> thuộc tính parent mất đi
+	//groupParent->getFill()/
+	//_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity
+
+	// Khởi tạo shape tương ứng
+	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "text") == 0) shape = new SVGText(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+
+	if (!shape) return nullptr;
+
+	// Nếu là text thì set nội dung
+	if (auto textShape = dynamic_cast<SVGText*>(shape)) {
+		if (node->value()) textShape->setContent(node->value());
+	}
+
+	// Parse các attribute
+	for (xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute()) {
+		shape->processAttribute(attr->name(), attr->value());
+	}
+
+	// Nếu là group -> đệ quy duyệt con
+	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
+		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
+			SVGShape* childShape = createShapeFromNode(child, group);
 			if (childShape) group->appendChild(childShape);
 		}
 	}
@@ -564,7 +618,7 @@ VOID SVGPath::draw(Graphics& graphics) {
 VOID SVGGroup::appendChild(SVGShape* shape) {
 	// Chỉ inherit properties từ parent group khi child không có thuộc tính đó
 	// VÀ parent group có thuộc tính đó
-	if (shape->getStrokeOpacity() == 0.0f && this->getStrokeOpacity() > 0.0f) {
+	/*if (shape->getStrokeOpacity() == 0.0f && this->getStrokeOpacity() > 0.0f) {
 		shape->setStroke(this->getStroke());
 		shape->setStrokeOpacity(this->getStrokeOpacity());
 	}
@@ -574,7 +628,7 @@ VOID SVGGroup::appendChild(SVGShape* shape) {
 	if (shape->getFillOpacity() == 0.0f && this->getFillOpacity() > 0.0f) {
 		shape->setFill(this->getFill());
 		shape->setFillOpacity(this->getFillOpacity());
-	}
+	}*/
 
 	children.push_back(shape);
 }

@@ -7,7 +7,9 @@
 #include <sstream>
 
 class SVGShape;
+class SVGGroup;
 SVGShape* createShapeFromNode(xml_node<>* node);
+SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent);
 
 
 // inheritance để những cái SVG class có cùng tên
@@ -20,6 +22,11 @@ protected:
 	float strokeWidth, strokeOpacity, fillOpacity;
 public:
 	SVGShape();
+	SVGShape(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity) 
+		: stroke(_stroke), strokeWidth(_strokeWidth), strokeOpacity(_strokeOpacity), 
+		fill(_fill), fillOpacity(_fillOpacity) {
+	}
 	virtual ~SVGShape() = default;
 
 
@@ -59,6 +66,11 @@ private:
 public:
 	SVGRectangle() : SVGShape(), width(0), height(0) {}
 
+	SVGRectangle(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), width(0), height(0) {
+	}
+
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics &graphics) override;
 };
@@ -71,6 +83,11 @@ private:
 	string content;
 public:
 	SVGText() : SVGShape(), fontSize(0.0) {}
+
+	SVGText(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), fontSize(0.0) {
+	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID setContent(char* attributeValue);
@@ -86,6 +103,11 @@ protected:
 public:
 	SVGEllipse() : SVGShape(), rx(0), ry(0) {}
 
+	SVGEllipse(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), rx(0), ry(0) {
+	}
+
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) override;
 };
@@ -95,6 +117,12 @@ public:
 class SVGCircle : public SVGEllipse {
 public:
 	SVGCircle() : SVGEllipse() {
+		rx = ry = 0;
+	}
+
+	SVGCircle(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGEllipse(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
 		rx = ry = 0;
 	}
 
@@ -111,6 +139,11 @@ private:
 public:
 	SVGLine() : SVGShape(), position1(), position2() {}
 
+	SVGLine(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), position1(), position2() {
+	}
+
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics& graphics) override;
 };
@@ -124,6 +157,12 @@ public:
 	SVGPolyline() : SVGShape() {
 		points = "";
 		fillOpacity = 1.0;
+	}
+
+	SVGPolyline(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+		points = "";
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
@@ -141,6 +180,12 @@ public:
 		strokeWidth = 1.0;
 		strokeOpacity = 1.0;
 		fillOpacity = 1.0;
+	}
+
+	SVGPolygon(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+		points = "";
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
@@ -161,6 +206,11 @@ public:
 		fillOpacity = 255.0;
 	}
 
+	SVGPath(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+	}
+
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 
 	VOID draw(Graphics& graphics) override;
@@ -174,6 +224,12 @@ private:
 
 public:
 	SVGGroup() {}
+
+	SVGGroup(const RGBColor& _stroke, const float& _strokeWidth,
+		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
+		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+	}
+
 	~SVGGroup() {
 		for (SVGShape* shape : children) {
 			delete shape;
