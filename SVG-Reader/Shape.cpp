@@ -236,7 +236,7 @@ VOID SVGText::draw(Graphics& graphics) {
 	StringFormat format;
 	//format.SetLineAlignment(Gdiplus::StringAlignmentFar); xxxxxxxxxx
 	// 
-	format.SetAlignment(Gdiplus::StringAlignmentCenter); // Left aligned
+	format.SetAlignment(Gdiplus::StringAlignmentNear); // Left aligned
 	format.SetLineAlignment(StringAlignmentNear);
 
 
