@@ -36,6 +36,13 @@ public:
 	float getFillOpacity() const;
 	RGBColor getStroke() const;
 	RGBColor getFill() const;
+
+	// setters
+	void setStrokeWidth(float &width);
+	void setStrokeOpacity(float &opacity);
+	void setFillOpacity(float &opacity);
+	void setStroke(RGBColor &color);
+	void setFill(RGBColor& color);
 };
 
 
