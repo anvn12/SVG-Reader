@@ -62,23 +62,23 @@ SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
 
 	// Khởi tạo shape tương ứng
 	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "text") == 0) shape = new SVGText(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeWidth(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 
 	if (!shape) return nullptr;
 
@@ -693,11 +693,16 @@ VOID SVGGroup::draw(Graphics& graphics) {
 	//}
 
 	// Draw all child shapes
+	GraphicsState groupState = graphics.Save();
 	for (SVGShape* shape : children) {
 		if (shape) {
+
 			shape->setGraphicsTransform(graphics);
 
 			shape->draw(graphics);
+
+
+			graphics.Restore(groupState);
 		}
 	}
 }
