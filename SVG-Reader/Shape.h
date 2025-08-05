@@ -129,7 +129,7 @@ public:
 };
 
 struct PathCommand {
-	char type; // 'M', 'L', 'C', 'Z'
+	char type; // 'M', 'L', 'C', 'Z', 'H', 'V'
 	vector<Point2D> data; //for x,y and control points
 };
 

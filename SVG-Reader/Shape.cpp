@@ -519,6 +519,24 @@ VOID SVGPath::draw(Graphics& graphics) {
 				current = newPoint;
 			}
 			break;
+		case 'H':
+			for (auto& point : cmd.data) {
+				PointF newPoint(point.getX(), current.Y);
+				gp.AddLine(current, newPoint);
+				current = newPoint;
+			}
+			break;
+		case 'h':
+			for (auto& point : cmd.data) {
+				PointF newPoint(current.X + point.getX(), current.Y);
+				gp.AddLine(current, newPoint);
+				current = newPoint;
+			}
+			break;
+		case 'V':
+			break;
+		case 'v':
+			break;
 		case 'C':
 			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) {
 				PointF c1(cmd.data[i].getX(), cmd.data[i].getY());
