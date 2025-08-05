@@ -62,6 +62,26 @@ VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 	
 }
 
+float SVGShape::getStrokeWidth() const {
+	return strokeWidth;
+}
+
+float SVGShape::getStrokeOpacity() const {
+	return strokeOpacity;
+}
+
+float SVGShape::getFillOpacity() const {
+	return fillOpacity;
+}
+
+RGBColor SVGShape::getStroke() const {
+	return stroke;
+}
+
+RGBColor SVGShape::getFill() const {
+	return fill;
+}
+
 
 //SVG-Rectangle
 VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
