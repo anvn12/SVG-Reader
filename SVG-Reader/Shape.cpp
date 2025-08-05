@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Shape.h"
 #include "SVGReader.h"
 #include "Transform.h"
@@ -9,9 +9,14 @@ using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
 
+//SVGShape::SVGShape()
+//	: position(), stroke(), fill(), 
+//		strokeWidth(0.0), strokeOpacity(0.0), fillOpacity(0.0) {}
+
 SVGShape::SVGShape()
-	: position(), stroke(), fill(), 
-		strokeWidth(0.0), strokeOpacity(0.0), fillOpacity(0.0) {}
+	: position(), stroke(), fill(),
+	strokeWidth(1.0), strokeOpacity(255.0), fillOpacity(255.0) {
+}
 
 VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x") == 0) {
@@ -20,11 +25,19 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	else if (strcmp(attributeName, "y") == 0) {
 		position.setY(atof(attributeValue));
 	}
+	/*else if (strcmp(attributeName, "stroke") == 0) {
+		stroke = textToRGB(attributeValue);
+	}*/
 	else if (strcmp(attributeName, "stroke") == 0) {
 		stroke = textToRGB(attributeValue);
+		if (strokeOpacity == 0.0) strokeOpacity = 255.0; // Set default if not specified
 	}
+	/*else if (strcmp(attributeName, "fill") == 0) {
+		fill = textToRGB(attributeValue);
+	}*/
 	else if (strcmp(attributeName, "fill") == 0) {
 		fill = textToRGB(attributeValue);
+		if (fillOpacity == 0.0) fillOpacity = 255.0; // Set default if not specified
 	}
 	else if (strcmp(attributeName, "stroke-width") == 0) {
 		strokeWidth = atof(attributeValue);
@@ -123,35 +136,77 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
+//VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
+//	// set transform attribute: translate, rotate, scale
+//	SVGShape::setGraphicsTransform(graphics);
+//
+//	// argb color
+//	Pen pen(Color(255,
+//			stroke.getRed(),
+//			stroke.getGreen(),
+//			stroke.getBlue()),
+//			strokeWidth);
+//
+//	SolidBrush solidBrush(Color((int)fillOpacity,
+//						fill.getRed(),
+//						fill.getGreen(),
+//						fill.getBlue()));
+//
+//
+//	RectF object = RectF(position.getX(), position.getY(),
+//						width, height);
+//	graphics.FillRectangle(&solidBrush, object);
+//
+//
+//	graphics.DrawRectangle(&pen, object);
+//
+//	// reset graphics after drawing
+//	graphics.ResetTransform();
+//}
+//
 VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
-	// set transform attribute: translate, rotate, scale
 	SVGShape::setGraphicsTransform(graphics);
 
-	// argb color
-	Pen pen(Color(255,
-			stroke.getRed(),
-			stroke.getGreen(),
-			stroke.getBlue()),
-			strokeWidth);
+	// Apply individual transform
+	GraphicsState state = graphics.Save();
+	for (const auto& op : getTransform().getOperations()) {
+		switch (op.type) {
+		case TRANSLATE:
+			graphics.TranslateTransform(op.values[0], op.values[1]);
+			break;
+		case ROTATE:
+			if (op.valueCount >= 3) {
+				graphics.TranslateTransform(op.values[1], op.values[2]);
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+				graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			}
+			else {
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			}
+			break;
+		case SCALE:
+			graphics.ScaleTransform(op.values[0], op.values[1]);
+			break;
+		}
+	}
 
-	SolidBrush solidBrush(Color((int)fillOpacity,
-						fill.getRed(),
-						fill.getGreen(),
-						fill.getBlue()));
+	// Sử dụng strokeOpacity thay vì hardcode 255
+	Pen pen(Color((int)strokeOpacity, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
+	SolidBrush solidBrush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
 
+	RectF object = RectF(position.getX(), position.getY(), width, height);
 
-	RectF object = RectF(position.getX(), position.getY(),
-						width, height);
-	graphics.FillRectangle(&solidBrush, object);
+	// Chỉ draw khi opacity > 0
+	if (fillOpacity > 0) {
+		graphics.FillRectangle(&solidBrush, object);
+	}
+	if (strokeOpacity > 0 && strokeWidth > 0) {
+		graphics.DrawRectangle(&pen, object);
+	}
 
-
-	graphics.DrawRectangle(&pen, object);
-
-	// reset graphics after drawing
+	graphics.Restore(state);
 	graphics.ResetTransform();
 }
-
-
 
 //SVG-Text
 VOID SVGText::processAttribute(char* attributeName, char* attributeValue) {
@@ -167,45 +222,91 @@ VOID SVGText::setContent(char* attributeValue) {
 	content = attributeValue;
 }
 
+//VOID SVGText::draw(Graphics& graphics) {
+//	SVGShape::setGraphicsTransform(graphics);
+//
+//	SolidBrush brush(Color(255,
+//						fill.getRed(),
+//						fill.getGreen(),
+//						fill.getBlue()));
+//
+//
+//	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
+//
+//
+//	FontFamily fontFamily(L"Times New Roman");
+//
+//
+//	Font font(&fontFamily,
+//			fontSize,
+//			Gdiplus::FontStyleRegular,
+//			Gdiplus::UnitPixel);
+//
+//
+//	PointF drawPoint(position.getX(), position.getY());
+//
+//
+//	// can dong cho text
+//	/*
+//		text__
+//		|	  |
+//		|_____|
+//	*/
+//	StringFormat format;
+//	format.SetAlignment(Gdiplus::StringAlignmentNear);
+//	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
+//
+//	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+//
+//	graphics.ResetTransform();
+//}
 VOID SVGText::draw(Graphics& graphics) {
 	SVGShape::setGraphicsTransform(graphics);
 
-	SolidBrush brush(Color(255,
-						fill.getRed(),
-						fill.getGreen(),
-						fill.getBlue()));
+	// Apply individual transform
+	GraphicsState state = graphics.Save();
+	for (const auto& op : getTransform().getOperations()) {
+		switch (op.type) {
+		case TRANSLATE:
+			graphics.TranslateTransform(op.values[0], op.values[1]);
+			break;
+		case ROTATE:
+			if (op.valueCount >= 3) {
+				graphics.TranslateTransform(op.values[1], op.values[2]);
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+				graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			}
+			else {
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			}
+			break;
+		case SCALE:
+			graphics.ScaleTransform(op.values[0], op.values[1]);
+			break;
+		}
+	}
 
+	// QUAN TRỌNG: Xử lý màu text đúng cách
+	// Trong SVG, text ưu tiên fill, nếu không có fill thì dùng stroke
+	RGBColor textColor = (fillOpacity > 0) ? fill : stroke;
+	float textOpacity = (fillOpacity > 0) ? fillOpacity : strokeOpacity;
 
-	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
+	SolidBrush brush(Color((int)textOpacity, textColor.getRed(), textColor.getGreen(), textColor.getBlue()));
 
-
+	wstring wideContent(content.begin(), content.end());
 	FontFamily fontFamily(L"Times New Roman");
-
-
-	Font font(&fontFamily,
-			fontSize,
-			Gdiplus::FontStyleRegular,
-			Gdiplus::UnitPixel);
-
-
+	Font font(&fontFamily, fontSize, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 	PointF drawPoint(position.getX(), position.getY());
 
-
-	// can dong cho text
-	/*
-		text__
-		|	  |
-		|_____|
-	*/
 	StringFormat format;
 	format.SetAlignment(Gdiplus::StringAlignmentNear);
 	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
 	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
 
+	graphics.Restore(state);
 	graphics.ResetTransform();
 }
-
 
 
 //SVG-Ellipse
@@ -227,33 +328,74 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
-VOID SVGEllipse::draw(Graphics & graphics) {
-
+//VOID SVGEllipse::draw(Graphics & graphics) {
+//
+//	SVGShape::setGraphicsTransform(graphics);
+//
+//	//int alphaFill = static_cast<int>(fillOpacity * 255);
+//	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
+//
+//	SolidBrush brush(Color(fillOpacity,
+//						fill.getRed(), 
+//						fill.getGreen(), 
+//						fill.getBlue()));
+//
+//	Pen pen(Color(strokeOpacity,
+//				stroke.getRed(),
+//				stroke.getGreen(), 
+//				stroke.getBlue()), 
+//				strokeWidth);
+//
+//	RectF rectF(position.getX() - rx, position.getY() - ry, 2 * rx, 2 * ry);
+//
+//
+//	graphics.FillEllipse(&brush, rectF);
+//	graphics.DrawEllipse(&pen, rectF);
+//
+//	graphics.ResetTransform();
+//}
+VOID SVGEllipse::draw(Graphics& graphics) {
 	SVGShape::setGraphicsTransform(graphics);
 
-	//int alphaFill = static_cast<int>(fillOpacity * 255);
-	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
+	// Apply individual transform
+	GraphicsState state = graphics.Save();
+	for (const auto& op : getTransform().getOperations()) {
+		switch (op.type) {
+		case TRANSLATE:
+			graphics.TranslateTransform(op.values[0], op.values[1]);
+			break;
+		case ROTATE:
+			if (op.valueCount >= 3) {
+				graphics.TranslateTransform(op.values[1], op.values[2]);
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+				graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			}
+			else {
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			}
+			break;
+		case SCALE:
+			graphics.ScaleTransform(op.values[0], op.values[1]);
+			break;
+		}
+	}
 
-	SolidBrush brush(Color(fillOpacity,
-						fill.getRed(), 
-						fill.getGreen(), 
-						fill.getBlue()));
-
-	Pen pen(Color(strokeOpacity,
-				stroke.getRed(),
-				stroke.getGreen(), 
-				stroke.getBlue()), 
-				strokeWidth);
+	SolidBrush brush(Color((int)fillOpacity, fill.getRed(), fill.getGreen(), fill.getBlue()));
+	Pen pen(Color((int)strokeOpacity, stroke.getRed(), stroke.getGreen(), stroke.getBlue()), strokeWidth);
 
 	RectF rectF(position.getX() - rx, position.getY() - ry, 2 * rx, 2 * ry);
 
+	// Chỉ draw khi opacity > 0
+	if (fillOpacity > 0) {
+		graphics.FillEllipse(&brush, rectF);
+	}
+	if (strokeOpacity > 0 && strokeWidth > 0) {
+		graphics.DrawEllipse(&pen, rectF);
+	}
 
-	graphics.FillEllipse(&brush, rectF);
-	graphics.DrawEllipse(&pen, rectF);
-
+	graphics.Restore(state);
 	graphics.ResetTransform();
 }
-
 
 
 //SVG-Circle
@@ -267,36 +409,88 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 	}
 }
 
+//VOID SVGCircle::draw(Graphics& graphics) {
+//	SVGShape::setGraphicsTransform(graphics);
+//
+//	//// type cast to 255
+//	//int alphaFill = static_cast<int>(fillOpacity * 255);
+//	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
+//
+//	SolidBrush brush(Color(fillOpacity,
+//		fill.getRed(),
+//		fill.getGreen(),
+//		fill.getBlue()));
+//
+//	Pen pen(Color(strokeOpacity,
+//		stroke.getRed(),
+//		stroke.getGreen(),
+//		stroke.getBlue()),
+//		strokeWidth);
+//
+//
+//	RectF rectF(position.getX() - rx, position.getY() - rx, 2 * rx, 2 * rx);
+//
+//
+//	graphics.FillEllipse(&brush, rectF);
+//	graphics.DrawEllipse(&pen, rectF);
+//
+//
+//	graphics.ResetTransform();
+//}
+
+
+// SAU (đã sửa):
 VOID SVGCircle::draw(Graphics& graphics) {
 	SVGShape::setGraphicsTransform(graphics);
 
-	//// type cast to 255
-	//int alphaFill = static_cast<int>(fillOpacity * 255);
-	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
+	// Apply individual transform
+	GraphicsState state = graphics.Save();
+	for (const auto& op : getTransform().getOperations()) {
+		switch (op.type) {
+		case TRANSLATE:
+			graphics.TranslateTransform(op.values[0], op.values[1]);
+			break;
+		case ROTATE:
+			if (op.valueCount >= 3) {
+				graphics.TranslateTransform(op.values[1], op.values[2]);
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+				graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			}
+			else {
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			}
+			break;
+		case SCALE:
+			graphics.ScaleTransform(op.values[0], op.values[1]);
+			break;
+		}
+	}
 
-	SolidBrush brush(Color(fillOpacity,
+	SolidBrush brush(Color((int)fillOpacity,
 		fill.getRed(),
 		fill.getGreen(),
 		fill.getBlue()));
 
-	Pen pen(Color(strokeOpacity,
+	Pen pen(Color((int)strokeOpacity,
 		stroke.getRed(),
 		stroke.getGreen(),
 		stroke.getBlue()),
 		strokeWidth);
 
-
+	// QUAN TRỌNG: Sửa lỗi tọa độ - dùng rx cho cả width và height
 	RectF rectF(position.getX() - rx, position.getY() - rx, 2 * rx, 2 * rx);
 
+	// Chỉ draw khi opacity > 0
+	if (fillOpacity > 0) {
+		graphics.FillEllipse(&brush, rectF);
+	}
+	if (strokeOpacity > 0 && strokeWidth > 0) {
+		graphics.DrawEllipse(&pen, rectF);
+	}
 
-	graphics.FillEllipse(&brush, rectF);
-	graphics.DrawEllipse(&pen, rectF);
-
-
+	graphics.Restore(state);
 	graphics.ResetTransform();
 }
-
-
 
 //SVG-Line
 VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
@@ -458,16 +652,34 @@ SVGGroup::~SVGGroup() {
 	}
 }
 
+//VOID SVGGroup::appendChild(SVGShape* shape) {
+//	//noi chung la thang strokeopacity = 0 thi coi nhu thang stroke ko co, fill - fillopacity cung tuong tu
+//	if (shape->getStrokeOpacity() == 0.0f) {
+//		shape->setStroke(this->getStroke());
+//		shape->setStrokeOpacity(this->getStrokeOpacity());
+//	}
+//	if (shape->getStrokeWidth() == 0.0f) {
+//		shape->setStrokeWidth(this->getStrokeWidth());
+//	}
+//	if (shape->getFillOpacity() == 0.0f) {
+//		shape->setFill(this->getFill());
+//		shape->setFillOpacity(this->getFillOpacity());
+//	}
+//
+//	children.push_back(shape);
+//}
+
 VOID SVGGroup::appendChild(SVGShape* shape) {
-	//noi chung la thang strokeopacity = 0 thi coi nhu thang stroke ko co, fill - fillopacity cung tuong tu
-	if (shape->getStrokeOpacity() == 0.0f) {
+	// Chỉ inherit properties từ parent group khi child không có thuộc tính đó
+	// VÀ parent group có thuộc tính đó
+	if (shape->getStrokeOpacity() == 0.0f && this->getStrokeOpacity() > 0.0f) {
 		shape->setStroke(this->getStroke());
 		shape->setStrokeOpacity(this->getStrokeOpacity());
 	}
-	if (shape->getStrokeWidth() == 0.0f) {
+	if (shape->getStrokeWidth() == 0.0f && this->getStrokeWidth() > 0.0f) {
 		shape->setStrokeWidth(this->getStrokeWidth());
 	}
-	if (shape->getFillOpacity() == 0.0f) {
+	if (shape->getFillOpacity() == 0.0f && this->getFillOpacity() > 0.0f) {
 		shape->setFill(this->getFill());
 		shape->setFillOpacity(this->getFillOpacity());
 	}
@@ -479,18 +691,56 @@ VOID SVGGroup::processAttribute(char* attributeName, char* attributeValue) {
 	SVGShape::processAttribute(attributeName, attributeValue);
 }
 
-VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
-	GraphicsState state = graphics.Save();	//snapshot trang thai hien tai
+//VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
+//	GraphicsState state = graphics.Save();	//snapshot trang thai hien tai
+//
+//	for (const auto& op : getTransform().getOperations()) {		//bien doi
+//		switch (op.type) {
+//		case TRANSLATE:
+//			graphics.TranslateTransform(op.values[0], op.values[1]);
+//			break;
+//		case ROTATE:
+//			graphics.TranslateTransform(op.values[1], op.values[2]);
+//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+//			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+//			break;
+//		case SCALE:
+//			graphics.ScaleTransform(op.values[0], op.values[1]);
+//			break;
+//		}
+//	}
+//
+//	for (SVGShape* shape : children) {
+//		if (shape) shape->draw(graphics);
+//	}
+//
+//	graphics.Restore(state);	//khoi phuc, tranh anh huong cac group hoac shape khong lien quan
+//}
 
-	for (const auto& op : getTransform().getOperations()) {		//bien doi
+VOID SVGGroup::draw(Graphics& graphics) {
+	// Save current graphics state
+	GraphicsState groupState = graphics.Save();
+
+	// QUAN TRỌNG: Áp dụng SVG reader transforms trước
+	SVGShape::setGraphicsTransform(graphics);
+
+	// Sau đó áp dụng group transforms
+	for (const auto& op : getTransform().getOperations()) {
 		switch (op.type) {
 		case TRANSLATE:
 			graphics.TranslateTransform(op.values[0], op.values[1]);
 			break;
 		case ROTATE:
-			graphics.TranslateTransform(op.values[1], op.values[2]);
-			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
-			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			// Xử lý rotation với center point chính xác
+			if (op.valueCount >= 3) {
+				graphics.TranslateTransform(op.values[1], op.values[2]);
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+				graphics.TranslateTransform(-op.values[1], -op.values[2]);
+			}
+			else {
+				// Rotation around origin
+				graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+			}
 			break;
 		case SCALE:
 			graphics.ScaleTransform(op.values[0], op.values[1]);
@@ -498,10 +748,13 @@ VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
 		}
 	}
 
+	// Draw all child shapes
 	for (SVGShape* shape : children) {
-		if (shape) shape->draw(graphics);
+		if (shape) {
+			shape->draw(graphics);
+		}
 	}
 
-	graphics.Restore(state);	//khoi phuc, tranh anh huong cac group hoac shape khong lien quan
+	// Restore original graphics state
+	graphics.Restore(groupState);
 }
-
