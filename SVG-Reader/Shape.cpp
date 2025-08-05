@@ -9,6 +9,99 @@ using namespace std;
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
+SVGShape* createShapeFromNode(xml_node<>* node) {
+	if (!node) return nullptr;
+
+	const char* nodeName = node->name();
+	SVGShape* shape = nullptr;
+
+	// Khởi tạo shape tương ứng
+	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle();
+	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse();
+	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle();
+	else if (strcmp(nodeName, "text") == 0) shape = new SVGText();
+	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine();
+	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline();
+	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon();
+	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath();
+	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup();
+
+	if (!shape) return nullptr;
+
+	// Nếu là text thì set nội dung
+	if (auto textShape = dynamic_cast<SVGText*>(shape)) {
+		if (node->value()) textShape->setContent(node->value());
+	}
+
+	// Parse các attribute
+	for (xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute()) {
+		shape->processAttribute(attr->name(), attr->value());
+	}
+
+	// Nếu là group -> đệ quy duyệt con
+	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
+		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
+			SVGShape* childShape = createShapeFromNode(child, group);
+			if (childShape) group->appendChild(childShape);
+		}
+	}
+
+	return shape;
+}
+
+SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
+	if (!node) return nullptr;
+
+	const char* nodeName = node->name();
+	SVGShape* shape = nullptr;
+
+	// them mấy cái constructor vô -> thay vì new thì new + thuộc tính của groupParent
+	// // nếu ở dưới có xử lí thêm thuộc tính -> thuộc tính parent mất đi
+	//groupParent->getFill()/
+	//_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity
+
+	// Khởi tạo shape tương ứng
+	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "text") == 0) shape = new SVGText(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+
+	if (!shape) return nullptr;
+
+	// Nếu là text thì set nội dung
+	if (auto textShape = dynamic_cast<SVGText*>(shape)) {
+		if (node->value()) textShape->setContent(node->value());
+	}
+
+	// Parse các attribute
+	for (xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute()) {
+		shape->processAttribute(attr->name(), attr->value());
+	}
+
+	// Nếu là group -> đệ quy duyệt con
+	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
+		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
+			SVGShape* childShape = createShapeFromNode(child, group);
+			if (childShape) group->appendChild(childShape);
+		}
+	}
+
+	return shape;
+}
 
 SVGShape::SVGShape()
 	: position(), stroke(), fill(), 
@@ -61,46 +154,6 @@ VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 	transform.applyToGraphics(&graphics);
 	
 }
-
-float SVGShape::getStrokeWidth() const {
-	return strokeWidth;
-}
-
-float SVGShape::getStrokeOpacity() const {
-	return strokeOpacity;
-}
-
-float SVGShape::getFillOpacity() const {
-	return fillOpacity;
-}
-
-RGBColor SVGShape::getStroke() const {
-	return stroke;
-}
-
-RGBColor SVGShape::getFill() const {
-	return fill;
-}
-
-void SVGShape::setStrokeWidth(float width) {
-	strokeWidth = width;
-}
-
-void SVGShape::setStrokeOpacity(float opacity) {
-	strokeOpacity = opacity;
-}
-
-void SVGShape::setFillOpacity(float opacity) {
-	fillOpacity = opacity;
-}
-
-void SVGShape::setStroke(const RGBColor &color) {
-	stroke = color;
-}
-
-void SVGShape::setFill(const RGBColor &color) {
-	fill = color;
-} 
 
 
 //SVG-Rectangle
@@ -163,14 +216,17 @@ VOID SVGText::draw(Graphics& graphics) {
 	FontFamily fontFamily(L"Times New Roman");
 
 	Font font(&fontFamily,
-			fontSize,
-			Gdiplus::FontStyleRegular,
-			Gdiplus::UnitPixel);
+		fontSize,
+		Gdiplus::FontStyleRegular,
+		Gdiplus::UnitPixel);
 
+	// add some variables to fix the alignment in gdi+
+	int ascent = fontFamily.GetCellAscent(FontStyleRegular);
+	int emHeight = fontFamily.GetEmHeight(FontStyleRegular);
+	float lineHeight = fontSize; // line height
+	float baselineOffset = lineHeight * (float) ascent / emHeight;
 
-	PointF drawPoint(position.getX(), position.getY());
-
-
+	
 	/* can dong cho text
 
 		text__
@@ -178,10 +234,37 @@ VOID SVGText::draw(Graphics& graphics) {
 		|_____|
 	*/
 	StringFormat format;
-	format.SetAlignment(Gdiplus::StringAlignmentNear);
-	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
+	//format.SetLineAlignment(Gdiplus::StringAlignmentFar); xxxxxxxxxx
+	// 
+	format.SetAlignment(Gdiplus::StringAlignmentCenter); // Left aligned
+	format.SetLineAlignment(StringAlignmentNear);
 
-	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+
+	// cho này đang gặp vấn đề: cái - baseline/2 là chỉnh bừa chứ ko có logic gì??
+	PointF drawPoint(position.getX() - baselineOffset / 2, position.getY() - baselineOffset);
+
+
+
+	//graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+
+
+	// as gdi+ does not support draw text with stroke -> use path
+	// ref: https://www.codeproject.com/Articles/42529/Outline-Text
+
+	GraphicsPath path;
+	path.AddString(wideContent.c_str(), -1, &fontFamily,
+		Gdiplus::FontStyleRegular, fontSize, drawPoint, &format);
+
+
+
+	Pen pen(Color(strokeOpacity,
+		stroke.getRed(),
+		stroke.getGreen(),
+		stroke.getBlue()),
+		strokeWidth);
+
+	graphics.FillPath(&brush, &path);
+	graphics.DrawPath(&pen, &path);
 }
 
 
@@ -541,4 +624,115 @@ VOID SVGPath::draw(Graphics& graphics) {
 		stroke.getBlue()),
 		strokeWidth);
 	graphics.DrawPath(&pen, &gp);
+}
+
+
+
+//VOID SVGGroup::appendChild(SVGShape* shape) {
+//	//noi chung la thang strokeopacity = 0 thi coi nhu thang stroke ko co, fill - fillopacity cung tuong tu
+//	if (shape->getStrokeOpacity() == 0.0f) {
+//		shape->setStroke(this->getStroke());
+//		shape->setStrokeOpacity(this->getStrokeOpacity());
+//	}
+//	if (shape->getStrokeWidth() == 0.0f) {
+//		shape->setStrokeWidth(this->getStrokeWidth());
+//	}
+//	if (shape->getFillOpacity() == 0.0f) {
+//		shape->setFill(this->getFill());
+//		shape->setFillOpacity(this->getFillOpacity());
+//	}
+//
+//	children.push_back(shape);
+//}
+
+VOID SVGGroup::appendChild(SVGShape* shape) {
+	// Chỉ inherit properties từ parent group khi child không có thuộc tính đó
+	// VÀ parent group có thuộc tính đó
+	/*if (shape->getStrokeOpacity() == 0.0f && this->getStrokeOpacity() > 0.0f) {
+		shape->setStroke(this->getStroke());
+		shape->setStrokeOpacity(this->getStrokeOpacity());
+	}
+	if (shape->getStrokeWidth() == 0.0f && this->getStrokeWidth() > 0.0f) {
+		shape->setStrokeWidth(this->getStrokeWidth());
+	}
+	if (shape->getFillOpacity() == 0.0f && this->getFillOpacity() > 0.0f) {
+		shape->setFill(this->getFill());
+		shape->setFillOpacity(this->getFillOpacity());
+	}*/
+
+	children.push_back(shape);
+}
+
+
+
+//VOID SVGGroup::draw(Graphics& graphics) {		//memento design pattern (maybe)
+//	GraphicsState state = graphics.Save();	//snapshot trang thai hien tai
+//
+//	for (const auto& op : getTransform().getOperations()) {		//bien doi
+//		switch (op.type) {
+//		case TRANSLATE:
+//			graphics.TranslateTransform(op.values[0], op.values[1]);
+//			break;
+//		case ROTATE:
+//			graphics.TranslateTransform(op.values[1], op.values[2]);
+//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+//			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+//			break;
+//		case SCALE:
+//			graphics.ScaleTransform(op.values[0], op.values[1]);
+//			break;
+//		}
+//	}
+//
+//	for (SVGShape* shape : children) {
+//		if (shape) shape->draw(graphics);
+//	}
+//
+//	graphics.Restore(state);	//khoi phuc, tranh anh huong cac group hoac shape khong lien quan
+//}
+
+VOID SVGGroup::draw(Graphics& graphics) {
+	// Save current graphics state
+	//GraphicsState groupState = graphics.Save();
+
+	// QUAN TRỌNG: Áp dụng SVG reader transforms trước
+	//SVGShape::setGraphicsTransform(graphics);
+
+	// Sau đó áp dụng group transforms
+	//for (const auto& op : getTransform().getOperations()) {
+	//	switch (op.type) {
+	//	case TRANSLATE:
+	//		graphics.TranslateTransform(op.values[0], op.values[1]);
+	//		break;
+	//	case ROTATE:
+	//		// Xử lý rotation với center point chính xác
+	//		if (op.valueCount >= 3) {
+	//			graphics.TranslateTransform(op.values[1], op.values[2]);
+	//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+	//			graphics.TranslateTransform(-op.values[1], -op.values[2]);
+	//		}
+	//		else {
+	//			// Rotation around origin
+	//			graphics.RotateTransform(op.values[0] * 180.0f / M_PI);
+	//		}
+	//		break;
+	//	case SCALE:
+	//		graphics.ScaleTransform(op.values[0], op.values[1]);
+	//		break;
+	//	}
+	//}
+
+	// Draw all child shapes
+	GraphicsState groupState = graphics.Save();
+	for (SVGShape* shape : children) {
+		if (shape) {
+
+			shape->setGraphicsTransform(graphics);
+
+			shape->draw(graphics);
+
+
+			graphics.Restore(groupState);
+		}
+	}
 }

@@ -190,6 +190,7 @@
     <None Include="..\..\svgreader\x64\Debug\transform_output.svg" />
     <None Include="..\Testcase\test_svg_transforms.svg" />
     <None Include="sample.svg" />
+    <None Include="testGroup.svg" />
     <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
