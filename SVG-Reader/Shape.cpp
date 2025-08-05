@@ -608,10 +608,10 @@ VOID SVGGroup::appendChild(SVGShape* shape) {
 
 VOID SVGGroup::draw(Graphics& graphics) {
 	// Save current graphics state
-	GraphicsState groupState = graphics.Save();
+	//GraphicsState groupState = graphics.Save();
 
 	// QUAN TRỌNG: Áp dụng SVG reader transforms trước
-	SVGShape::setGraphicsTransform(graphics);
+	//SVGShape::setGraphicsTransform(graphics);
 
 	// Sau đó áp dụng group transforms
 	//for (const auto& op : getTransform().getOperations()) {
@@ -640,6 +640,8 @@ VOID SVGGroup::draw(Graphics& graphics) {
 	// Draw all child shapes
 	for (SVGShape* shape : children) {
 		if (shape) {
+			shape->setGraphicsTransform(graphics);
+
 			shape->draw(graphics);
 		}
 	}
