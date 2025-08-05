@@ -7,6 +7,7 @@
 #include <sstream>
 
 
+
 // inheritance để những cái SVG class có cùng tên
 // polymorphism để mỗi hàm trong class làm việc khác nhau
 class SVGShape {
@@ -181,5 +182,44 @@ public:
 	const std::vector<SVGShape*>& getChildren() const { return children; }
 
 };
+
+SVGShape* createShapeFromNode(xml_node<>* node) {
+	if (!node) return nullptr;
+
+	const char* nodeName = node->name();
+	SVGShape* shape = nullptr;
+
+	// Khởi tạo shape tương ứng
+	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle();
+	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse();
+	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle();
+	else if (strcmp(nodeName, "text") == 0) shape = new SVGText();
+	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine();
+	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline();
+	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon();
+	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup();
+
+	if (!shape) return nullptr;
+
+	// Nếu là text thì set nội dung
+	if (auto textShape = dynamic_cast<SVGText*>(shape)) {
+		if (node->value()) textShape->setContent(node->value());
+	}
+
+	// Parse các attribute
+	for (xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute()) {
+		shape->processAttribute(attr->name(), attr->value());
+	}
+
+	// Nếu là group -> đệ quy duyệt con
+	if (auto group = dynamic_cast<SVGGroup*>(shape)) {
+		for (xml_node<>* child = node->first_node(); child; child = child->next_sibling()) {
+			SVGShape* childShape = createShapeFromNode(child);
+			if (childShape) group->appendChild(childShape);
+		}
+	}
+
+	return shape;
+}
 
 #endif
