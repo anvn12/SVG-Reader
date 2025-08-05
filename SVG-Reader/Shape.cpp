@@ -234,7 +234,24 @@ VOID SVGText::draw(Graphics& graphics) {
 	format.SetAlignment(Gdiplus::StringAlignmentNear);
 	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
-	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+	//graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
+
+
+	// as gdi+ does not support draw text with stroke -> use path
+	// ref: https://www.codeproject.com/Articles/42529/Outline-Text
+
+	GraphicsPath path;
+	path.AddString(wideContent.c_str(), wcslen(wideContent.c_str()), &fontFamily,
+		Gdiplus::FontStyleRegular, fontSize, Gdiplus::PointF(position.getX(), position.getY()), &format);
+
+	Pen pen(Color(255,
+		stroke.getRed(),
+		stroke.getGreen(),
+		stroke.getBlue()),
+		strokeWidth);
+
+	graphics.FillPath(&brush, &path);
+	graphics.DrawPath(&pen, &path);
 }
 
 
