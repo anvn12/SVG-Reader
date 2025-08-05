@@ -1,0 +1,41 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f8f8" stroke="none"/>
+  
+  <!-- Grid for reference -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#grid)"/>
+  
+  <!-- Coordinate system -->
+  <g stroke="black" stroke-width="1" fill="none">
+    <line x1="0" y1="150" x2="400" y2="150" opacity="0.3"/>
+    <line x1="200" y1="0" x2="200" y2="300" opacity="0.3"/>
+  </g>
+  
+  <!-- Original rectangle (reference) -->
+  <rect x="180" y="130" width="40" height="30" fill="lightblue" stroke="blue" stroke-width="2" opacity="0.5"/>
+  <text x="185" y="125" font-size="12" fill="blue">Original</text>
+  
+  <!-- Test Shape with transform: translate(50, 20) rotate(30) scale(1.5, 0.8) -->
+  <rect x="180" y="130" width="40" height="30" fill="red" stroke="darkred" stroke-width="2" 
+        transform="translate(50, 20) rotate(30) scale(1.5, 0.8)"/>
+  
+  <!-- Center point markers -->
+  <circle cx="200" cy="145" r="2" fill="blue"/>
+  <circle cx="250" cy="165" r="2" fill="red"/>
+  
+  <!-- Labels -->
+  <text x="10" y="30" font-size="14" font-weight="bold">Transform Test: translate(50, 20) rotate(30) scale(1.5, 0.8)</text>
+  <text x="10" y="50" font-size="12" fill="blue">Blue: Original rectangle (180, 130, 40×30)</text>
+  <text x="10" y="70" font-size="12" fill="red">Red: Transformed rectangle</text>
+  
+  <!-- Expected result values -->
+  <text x="10" y="250" font-size="11" font-family="monospace" fill="darkgreen">Expected transform sequence:</text>
+  <text x="10" y="265" font-size="11" font-family="monospace" fill="darkgreen">1. Translate by (50, 20)</text>
+  <text x="10" y="280" font-size="11" font-family="monospace" fill="darkgreen">2. Rotate 30° around origin</text>
+  <text x="10" y="295" font-size="11" font-family="monospace" fill="darkgreen">3. Scale by (1.5, 0.8)</text>
+</svg>

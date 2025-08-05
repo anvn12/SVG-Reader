@@ -49,12 +49,8 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		fillOpacity = atof(attributeValue) * 255;
 	}
 	else if (strcmp(attributeName, "transform") == 0) {
+
 		transform.parseTransform(attributeValue);
-	/*	float tempX = position.getX();
-		float tempY = position.getY();
-		transform.applyTransform(tempX, tempY);
-		position.setX(tempX);
-		position.setY(tempY);*/
 	}
 
 }
@@ -62,10 +58,8 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 // set transform attribute: translate, rotate, scale
 VOID SVGShape::setGraphicsTransform(Graphics& graphics) {
 	// + them transform attribute cua svg
-	graphics.TranslateTransform(SVGReader::getInstance().getX() /* + transform X*/, SVGReader::getInstance().getY() /* + transform Y*/);
-	graphics.ScaleTransform(SVGReader::getInstance().getScale() /* + Scale X */ , SVGReader::getInstance().getScale()) /* + Scale Y */;
-	//graphics.RotateTransform(rotate transform);
-	//graphics.RotateTransform(45);
+	transform.applyToGraphics(&graphics);
+	
 }
 
 
@@ -83,9 +77,6 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
-	// set transform attribute: translate, rotate, scale
-	SVGShape::setGraphicsTransform(graphics);
-
 	// argb color
 	Pen pen(Color(255,
 			stroke.getRed(),
@@ -98,16 +89,11 @@ VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 						fill.getGreen(),
 						fill.getBlue()));
 
-
 	RectF object = RectF(position.getX(), position.getY(),
 						width, height);
+
 	graphics.FillRectangle(&solidBrush, object);
-
-
 	graphics.DrawRectangle(&pen, object);
-
-	// reset graphics after drawing
-	graphics.ResetTransform();
 }
 
 
@@ -127,19 +113,14 @@ VOID SVGText::setContent(char* attributeValue) {
 }
 
 VOID SVGText::draw(Graphics& graphics) {
-	SVGShape::setGraphicsTransform(graphics);
-
 	SolidBrush brush(Color(255,
 						fill.getRed(),
 						fill.getGreen(),
 						fill.getBlue()));
 
-
 	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
 
-
 	FontFamily fontFamily(L"Times New Roman");
-
 
 	Font font(&fontFamily,
 			fontSize,
@@ -150,8 +131,8 @@ VOID SVGText::draw(Graphics& graphics) {
 	PointF drawPoint(position.getX(), position.getY());
 
 
-	// can dong cho text
-	/*
+	/* can dong cho text
+
 		text__
 		|	  |
 		|_____|
@@ -161,8 +142,6 @@ VOID SVGText::draw(Graphics& graphics) {
 	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
 	graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
-
-	graphics.ResetTransform();
 }
 
 
@@ -187,12 +166,6 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGEllipse::draw(Graphics & graphics) {
-
-	SVGShape::setGraphicsTransform(graphics);
-
-	//int alphaFill = static_cast<int>(fillOpacity * 255);
-	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
-
 	SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
@@ -206,11 +179,8 @@ VOID SVGEllipse::draw(Graphics & graphics) {
 
 	RectF rectF(position.getX() - rx, position.getY() - ry, 2 * rx, 2 * ry);
 
-
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
-
-	graphics.ResetTransform();
 }
 
 
@@ -227,12 +197,6 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGCircle::draw(Graphics& graphics) {
-	SVGShape::setGraphicsTransform(graphics);
-
-	//// type cast to 255
-	//int alphaFill = static_cast<int>(fillOpacity * 255);
-	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
-
 	SolidBrush brush(Color(fillOpacity,
 		fill.getRed(),
 		fill.getGreen(),
@@ -244,15 +208,10 @@ VOID SVGCircle::draw(Graphics& graphics) {
 		stroke.getBlue()),
 		strokeWidth);
 
-
 	RectF rectF(position.getX() - rx, position.getY() - rx, 2 * rx, 2 * rx);
-
 
 	graphics.FillEllipse(&brush, rectF);
 	graphics.DrawEllipse(&pen, rectF);
-
-
-	graphics.ResetTransform();
 }
 
 
@@ -277,11 +236,6 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGLine::draw(Graphics& graphics) {
-	SVGShape::setGraphicsTransform(graphics);
-
-	// type cast to 255
-	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
-
 	Pen pen(Color(strokeOpacity,
 				stroke.getRed(), 
 				stroke.getGreen(), 
@@ -289,8 +243,6 @@ VOID SVGLine::draw(Graphics& graphics) {
 				strokeWidth);
 
 	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
-
-	graphics.ResetTransform();
 }
 
 
@@ -312,19 +264,6 @@ VOID SVGPolyline::draw(Graphics& graphics) {
         return; 
 	}
 
-	SVGShape::setGraphicsTransform(graphics);
-
-	// type cast to 255
-    //int alphaFill = static_cast<int>(fillOpacity * 255);
-    //int alphaStroke = static_cast<int>(strokeOpacity * 255);
-
-	/*for (auto& pt : pointArray) {
-		float x = pt.X, y = pt.Y;
-
-		pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-		pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-	}*/
-
     SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
@@ -336,23 +275,11 @@ VOID SVGPolyline::draw(Graphics& graphics) {
 				stroke.getBlue()), 
 				strokeWidth);
 
-
-	/*if (fillOpacity > 0 && pointArray.size() >= 3) {
-		graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
-	}
-
-	for (size_t i = 0; i < pointArray.size() - 1; i++) {
-		graphics.DrawLine(&pen, pointArray[i], pointArray[i + 1]);
-	}*/
-
-
 	// fill
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
 	
 	// draw
 	graphics.DrawLines(&pen, pointArray.data(), pointArray.size());
-
-	graphics.ResetTransform();
 }
 
 
@@ -374,18 +301,6 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 		return;
 	}
 
-	//for (auto& pt : pointArray) {
-	//	float x = pt.X, y = pt.Y;
-	//	transform.applyTransform(x, y);
-	//	pt.X = x * SVGReader::getInstance().getScale() + SVGReader::getInstance().getX();
-	//	pt.Y = y * SVGReader::getInstance().getScale() + SVGReader::getInstance().getY();
-	//}
-
-
-	// type cast to 255
-	//int alphaFill = static_cast<int>(fillOpacity * 255);
-	//int alphaStroke = static_cast<int>(strokeOpacity * 255);
-
 	SolidBrush brush(Color(fillOpacity,
 						fill.getRed(), 
 						fill.getGreen(), 
@@ -397,15 +312,11 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 				stroke.getBlue()), 
 				strokeWidth);
 
-
-	SVGShape::setGraphicsTransform(graphics);
 	//fill 
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
 
 	//stroke oultine
 	graphics.DrawPolygon(&pen, pointArray.data(), pointArray.size());
-
-	graphics.ResetTransform();
 }
 
 

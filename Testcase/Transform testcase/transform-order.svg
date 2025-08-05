@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+	<rect fill-opacity="0.5" fill="rgb(200,200,200)" stroke="rgb(200,200,200)" stroke-width="2" x="200" y="50" width="100" height="200" transform="rotate(30) translate(100,0) " />
+	<rect fill-opacity="0.5" fill="rgb(255, 1, 1)" stroke="rgb(200,200,200)" stroke-width="2" x="200" y="50" width="100" height="200" transform="rotate(30) translate(200,0) " />
+	<rect fill-opacity="0.5" fill="rgb(200, 243, 12)" stroke="rgb(200,200,200)" stroke-width="2" x="200" y="50" width="100" height="200" transform="rotate(30) translate(300,0) " />
+	<rect fill-opacity="0.5" fill="rgb(0, 240, 56)" stroke="rgb(200,200,200)" stroke-width="2" x="200" y="50" width="100" height="200" transform="rotate(30) translate(400,0) " />
+	<rect fill-opacity="0.5" fill="rgb(40, 26, 239)" stroke="rgb(200,200,200)" stroke-width="2" x="200" y="50" width="100" height="200" transform="rotate(30) translate(500,0) " />
+</svg>
