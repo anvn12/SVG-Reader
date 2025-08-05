@@ -82,23 +82,23 @@ RGBColor SVGShape::getFill() const {
 	return fill;
 }
 
-void SVGShape::setStrokeWidth(float &width) {
+void SVGShape::setStrokeWidth(float width) {
 	strokeWidth = width;
 }
 
-void SVGShape::setStrokeOpacity(float &opacity) {
+void SVGShape::setStrokeOpacity(float opacity) {
 	strokeOpacity = opacity;
 }
 
-void SVGShape::setFillOpacity(float &opacity) {
+void SVGShape::setFillOpacity(float opacity) {
 	fillOpacity = opacity;
 }
 
-void SVGShape::setStroke(RGBColor &color) {
+void SVGShape::setStroke(const RGBColor &color) {
 	stroke = color;
 }
 
-void SVGShape::setFill(RGBColor &color) {
+void SVGShape::setFill(const RGBColor &color) {
 	fill = color;
 } 
 
