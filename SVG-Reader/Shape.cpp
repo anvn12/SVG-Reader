@@ -216,14 +216,17 @@ VOID SVGText::draw(Graphics& graphics) {
 	FontFamily fontFamily(L"Times New Roman");
 
 	Font font(&fontFamily,
-			fontSize,
-			Gdiplus::FontStyleRegular,
-			Gdiplus::UnitPixel);
+		fontSize,
+		Gdiplus::FontStyleRegular,
+		Gdiplus::UnitPixel);
 
+	// add some variables to fix the alignment in gdi+
+	int ascent = fontFamily.GetCellAscent(FontStyleRegular);
+	int emHeight = fontFamily.GetEmHeight(FontStyleRegular);
+	float lineHeight = fontSize; // line height
+	float baselineOffset = lineHeight * (float) ascent / emHeight;
 
-	PointF drawPoint(position.getX(), position.getY());
-
-
+	
 	/* can dong cho text
 
 		text__
@@ -231,8 +234,16 @@ VOID SVGText::draw(Graphics& graphics) {
 		|_____|
 	*/
 	StringFormat format;
-	format.SetAlignment(Gdiplus::StringAlignmentNear);
-	format.SetLineAlignment(Gdiplus::StringAlignmentFar);
+	//format.SetLineAlignment(Gdiplus::StringAlignmentFar); xxxxxxxxxx
+	// 
+	format.SetAlignment(Gdiplus::StringAlignmentCenter); // Left aligned
+	format.SetLineAlignment(StringAlignmentNear);
+
+
+	// cho này đang gặp vấn đề: cái - baseline/2 là chỉnh bừa chứ ko có logic gì??
+	PointF drawPoint(position.getX() - baselineOffset / 2, position.getY() - baselineOffset);
+
+
 
 	//graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
 
@@ -241,10 +252,12 @@ VOID SVGText::draw(Graphics& graphics) {
 	// ref: https://www.codeproject.com/Articles/42529/Outline-Text
 
 	GraphicsPath path;
-	path.AddString(wideContent.c_str(), wcslen(wideContent.c_str()), &fontFamily,
-		Gdiplus::FontStyleRegular, fontSize, Gdiplus::PointF(position.getX(), position.getY()), &format);
+	path.AddString(wideContent.c_str(), -1, &fontFamily,
+		Gdiplus::FontStyleRegular, fontSize, drawPoint, &format);
 
-	Pen pen(Color(255,
+
+
+	Pen pen(Color(strokeOpacity,
 		stroke.getRed(),
 		stroke.getGreen(),
 		stroke.getBlue()),
