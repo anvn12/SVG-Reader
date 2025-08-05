@@ -429,6 +429,12 @@ VOID SVGPath::handleCommand(char cmd, const vector<float>& nums) {
 		}
 		return;
     }
+	else if (cmd == 'H' || cmd == 'h') { //h80v60
+		command.data.push_back(Point2D(nums[0], 0));
+	}
+	else if (cmd == 'V' || cmd == 'v') {
+		command.data.push_back(Point2D(0, nums[0]));
+	}
 	else if (cmd == 'C' || cmd == 'c') { //(x1,y1,x2,y2,x,y)
 		for (size_t i = 0; i + 5 < nums.size(); i += 6) {
 			command.data.push_back(Point2D(nums[i], nums[i + 1]));     
@@ -463,7 +469,7 @@ VOID SVGPath::processAttribute(char* attributeName, char* attributeValue) {
 				ss.clear();
 				ss << c;
 				size_t j = i + 1;
-				while (j < d.size() && (isdigit(d[j]) || d[j] == '.' || d[j] == 'e' || d[j] == 'E')) {
+				while (j < d.size() && (isdigit(d[j]) || d[j] == '.')) {
 					ss << d[j];
 					j++;
 				}
@@ -538,12 +544,14 @@ VOID SVGPath::draw(Graphics& graphics) {
 				PointF newPoint(current.X, point.getY());
 				gp.AddLine(current, newPoint);
 				current = newPoint;
+			}
 			break;
 		case 'v':
 			for (auto& point : cmd.data) {
 				PointF newPoint(current.X, current.Y + point.getY());
 				gp.AddLine(current, newPoint);
 				current = newPoint;
+			}
 			break;
 		case 'C':
 			for (size_t i = 0; i + 2 < cmd.data.size(); i += 3) {
