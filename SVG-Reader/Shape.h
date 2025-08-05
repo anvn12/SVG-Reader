@@ -29,6 +29,13 @@ public:
 
 	// set transform attribute: translate, rotate, scale
 	VOID setGraphicsTransform(Graphics& graphics);
+
+	// getters
+	float getStrokeWidth() const;
+	float getStrokeOpacity() const;
+	float getFillOpacity() const;
+	RGBColor getStroke() const;
+	RGBColor getFill() const;
 };
 
 
