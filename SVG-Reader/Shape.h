@@ -38,11 +38,11 @@ public:
 	RGBColor getFill() const;
 
 	// setters
-	void setStrokeWidth(float &width);
-	void setStrokeOpacity(float &opacity);
-	void setFillOpacity(float &opacity);
-	void setStroke(RGBColor &color);
-	void setFill(RGBColor& color);
+	void setStrokeWidth(float width);
+	void setStrokeOpacity(float opacity);
+	void setFillOpacity(float opacity);
+	void setStroke(const RGBColor &color);
+	void setFill(const RGBColor& color);
 };
 
 
