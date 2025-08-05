@@ -23,6 +23,7 @@ SVGShape* createShapeFromNode(xml_node<>* node) {
 	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine();
 	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline();
 	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon();
+	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath();
 	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup();
 
 	if (!shape) return nullptr;
