@@ -129,7 +129,7 @@ public:
 };
 
 struct PathCommand {
-	char type; // 'M', 'L', 'C', 'Z'
+	char type; // 'M', 'L', 'C', 'Z', 'H', 'V'
 	vector<Point2D> data; //for x,y and control points
 };
 
@@ -137,7 +137,10 @@ class SVGPath : public SVGShape {
 private:
 	vector<PathCommand> commands;
 public:
-	SVGPath() : SVGShape() {}
+	SVGPath() : SVGShape() {
+		strokeOpacity = 255.0; 
+		fillOpacity = 255.0;
+	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 
