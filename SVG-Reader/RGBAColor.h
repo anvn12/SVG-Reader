@@ -45,7 +45,10 @@ public:
 	void setRed(int r) { red = clamp(r); }
 	void setGreen(int g) { green = clamp(g); }
 	void setBlue(int b) { blue = clamp(b); }
-	float setAlpha(float a) { alpha = a; }
+	void setAlpha(float a) { alpha = a; }
+
+	void setIsColor(bool mode) { isColor = mode; }
+
 
 	// extract char* to RGBColor
 	void textToRGB(char*);
