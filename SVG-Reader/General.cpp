@@ -11,10 +11,11 @@ vector<Gdiplus::PointF> parsePoints(const string& pointsStr) {
     istringstream iss(pointsStr);
     if (pointsStr.empty()) return points;
 
-    char ch;
+    //char ch;
     float x, y;
 
-    while (iss >> x >> ch >> y) {
+    //while (iss >> x >> ch >> y) {
+    while (iss >> x >> y) {
         points.emplace_back(x, y);
         while (iss.peek() == ' ' || iss.peek() == ',') iss.ignore();
     }
