@@ -150,6 +150,17 @@ void RGBAColor::textToRGBA(char* text) {
             isColor = true;
         }
     }
+    else if (stext == "darkslategray") {
+        //(135, 206, 235)
+        red = 47;
+        green = 79;
+        blue = 79;
+
+        if (isColor == false) {
+            alpha = 255;
+            isColor = true;
+        }
+        }
     else if (stext == "black") {
         if (isColor == false) {
             alpha = 255;
