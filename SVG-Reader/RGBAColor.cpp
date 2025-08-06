@@ -49,11 +49,11 @@ void RGBAColor::textToRGBA(char* text) {
         stringstream ss(stext);
         string temp;
         getline(ss, temp, ',');
-        red = stoi(temp);
+        red = clamp(stoi(temp));
         getline(ss, temp, ',');
-        green = stoi(temp);
+        green = clamp(stoi(temp));
         getline(ss, temp, ')');
-        blue = stoi(temp);
+        blue = clamp(stoi(temp));
 
         if (isColor == false) {
             alpha = 255;

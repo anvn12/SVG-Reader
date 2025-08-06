@@ -231,24 +231,25 @@ VOID SVGText::draw(Graphics& graphics) {
 	//format.SetLineAlignment(Gdiplus::StringAlignmentFar); xxxxxxxxxx
 	// 
 	format.SetAlignment(Gdiplus::StringAlignmentNear); // Left aligned
-	//format.SetLineAlignment(StringAlignmentNear);
-	format.SetLineAlignment(StringAlignmentFar);
+	format.SetLineAlignment(StringAlignmentNear);
+	//format.SetLineAlignment(StringAlignmentFar);
 
 
 
 
 
 	// add some variables to fix the alignment in gdi+
-	//int ascent = fontFamily.GetCellAscent(FontStyleRegular);
-	//int emHeight = fontFamily.GetEmHeight(FontStyleRegular);
-	//float lineHeight = fontSize; // line height
-	//float baselineOffset = lineHeight * (float) ascent / emHeight;
+	int ascent = fontFamily.GetCellAscent(FontStyleRegular);
+	int emHeight = fontFamily.GetEmHeight(FontStyleRegular);
+	float lineHeight = fontSize; // line height
+	float baselineOffset = lineHeight * (float) ascent / emHeight;
 
 
 	// cho này đang gặp vấn đề: cái - baseline/2 là chỉnh bừa chứ ko có logic gì??
 	//PointF drawPoint(position.getX() - baselineOffset / 2, position.getY() - baselineOffset);
+	PointF drawPoint(position.getX(), position.getY() - baselineOffset);
 
-	PointF drawPoint(position.getX(), position.getY());
+	//PointF drawPoint(position.getX(), position.getY());
 
 
 
