@@ -139,12 +139,24 @@ void RGBAColor::textToRGBA(char* text) {
             isColor = true;
         }
     }
+    else if (stext == "skyblue") {
+        //(135, 206, 235)
+        red = 135;
+        green = 206;
+        blue = 235;
+
+        if (isColor == false) {
+            alpha = 255;
+            isColor = true;
+        }
+    }
     else if (stext == "black") {
         if (isColor == false) {
             alpha = 255;
             isColor = true;
         }
     }
+
     else if (stext == "none") {
         isColor = false;
     }

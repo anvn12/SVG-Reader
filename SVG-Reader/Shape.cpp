@@ -181,7 +181,7 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 
 VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 	// argb color
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
@@ -209,7 +209,7 @@ VOID SVGText::setContent(char* attributeValue) {
 }
 
 VOID SVGText::draw(Graphics& graphics) {
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
@@ -285,7 +285,7 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGEllipse::draw(Graphics & graphics) {
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
@@ -309,7 +309,7 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGCircle::draw(Graphics& graphics) {
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
@@ -341,7 +341,7 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGLine::draw(Graphics& graphics) {
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
 }
@@ -365,7 +365,7 @@ VOID SVGPolyline::draw(Graphics& graphics) {
         return; 
 	}
 
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
@@ -395,7 +395,7 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 		return;
 	}
 
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
@@ -576,7 +576,7 @@ VOID SVGPath::draw(Graphics& graphics) {
 		}
 	}
 
-	Pen pen(setPenColor());
+	Pen pen(setPenColor(), strokeWidth);
 
 	SolidBrush brush(setBrushColor());
 
