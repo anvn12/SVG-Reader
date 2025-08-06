@@ -25,7 +25,7 @@ SVGShape* createShapeFromNode(xml_node<>* node) {
 	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon();
 	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath();
 	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup();
-	else {} // undefined SVG shape -> do nothing
+	// undefined SVG shape -> do nothing
 
 	if (!shape) return nullptr;
 
@@ -80,7 +80,7 @@ SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
 		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup(groupParent->getStroke(),
 		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
-	else {} // undefined SVG shape -> do nothing
+	// undefined SVG shape -> do nothing
 
 	if (!shape) return nullptr;
 
@@ -146,8 +146,7 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	else if (strcmp(attributeName, "transform") == 0) {
 		transform.parseTransform(attributeValue);
 	}
-	else {}	// undefined attributes
-
+	// undefined attributes -> do nothing
 }
 
 // set transform attribute: translate, rotate, scale

@@ -56,6 +56,10 @@ public:
 // extract char* to RGBColor
 RGBColor textToRGB(char*);
 
+RGBColor hexToRGB(const string& hex);
+
+RGBColor shorthandHexToRGB(const string& hex);
+
 
 //help for reading poly points
 vector<PointF> parsePoints(const string& pointsStr);
