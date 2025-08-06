@@ -137,21 +137,24 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	else if (strcmp(attributeName, "stroke") == 0) {
 		stroke.textToRGBA(attributeValue);
 	}
-	else if (strcmp(attributeName, "fill") == 0) {
-		fill.textToRGBA(attributeValue);
-	}
 	else if (strcmp(attributeName, "stroke-width") == 0) {
 		strokeWidth = atof(attributeValue);
+		stroke.setIsColor(true);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
 		// type cast to 255
 		//strokeOpacity = atof(attributeValue) * 255;
 		stroke.setAlpha(atof(attributeValue) * 255);
+		stroke.setIsColor(true);
+	}
+	else if (strcmp(attributeName, "fill") == 0) {
+		fill.textToRGBA(attributeValue);
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
 		// cast to 255 in alpha (argb)
 		//fillOpacity = atof(attributeValue) * 255;
 		fill.setAlpha(atof(attributeValue) * 255);
+		fill.setIsColor(true);
 	}
 	else if (strcmp(attributeName, "transform") == 0) {
 		transform.parseTransform(attributeValue);
