@@ -212,10 +212,6 @@ VOID SVGText::setContent(char* attributeValue) {
 }
 
 VOID SVGText::draw(Graphics& graphics) {
-	Pen pen(setPenColor(), strokeWidth);
-
-	SolidBrush brush(setBrushColor());
-
 	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
 
 	FontFamily fontFamily(L"Times New Roman");
@@ -225,13 +221,6 @@ VOID SVGText::draw(Graphics& graphics) {
 		Gdiplus::FontStyleRegular,
 		Gdiplus::UnitPixel);
 
-	// add some variables to fix the alignment in gdi+
-	int ascent = fontFamily.GetCellAscent(FontStyleRegular);
-	int emHeight = fontFamily.GetEmHeight(FontStyleRegular);
-	float lineHeight = fontSize; // line height
-	float baselineOffset = lineHeight * (float) ascent / emHeight;
-
-	
 	/* can dong cho text
 
 		text__
@@ -246,12 +235,26 @@ VOID SVGText::draw(Graphics& graphics) {
 	format.SetLineAlignment(StringAlignmentFar);
 
 
+
+
+
+	// add some variables to fix the alignment in gdi+
+	//int ascent = fontFamily.GetCellAscent(FontStyleRegular);
+	//int emHeight = fontFamily.GetEmHeight(FontStyleRegular);
+	//float lineHeight = fontSize; // line height
+	//float baselineOffset = lineHeight * (float) ascent / emHeight;
+
+
 	// cho này đang gặp vấn đề: cái - baseline/2 là chỉnh bừa chứ ko có logic gì??
 	//PointF drawPoint(position.getX() - baselineOffset / 2, position.getY() - baselineOffset);
 
 	PointF drawPoint(position.getX(), position.getY());
 
 
+
+	Pen pen(setPenColor(), strokeWidth);
+
+	SolidBrush brush(setBrushColor());
 
 
 	//graphics.DrawString(wideContent.c_str(), -1, &font, drawPoint, &format, &brush);
