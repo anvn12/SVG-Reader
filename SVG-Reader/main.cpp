@@ -55,7 +55,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 	//=======================
 
 
-	SVGReader::getInstance().init("testGroup.svg");
+	SVGReader::getInstance().init("D:\\SVG-Reader\\Testcase\\TestCases\\svg-01.svg");
 
 	// the main loop for processing messages
 	SVGReader::getInstance().messageLoop();
