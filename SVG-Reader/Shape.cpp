@@ -62,7 +62,7 @@ SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
 	//_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity
 
 	// Khởi tạo shape tương ứng
-	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle(groupParent->getStroke(),
+	/*if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle(groupParent->getStroke(),
 		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse(groupParent->getStroke(),
 		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
@@ -79,7 +79,27 @@ SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
 	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath(groupParent->getStroke(),
 		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
 	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup(groupParent->getStroke(),
-		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());
+		groupParent->getStrokeWidth(), groupParent->getStrokeOpacity(), groupParent->getFill(), groupParent->getFillOpacity());*/
+
+	if (strcmp(nodeName, "rect") == 0) shape = new SVGRectangle(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "ellipse") == 0) shape = new SVGEllipse(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "circle") == 0) shape = new SVGCircle(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "text") == 0) shape = new SVGText(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "line") == 0) shape = new SVGLine(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "polyline") == 0) shape = new SVGPolyline(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "polygon") == 0) shape = new SVGPolygon(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "path") == 0) shape = new SVGPath(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+	else if (strcmp(nodeName, "g") == 0) shape = new SVGGroup(groupParent->getStroke(),
+		groupParent->getStrokeWidth(), groupParent->getFill());
+
 	// undefined SVG shape -> do nothing
 
 	if (!shape) return nullptr;
@@ -105,9 +125,7 @@ SVGShape* createShapeFromNode(xml_node<>* node, SVGGroup* groupParent) {
 	return shape;
 }
 
-SVGShape::SVGShape()
-	: position(), stroke(), fill(), 
-		strokeWidth(0.0), strokeOpacity(0.0), fillOpacity(0.0) {}
+
 
 VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 	if (strcmp(attributeName, "x") == 0) {
@@ -117,31 +135,26 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		position.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "stroke") == 0) {
-		if (strcmp(attributeValue, "none") == 0) {
-			strokeOpacity = 0.0; 
-		}
-		else {
-			stroke = textToRGB(attributeValue);
-		}
-	}
-	else if (strcmp(attributeName, "fill") == 0) {
-		if (strcmp(attributeValue, "none") == 0) {
-			fillOpacity = 0.0;  
-		}
-		else {
-			fill = textToRGB(attributeValue);
-		}
+		stroke.textToRGBA(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-width") == 0) {
 		strokeWidth = atof(attributeValue);
+		stroke.setIsColor(true);
 	}
 	else if (strcmp(attributeName, "stroke-opacity") == 0) {
 		// type cast to 255
-		strokeOpacity = atof(attributeValue) * 255;
+		//strokeOpacity = atof(attributeValue) * 255;
+		stroke.setAlpha(atof(attributeValue) * 255);
+		stroke.setIsColor(true);
+	}
+	else if (strcmp(attributeName, "fill") == 0) {
+		fill.textToRGBA(attributeValue);
 	}
 	else if (strcmp(attributeName, "fill-opacity") == 0) {
 		// cast to 255 in alpha (argb)
-		fillOpacity = atof(attributeValue) * 255;
+		//fillOpacity = atof(attributeValue) * 255;
+		fill.setAlpha(atof(attributeValue) * 255);
+		fill.setIsColor(true);
 	}
 	else if (strcmp(attributeName, "transform") == 0) {
 		transform.parseTransform(attributeValue);
@@ -171,21 +184,14 @@ VOID SVGRectangle::processAttribute(char* attributeName, char* attributeValue) {
 
 VOID SVGRectangle::draw(Gdiplus::Graphics& graphics) {
 	// argb color
-	Pen pen(Color(255,
-			stroke.getRed(),
-			stroke.getGreen(),
-			stroke.getBlue()),
-			strokeWidth);
+	Pen pen(setPenColor(), strokeWidth);
 
-	SolidBrush solidBrush(Color((int)fillOpacity,
-						fill.getRed(),
-						fill.getGreen(),
-						fill.getBlue()));
+	SolidBrush brush(setBrushColor());
 
 	RectF object = RectF(position.getX(), position.getY(),
 						width, height);
 
-	graphics.FillRectangle(&solidBrush, object);
+	graphics.FillRectangle(&brush, object);
 	graphics.DrawRectangle(&pen, object);
 }
 
@@ -206,10 +212,9 @@ VOID SVGText::setContent(char* attributeValue) {
 }
 
 VOID SVGText::draw(Graphics& graphics) {
-	SolidBrush brush(Color(255,
-						fill.getRed(),
-						fill.getGreen(),
-						fill.getBlue()));
+	Pen pen(setPenColor(), strokeWidth);
+
+	SolidBrush brush(setBrushColor());
 
 	wstring wideContent(content.begin(), content.end()); //doi sang wstring de gdi+ dung`
 
@@ -257,12 +262,6 @@ VOID SVGText::draw(Graphics& graphics) {
 
 
 
-	Pen pen(Color(strokeOpacity,
-		stroke.getRed(),
-		stroke.getGreen(),
-		stroke.getBlue()),
-		strokeWidth);
-
 	graphics.FillPath(&brush, &path);
 	graphics.DrawPath(&pen, &path);
 }
@@ -289,16 +288,9 @@ VOID SVGEllipse::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGEllipse::draw(Graphics & graphics) {
-	SolidBrush brush(Color(fillOpacity,
-						fill.getRed(), 
-						fill.getGreen(), 
-						fill.getBlue()));
+	Pen pen(setPenColor(), strokeWidth);
 
-	Pen pen(Color(strokeOpacity,
-				stroke.getRed(),
-				stroke.getGreen(), 
-				stroke.getBlue()), 
-				strokeWidth);
+	SolidBrush brush(setBrushColor());
 
 	RectF rectF(position.getX() - rx, position.getY() - ry, 2 * rx, 2 * ry);
 
@@ -320,16 +312,9 @@ VOID SVGCircle::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGCircle::draw(Graphics& graphics) {
-	SolidBrush brush(Color(fillOpacity,
-		fill.getRed(),
-		fill.getGreen(),
-		fill.getBlue()));
+	Pen pen(setPenColor(), strokeWidth);
 
-	Pen pen(Color(strokeOpacity,
-		stroke.getRed(),
-		stroke.getGreen(),
-		stroke.getBlue()),
-		strokeWidth);
+	SolidBrush brush(setBrushColor());
 
 	RectF rectF(position.getX() - rx, position.getY() - rx, 2 * rx, 2 * rx);
 
@@ -359,11 +344,7 @@ VOID SVGLine::processAttribute(char* attributeName, char* attributeValue) {
 }
 
 VOID SVGLine::draw(Graphics& graphics) {
-	Pen pen(Color(strokeOpacity,
-				stroke.getRed(), 
-				stroke.getGreen(), 
-				stroke.getBlue()), 
-				strokeWidth);
+	Pen pen(setPenColor(), strokeWidth);
 
 	graphics.DrawLine(&pen, position1.getX(), position1.getY(), position2.getX(), position2.getY());
 }
@@ -387,16 +368,9 @@ VOID SVGPolyline::draw(Graphics& graphics) {
         return; 
 	}
 
-    SolidBrush brush(Color(fillOpacity,
-						fill.getRed(), 
-						fill.getGreen(), 
-						fill.getBlue()));
+	Pen pen(setPenColor(), strokeWidth);
 
-    Pen pen(Color(strokeOpacity,
-				stroke.getRed(), 
-				stroke.getGreen(), 
-				stroke.getBlue()), 
-				strokeWidth);
+	SolidBrush brush(setBrushColor());
 
 	// fill
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
@@ -424,16 +398,9 @@ VOID SVGPolygon::draw(Graphics& graphics) {
 		return;
 	}
 
-	SolidBrush brush(Color(fillOpacity,
-						fill.getRed(), 
-						fill.getGreen(), 
-						fill.getBlue()));
+	Pen pen(setPenColor(), strokeWidth);
 
-	Pen pen(Color(strokeOpacity,
-				stroke.getRed(),
-				stroke.getGreen(), 
-				stroke.getBlue()), 
-				strokeWidth);
+	SolidBrush brush(setBrushColor());
 
 	//fill 
 	graphics.FillPolygon(&brush, pointArray.data(), pointArray.size());
@@ -612,17 +579,11 @@ VOID SVGPath::draw(Graphics& graphics) {
 		}
 	}
 
-	SolidBrush brush(Color(fillOpacity,
-		fill.getRed(),
-		fill.getGreen(),
-		fill.getBlue()));
-	graphics.FillPath(&brush, &gp);
+	Pen pen(setPenColor(), strokeWidth);
 
-	Pen pen(Color(strokeOpacity,
-		stroke.getRed(),
-		stroke.getGreen(),
-		stroke.getBlue()),
-		strokeWidth);
+	SolidBrush brush(setBrushColor());
+
+	graphics.FillPath(&brush, &gp);
 	graphics.DrawPath(&pen, &gp);
 }
 

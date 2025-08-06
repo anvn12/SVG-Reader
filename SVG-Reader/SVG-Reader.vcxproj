@@ -155,6 +155,7 @@
     <ResourceCompile />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="RGBAColor.h" />
     <ClInclude Include="General.h" />
     <ClInclude Include="ProcessMain.h" />
     <ClInclude Include="rapidxml.hpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RGBAColor.cpp" />
     <ClCompile Include="General.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ProcessMain.cpp" />

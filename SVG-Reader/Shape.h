@@ -3,7 +3,9 @@
 #pragma once
 
 #include "General.h"
+#include "RGBAColor.h"
 #include "Transform.h"
+#include <gdiplus.h>
 #include <sstream>
 
 class SVGShape;
@@ -18,15 +20,30 @@ class SVGShape {
 protected:
 	Transform transform;
 	Point2D position;
-	RGBColor stroke, fill;
-	float strokeWidth, strokeOpacity, fillOpacity;
+	//RGBColor stroke, fill;
+	//float strokeWidth, strokeOpacity, fillOpacity;
+	RGBAColor stroke, fill;
+	float strokeWidth;
 public:
-	SVGShape();
-	SVGShape(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGShape()
+		: position(), stroke(), fill(),
+		strokeWidth(0.0), strokeOpacity(0.0), fillOpacity(0.0) {
+	}*/
+
+	SVGShape()
+		: position(), stroke(), fill(), strokeWidth(0.0) {
+	}
+
+	/*SVGShape(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity) 
 		: stroke(_stroke), strokeWidth(_strokeWidth), strokeOpacity(_strokeOpacity), 
 		fill(_fill), fillOpacity(_fillOpacity) {
+	}*/
+
+	SVGShape(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: stroke(_stroke), strokeWidth(_strokeWidth), fill(_fill) {
 	}
+
 	virtual ~SVGShape() = default;
 
 
@@ -42,19 +59,52 @@ public:
 
 	// getters
 	float getStrokeWidth() const { return strokeWidth; }
-	float getStrokeOpacity() const { return strokeOpacity; }
-	float getFillOpacity() const { return fillOpacity; }
-	RGBColor getStroke() const { return stroke; }
-	RGBColor getFill() const { return fill; }
+	//float getStrokeOpacity() const { return strokeOpacity; }
+	//float getFillOpacity() const { return fillOpacity; }
+	//RGBColor getStroke() const { return stroke; }
+	//RGBColor getFill() const { return fill; }
+
+	RGBAColor getStroke() const { return stroke; }
+	RGBAColor getFill() const { return fill; }
 
 	// setters
 	void setStrokeWidth(const float &width) { strokeWidth = width; }
-	void setStrokeOpacity(const float &opacity) { strokeOpacity = opacity; }
-	void setFillOpacity(const float &opacity) { fillOpacity = opacity; }
-	void setStroke(const RGBColor &color) { stroke = color; }
-	void setFill(const RGBColor& color) { fill = color; }
-	
+	//void setStrokeOpacity(const float &opacity) { strokeOpacity = opacity; }
+	//void setFillOpacity(const float &opacity) { fillOpacity = opacity; }
+	//void setStroke(const RGBColor &color) { stroke = color; }
+	//void setFill(const RGBColor& color) { fill = color; }
+	void setStroke(const RGBAColor& color) { stroke = color; }
+	void setFill(const RGBAColor& color) { fill = color; }
 
+
+	Gdiplus::Color setBrushColor() {
+		if (fill.getIsColor() == true) {
+			return Color((int)fill.getAlpha(),
+				fill.getRed(),
+				fill.getGreen(),
+				fill.getBlue());
+		}
+		
+		// false
+		return Color((int)0,
+			fill.getRed(),
+			fill.getGreen(),
+			fill.getBlue());
+	}
+	Gdiplus::Color setPenColor() {
+		if (stroke.getIsColor() == true) {
+			return Color((int)stroke.getAlpha(),
+				stroke.getRed(),
+				stroke.getGreen(),
+				stroke.getBlue());
+		}
+
+		// false
+		return Color((int)0,
+			stroke.getRed(),
+			stroke.getGreen(),
+			stroke.getBlue());
+	}
 };
 
 
@@ -66,10 +116,15 @@ private:
 public:
 	SVGRectangle() : SVGShape(), width(0), height(0) {}
 
-	SVGRectangle(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGRectangle(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), width(0), height(0) {
+	}*/
+
+	SVGRectangle(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill), width(0), height(0) {
 	}
+
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
 	VOID draw(Graphics &graphics) override;
@@ -84,9 +139,13 @@ private:
 public:
 	SVGText() : SVGShape(), fontSize(0.0) {}
 
-	SVGText(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGText(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), fontSize(0.0) {
+	}*/
+
+	SVGText(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill), fontSize(0.0) {
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
@@ -103,9 +162,13 @@ protected:
 public:
 	SVGEllipse() : SVGShape(), rx(0), ry(0) {}
 
-	SVGEllipse(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGEllipse(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), rx(0), ry(0) {
+	}*/
+
+	SVGEllipse(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill), rx(0), ry(0) {
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
@@ -120,9 +183,14 @@ public:
 		rx = ry = 0;
 	}
 
-	SVGCircle(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGCircle(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGEllipse(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+		rx = ry = 0;
+	}*/
+
+	SVGCircle(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGEllipse(_stroke, _strokeWidth, _fill) {
 		rx = ry = 0;
 	}
 
@@ -139,9 +207,13 @@ private:
 public:
 	SVGLine() : SVGShape(), position1(), position2() {}
 
-	SVGLine(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGLine(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity), position1(), position2() {
+	}*/
+
+	SVGLine(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill), position1(), position2() {
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
@@ -156,12 +228,17 @@ private:
 public:
 	SVGPolyline() : SVGShape() {
 		points = "";
-		fillOpacity = 1.0;
+		//fillOpacity = 1.0;
 	}
 
-	SVGPolyline(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGPolyline(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+		points = "";
+	}*/
+
+	SVGPolyline(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill) {
 		points = "";
 	}
 
@@ -178,13 +255,18 @@ public:
 	SVGPolygon() : SVGShape() {
 		points = "";
 		strokeWidth = 1.0;
-		strokeOpacity = 1.0;
-		fillOpacity = 1.0;
+		//strokeOpacity = 1.0;
+		//fillOpacity = 1.0;
 	}
 
-	SVGPolygon(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGPolygon(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+		points = "";
+	}*/
+
+	SVGPolygon(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill) {
 		points = "";
 	}
 
@@ -202,13 +284,17 @@ private:
 	vector<PathCommand> commands;
 public:
 	SVGPath() : SVGShape() {
-		strokeOpacity = 255.0; 
-		fillOpacity = 255.0;
+		//strokeOpacity = 255.0; 
+		//fillOpacity = 255.0;
 	}
 
-	SVGPath(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGPath(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+	}*/
+
+	SVGPath(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill) {
 	}
 
 	VOID processAttribute(char* attributeName, char* attributeValue) override;
@@ -225,10 +311,16 @@ private:
 public:
 	SVGGroup() {}
 
-	SVGGroup(const RGBColor& _stroke, const float& _strokeWidth,
+	/*SVGGroup(const RGBColor& _stroke, const float& _strokeWidth,
 		const float& _strokeOpacity, const RGBColor& _fill, const float& _fillOpacity)
 		: SVGShape(_stroke, _strokeWidth, _strokeOpacity, _fill, _fillOpacity) {
+	}*/
+
+	SVGGroup(const RGBAColor& _stroke, const float& _strokeWidth, const RGBAColor& _fill)
+		: SVGShape(_stroke, _strokeWidth, _fill) {
 	}
+
+
 
 	~SVGGroup() {
 		for (SVGShape* shape : children) {
