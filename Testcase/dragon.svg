@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+	<!-- Body -->
+	<ellipse cx="300" cy="300" rx="120" ry="60" fill="rgb(0,150,0)" stroke="rgb(0,0,0)" stroke-width="2" stroke-opacity="1" fill-opacity="0.6" />
+
+	<!-- Tail -->
+	<polyline points="420,300 450,310 470,330 480,350 490,360" fill-opacity="0.3" stroke="rgb(0,150,0)" stroke-width="10" stroke-opacity="0.6" />
+
+	<!-- Neck -->
+	<line x1="240" y1="270" x2="200" y2="200" stroke="rgb(0,150,0)" stroke-width="25" stroke-opacity="0.7" />
+
+	<!-- Head -->
+	<circle cx="190" cy="180" r="30" fill="rgb(0,150,0)" stroke="rgb(0,0,0)" stroke-width="2" stroke-opacity="1" fill-opacity="0.6" />
+
+
+
+	<!-- Wings -->
+	<polygon fill="rgb(50,200,100)" fill-opacity="0.5" stroke="rgb(0,100,0)" stroke-width="2" stroke-opacity="0.5"
+			 points="260,250 320,150 380,250" />
+	<polygon fill="rgb(50,200,100)" fill-opacity="0.5" stroke="rgb(0,100,0)" stroke-width="2" stroke-opacity="0.5"
+			 points="280,260 350,160 420,260" />
+
+	<!-- Legs -->
+	<line x1="260" y1="340" x2="250" y2="380" stroke="rgb(0,100,0)" stroke-width="10" stroke-opacity="0.6" />
+	<line x1="320" y1="340" x2="330" y2="380" stroke="rgb(0,100,0)" stroke-width="10" stroke-opacity="0.6" />
+
+	<!-- Fire -->
+	<polygon fill="rgb(255,100,0)" fill-opacity="0.7" stroke="rgb(255,0,0)" stroke-width="2" stroke-opacity="0.6"
+			 points="160,190 140,185 150,180 135,170 160,165 145,160 165,150 170,170 180,160 175,180 190,185 170,190" />
+
+	<!-- Eyes -->
+	<circle cx="180" cy="175" r="5" fill="rgb(255,255,255)" fill-opacity="1" />
+	<circle cx="200" cy="175" r="5" fill="rgb(255,255,255)" fill-opacity="1" />
+
+	<!-- Label -->
+	<text x="200" y="50" font-size="40" fill="rgb(255,0,0)">Dragon</text>
+</svg>
