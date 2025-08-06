@@ -45,6 +45,9 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RGBAColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SVGReader.cpp">
@@ -68,6 +71,9 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RGBAColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -88,6 +94,8 @@
     <None Include="..\Testcase\test_svg_transforms.svg">
       <Filter>src</Filter>
     </None>
+    <None Include="..\..\..\Downloads\transformed_svg.svg" />
+    <None Include="testGroup.svg" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVGReader.rc">
