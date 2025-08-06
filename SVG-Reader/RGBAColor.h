@@ -51,7 +51,7 @@ public:
 
 
 	// extract char* to RGBColor
-	void textToRGB(char*);
+	void textToRGBA(char*);
 };
 
 RGBAColor hexToRGB(const string& hex);

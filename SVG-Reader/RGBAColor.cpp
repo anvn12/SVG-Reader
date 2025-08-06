@@ -25,7 +25,7 @@ float RGBAColor::clamp(float value) const
     return value;
 }
 
-void RGBAColor::textToRGB(char* text) {
+void RGBAColor::textToRGBA(char* text) {
     // These are color formats in SVG:
     //Named color	"red"
     //Hexadecimal	"#ff0000" / "#f00"
@@ -60,9 +60,23 @@ void RGBAColor::textToRGB(char* text) {
             isColor = true;
         }
     }
-    //else if (stext.substr(0, 4) == "rgba") {
-    //
-    //}
+    else if (stext.substr(0, 4) == "rgba") {
+        stext.erase(0, 5);
+        stringstream ss(stext);
+        string temp;
+        getline(ss, temp, ',');
+        red = stoi(temp);
+        getline(ss, temp, ',');
+        green = stoi(temp);
+        getline(ss, temp, ',');
+        blue = stoi(temp);
+        getline(ss, temp, ')');
+        alpha = stof(temp) * 255;
+
+        if (isColor == false) {
+            isColor = true;
+        }
+    }
     //else if (stext.substr(0, 3) == "hsl") {
     //    //stext.erase(0, 4);
     //    //stringstream ss(stext);
@@ -111,6 +125,21 @@ void RGBAColor::textToRGB(char* text) {
     else if (stext == "blue") {
         blue = 255;
 
+        if (isColor == false) {
+            alpha = 255;
+            isColor = true;
+        }
+    }
+    else if (stext == "yellow") {
+        red = 255;
+        green = 255;
+
+        if (isColor == false) {
+            alpha = 255;
+            isColor = true;
+        }
+    }
+    else if (stext == "black") {
         if (isColor == false) {
             alpha = 255;
             isColor = true;

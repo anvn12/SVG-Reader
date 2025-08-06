@@ -135,24 +135,10 @@ VOID SVGShape::processAttribute(char* attributeName, char* attributeValue) {
 		position.setY(atof(attributeValue));
 	}
 	else if (strcmp(attributeName, "stroke") == 0) {
-		if (strcmp(attributeValue, "none") == 0) {
-			//strokeOpacity = 0.0;
-			stroke.setIsColor(false);
-		}
-		else {
-			//stroke = textToRGB(attributeValue);
-			stroke.textToRGB(attributeValue);
-		}
+		stroke.textToRGBA(attributeValue);
 	}
 	else if (strcmp(attributeName, "fill") == 0) {
-		if (strcmp(attributeValue, "none") == 0) {
-			//fillOpacity = 0.0;  
-			fill.setIsColor(false);
-		}
-		else {
-			//fill = textToRGB(attributeValue);
-			fill.textToRGB(attributeValue);
-		}
+		fill.textToRGBA(attributeValue);
 	}
 	else if (strcmp(attributeName, "stroke-width") == 0) {
 		strokeWidth = atof(attributeValue);
