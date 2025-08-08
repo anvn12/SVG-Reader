@@ -6,6 +6,7 @@
 #include <sstream>
 
 
+
 class Point2D {
 private:
 	float x, y;
