@@ -196,43 +196,48 @@ void RGBAColor::textToRGBA(char* text) {
     };
 
 
-    //rgb tim rgba truoc de tranh trung1 voi rgb
-    if (stext.rfind("rgba(", 0) == 0) {
-        auto l = stext.find('('), r = stext.find(')'); //tim ngoac trai phai
-        if (l != string::npos && r != string::npos && r > l) {
-            string inside = stext.substr(l + 1, r - l - 1);
-            stringstream ss(inside);
-            string a, b, c, d;
-            if (getline(ss, a, ',') && getline(ss, b, ',') &&
-                getline(ss, c, ',') && getline(ss, d, ',')) {
-                red = clamp(stoi(a));
-                green = clamp(stoi(b));
-                blue = clamp(stoi(c));
-                // alpha is 0..1, scale to 0..255
-                alpha = clamp(static_cast<float>(stof(d) * 255.0f));
+    //rgba tim rgba truoc de tranh trung1 voi rgb
+    if (stext.substr(0, 4) == "rgba") {
+            stext.erase(0, 5);
+            stringstream ss(stext);
+            string temp;
+            getline(ss, temp, ',');
+            red = stoi(temp);
+            getline(ss, temp, ',');
+            green = stoi(temp);
+            getline(ss, temp, ',');
+            blue = stoi(temp);
+            getline(ss, temp, ')');
+            alpha = stof(temp) * 255;
+
+            if (isColor == false) {
                 isColor = true;
-                return;
             }
+    }
+    else if (stext.substr(0, 3) == "rgb") {
+        stext.erase(0, 4);
+        stringstream ss(stext);
+        string temp;
+        getline(ss, temp, ',');
+        red = clamp(stoi(temp));
+        getline(ss, temp, ',');
+        green = clamp(stoi(temp));
+        getline(ss, temp, ')');
+        blue = clamp(stoi(temp));
+
+        if (isColor == false) {
+            alpha = 255;
+            isColor = true;
         }
     }
 
-    //rgb
-    if (stext.rfind("rgb(", 0) == 0) {
-        auto l = stext.find('('), r = stext.find(')');
-        if (l != string::npos && r != string::npos && r > l) {
-            string inside = stext.substr(l + 1, r - l - 1);
-            stringstream ss(inside);
-            string a, b, c;
-            if (getline(ss, a, ',') && getline(ss, b, ',') &&
-                getline(ss, c, ',')) {
-                red = clamp(stoi(a));
-                green = clamp(stoi(b));
-                blue = clamp(stoi(c));
-                alpha = 255;
-                isColor = true;
-                return;
-            }
-        }
+
+    auto it = namedColors.find(stext);
+    if (it != namedColors.end()) {
+        *this = it->second;
+        alpha = 255;
+        isColor = true;
+        return;
     }
     //else if (stext.substr(0, 3) == "hsl") {
     //    //stext.erase(0, 4);
