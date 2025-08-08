@@ -8,17 +8,24 @@
 
 vector<Gdiplus::PointF> parsePoints(const string& pointsStr) {
     vector<Gdiplus::PointF> points;
-    istringstream iss(pointsStr);
     if (pointsStr.empty()) return points;
 
-    //char ch;
-    float x, y;
+    istringstream iss(pointsStr);
+    vector<float> nums;
+    float v;
 
-    //while (iss >> x >> ch >> y) {
-    while (iss >> x >> y) {
-        points.emplace_back(x, y);
-        while (iss.peek() == ' ' || iss.peek() == ',') iss.ignore();
+    while (iss >> v) {
+        nums.push_back(v);
+        //eats any ',' between "x,y"
+        while (iss.peek() == ',') iss.get();
+        //operator >> eats ' '
     }
+
+    // Pair up numbers into (x,y)
+    for (size_t i = 0; i + 1 < nums.size(); i += 2) {
+        points.emplace_back(nums[i], nums[i + 1]);
+    }
+
     return points;
 }
 
